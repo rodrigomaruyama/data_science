@@ -1,0 +1,8 @@
+.ipynb_checkpoints/
+Model Selection.ipynb
+README.md
+__pycache__/
+census.csv
+project_description.md
+supervisedLearningResume.png
+visuals.py
