@@ -11,3 +11,8 @@ fd.csv
 features_final.csv
 income.csv
 firstReviewFindingDonors.pdf
+customers_segments/__pycache__/
+customers_segments/customers.csv
+customers_segments/README.md
+customers_segments/visuals.py
+customers_segments/project_description.md
