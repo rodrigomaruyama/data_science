@@ -1,5 +1,8 @@
 # Lesson 4: Explore One Variable
 
+# setting the working directory
+setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/")
+
 install.packages('ggplot2')
 library('ggplot2')
 diamonds
@@ -22,6 +25,6 @@ subset(diamonds, price < 500)
 subset(diamonds, price < 250)
 subset(diamonds, price >= 15000)
 
-
+# Quiz 5: Cheaper Diamonds
 qplot(diamonds$price, geom="histogram", bins="50")
-
+ggsave('dsNanodegree/machine-learning-master/projects/finding_donors/priceAnalysisR/priceHistogram.jpg')
