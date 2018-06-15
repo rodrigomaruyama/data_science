@@ -43,3 +43,10 @@ by(diamonds$price,diamonds$cut,median)
 
 # Quiz 8: Scales and Multiple Histograms
 qplot(x = price, data = diamonds) + facet_wrap(~cut, scales = "free_y")
+
+# Quiz 9: Price per Carat by Cut
+# https://discussions.udacity.com/t/problem-set-3-price-box-plots/158779
+qplot(x=clarity,y=price,data=diamonds,geom='boxplot',fill=clarity) +
+coord_cartesian(ylim=c(500,6500))
+ggsave('C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/boxPlot.jpg')
+
