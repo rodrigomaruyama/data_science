@@ -49,4 +49,16 @@ qplot(x = price, data = diamonds) + facet_wrap(~cut, scales = "free_y")
 qplot(x=clarity,y=price,data=diamonds,geom='boxplot',fill=clarity) +
 coord_cartesian(ylim=c(500,6500))
 ggsave('C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/boxPlot.jpg')
+g1 <- ggplot(aes(x=color, y=price), data=diamonds) + geom_boxplot()
+g2 <- ggplot(aes(x=cut, y=price), data=diamonds) + geom_boxplot()
+g3 <- ggplot(aes(x=clarity, y=price), data=diamonds) + geom_boxplot()
+grid.arrange(g1, g2, g3, ncol=3)
+
+# Quiz 10
+#
+by(diamonds$price,diamonds$color,quantile)
+by(diamonds$price,diamonds$cut,quantile)
+by(diamonds$price,diamonds$cut,quantile)
+
+
 
