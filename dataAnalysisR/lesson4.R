@@ -54,11 +54,22 @@ g2 <- ggplot(aes(x=cut, y=price), data=diamonds) + geom_boxplot()
 g3 <- ggplot(aes(x=clarity, y=price), data=diamonds) + geom_boxplot()
 grid.arrange(g1, g2, g3, ncol=3)
 
-# Quiz 10
-#
-by(diamonds$price,diamonds$color,quantile)
-by(diamonds$price,diamonds$cut,quantile)
-by(diamonds$price,diamonds$cut,quantile)
+# Quiz 10: Price Box Plots
+qplot(x=clarity,y=price,data=diamonds,geom='boxplot',fill=clarity) +
+coord_cartesian(ylim=c(500,6500))
+
+# Quiz 11: Interquartile Range - IQR
+by(diamonds$price,diamonds$color,IQR)
+by(diamonds$price,diamonds$cut,IQR)
+by(diamonds$price,diamonds$cut,IQR)
+
+# Quiz 12: Price per Carat Box Plots by Color
+# https://www.r-graph-gallery.com/265-grouped-boxplot-with-ggplot2/
+ggplot(aes(x=color, y=price, fill=color), data=diamonds) + geom_boxplot()
+
+
+
+
 
 
 
