@@ -66,10 +66,8 @@ by(diamonds$price,diamonds$cut,IQR)
 # Quiz 12: Price per Carat Box Plots by Color
 # https://www.r-graph-gallery.com/265-grouped-boxplot-with-ggplot2/
 ggplot(aes(x=color, y=price, fill=color), data=diamonds) + geom_boxplot()
+ggsave('C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/pricePerCaratColor.jpg')
 
-
-
-
-
-
-
+# Quiz 13: Carat Frequency Polygon
+# https://discussions.udacity.com/t/carat-frequency-polygon-problem-set-3/21610/13
+qplot(x = carat, data = diamonds, binwidth = 0.1, geom = 'freqpoly', binwidth = 0.1) 
