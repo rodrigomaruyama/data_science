@@ -1,21 +1,25 @@
-.ipynb_checkpoints/
-Model Selection.ipynb
-README.md
-__pycache__/
-census.csv
-project_description.md
-supervisedLearningResume.png
-visuals.py
-all_param.csv
-fd.csv
-features_final.csv
-income.csv
-firstReviewFindingDonors.pdf
-customers_segments/__pycache__/
-customers_segments/customers.csv
+.ipynb_checkpoints/*
 customers_segments/README.md
-customers_segments/visuals.py
-customers_segments/project_description.md
 customers_segments/firstReviewCustomersSegments.pdf
-customers_segments/trueCenters.PNG
 customers_segments/thirdReviewCustomersSegments.pdf
+customers_segments/trueCenters.PNG
+dataAnalysisR/birthdaysExample.csv
+dataAnalysisR/countries.csv
+dataAnalysisR/gdp2016.csv
+dataAnalysisR/indicator who bad_teeth.csv
+finding_donors/Model Selection.ipynb
+finding_donors/README.md
+finding_donors/__pycache__/
+finding_donors/all_param.csv
+finding_donors/census.csv
+finding_donors/fd.csv
+finding_donors/features_final.csv
+finding_donors/firstReviewFindingDonors.pdf
+finding_donors/income.csv
+finding_donors/project_description.md
+finding_donors/supervisedLearningResume.png
+finding_donors/visuals.py
+dataAnalysisR/boxPlot.jpg
+dataAnalysisR/pricePerCaratColor.jpg
+dataAnalysisR/priceHistogram.jpg
+

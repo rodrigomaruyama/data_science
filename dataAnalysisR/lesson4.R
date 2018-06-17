@@ -71,3 +71,38 @@ ggsave('C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fi
 # Quiz 13: Carat Frequency Polygon
 # https://discussions.udacity.com/t/carat-frequency-polygon-problem-set-3/21610/13
 qplot(x = carat, data = diamonds, binwidth = 0.1, geom = 'freqpoly', binwidth = 0.1) 
+
+# Quiz 15: Gapminder Data
+# Instalacao de bibliotecas
+install.packages('tidyr')
+library('tidyr')
+install.packages('dplyr')
+library('dplyr')
+
+teeth <- read.csv('indicator who bad_teeth.csv')
+countries <- read.csv('countries.csv')
+# Changing the column names in teeth dataframe 
+colnames(teeth) <- c('name','bad_teeth')
+
+# Merging the 2 dataframes
+total <- merge(teeth, countries, by='name')
+
+# bad_teeth histogram
+ggplot(data = total, aes(x = bad_teeth)) + geom_histogram(binwidth = 0.1)
+ggplot(data = total, aes(y = bad_teeth, x=region, fill=bad_teeth)) + geom_boxplot()
+
+# bad_teeth <= 1 Box plot
+df_good_teeth <- subset(total, bad_teeth <= 1)
+ggplot(data = df_good_teeth, aes(y = bad_teeth, x=region, fill=bad_teeth)) + geom_boxplot()
+
+# bad_teeth >= 4 Box plot
+df_bad_teeth <- subset(total, bad_teeth >= 4)
+ggplot(data = df_bad_teeth, aes(y = bad_teeth, x=region, fill=bad_teeth)) + geom_boxplot()
+
+# Max, Min, Median, Mean
+max(total$bad_teeth)
+min(total$bad_teeth)
+median(total$bad_teeth)
+mean(total$bad_teeth)
+
+# Quiz 16: Exploring Your Friends' Birthdays
