@@ -106,3 +106,4 @@ median(total$bad_teeth)
 mean(total$bad_teeth)
 
 # Quiz 16: Exploring Your Friends' Birthdays
+bd <- read.csv('birthdaysExample.csv')

@@ -7,6 +7,9 @@ dataAnalysisR/birthdaysExample.csv
 dataAnalysisR/countries.csv
 dataAnalysisR/gdp2016.csv
 dataAnalysisR/indicator who bad_teeth.csv
+dataAnalysisR/boxPlot.jpg
+dataAnalysisR/pricePerCaratColor.jpg
+dataAnalysisR/priceHistogram.jpg
 finding_donors/Model Selection.ipynb
 finding_donors/README.md
 finding_donors/__pycache__/
@@ -19,7 +22,4 @@ finding_donors/income.csv
 finding_donors/project_description.md
 finding_donors/supervisedLearningResume.png
 finding_donors/visuals.py
-dataAnalysisR/boxPlot.jpg
-dataAnalysisR/pricePerCaratColor.jpg
-dataAnalysisR/priceHistogram.jpg
 
