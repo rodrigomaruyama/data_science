@@ -106,4 +106,10 @@ median(total$bad_teeth)
 mean(total$bad_teeth)
 
 # Quiz 16: Exploring Your Friends' Birthdays
+install.packages('lubridate')
+library(lubridate)
 bd <- read.csv('birthdaysExample.csv')
+bd_dates <- as.Date(bd$dates, '%m/%d/%y')
+qplot(day(bd_dates), geom="histogram", binwidth=1)
+qplot(month(bd_dates), geom="histogram", binwidth=1)
+	
