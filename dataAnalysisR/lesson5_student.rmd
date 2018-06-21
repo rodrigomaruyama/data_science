@@ -141,7 +141,7 @@ Notes:
 Notes:
 
 ```{r Correlation}
-
+cor.test(pf$age, pf$friend_count)
 ```
 
 Look up the documentation for the cor.test function.
@@ -154,14 +154,17 @@ Response:
 ### Correlation on Subsets
 Notes:
 
-```{r Correlation on Subsets}
-with(                 , cor.test(age, friend_count))
+```{r Correlation on Subsets, message=FALSE, warning=FALSE, paged.print=FALSE}
+with(subset(pf, age<=70)                 , cor.test(age, friend_count))
 ```
 
 ***
 
 ### Correlation Methods
 Notes:
+```{r Correlation on Subsets, message=FALSE, warning=FALSE, paged.print=FALSE}
+with(subset(pf, age<=70)                 , cor.test(age, friend_count, method='spearman'))
+```
 
 ***
 
@@ -169,7 +172,7 @@ Notes:
 Notes:
 
 ```{r}
-
+ggplot(aes(x=www_likes_received, y=likes_received), data=pf) + geom_point()
 ```
 
 ***
