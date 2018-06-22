@@ -10,6 +10,17 @@ dataAnalysisR/indicator who bad_teeth.csv
 dataAnalysisR/boxPlot.jpg
 dataAnalysisR/pricePerCaratColor.jpg
 dataAnalysisR/priceHistogram.jpg
+dataAnalysisR/.RData
+dataAnalysisR/.Rhistory
+dataAnalysisR/__MACOSX/
+dataAnalysisR/eda-course-materials (1).zip
+dataAnalysisR/lesson2/
+dataAnalysisR/lesson3/
+dataAnalysisR/lesson4/
+dataAnalysisR/lesson5/
+dataAnalysisR/lesson6/
+dataAnalysisR/project/
+dataAnalysisR/pseudo_facebook.tsv
 finding_donors/Model Selection.ipynb
 finding_donors/README.md
 finding_donors/__pycache__/
@@ -22,14 +33,3 @@ finding_donors/income.csv
 finding_donors/project_description.md
 finding_donors/supervisedLearningResume.png
 finding_donors/visuals.py
-dataAnalysisR/.RData
-dataAnalysisR/.Rhistory
-dataAnalysisR/__MACOSX/
-dataAnalysisR/eda-course-materials (1).zip
-dataAnalysisR/lesson2/
-dataAnalysisR/lesson3/
-dataAnalysisR/lesson4/
-dataAnalysisR/lesson5/
-dataAnalysisR/lesson6/
-dataAnalysisR/project/
-dataAnalysisR/pseudo_facebook.tsv
