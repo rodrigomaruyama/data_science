@@ -206,8 +206,7 @@ Notes:
 Notes:
 
 ```{r More Caution With Correlation}
-install.packages('alr3',dependencies=TRUE)
-install.packages('MatrixModels',dependencies = TRUE)
+install.packages('alr3')
 library(alr3)
 ```
 
@@ -218,7 +217,7 @@ data(Mitchell)
 Create your plot!
 
 ```{r Temp vs Month}
-ggplot(data=mt, aes(x=Temp, y=Month)) +
+ggplot(data=Mitchell, aes(x=Month, y=Temp)) +
   geom_point()
 ```
 
@@ -231,7 +230,7 @@ b. What is the actual correlation of the two variables?
 (Round to the thousandths place)
 
 ```{r Noisy Scatterplots}
-
+with(Mitchell, cor.test(Month, Temp))
 ```
 
 ***
@@ -240,7 +239,9 @@ b. What is the actual correlation of the two variables?
 Notes:
 
 ```{r Making Sense of Data}
-
+ggplot(data=Mitchell, aes(x=Month, y=Temp)) +
+  geom_point() +
+  scale_x_discrete(breaks=seq(0, 203, 12))
 ```
 
 ***
@@ -252,6 +253,9 @@ Response:
 
 Watch the solution video and check out the Instructor Notes!
 Notes:
+
+ggplot(data=Mitchell, aes(x=(Month%%12), y=Temp)) +
+  geom_point()
 
 ***
 
