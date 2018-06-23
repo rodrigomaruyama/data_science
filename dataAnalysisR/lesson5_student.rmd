@@ -190,7 +190,7 @@ ggplot(aes(x=www_likes_received, y=likes_received), data=pf) + geom_point() +
 What's the correlation betwen the two variables? Include the top 5% of values for the variable in the calculation and round to 3 decimal places.
 
 ```{r Correlation Calcuation}
-cor.test(www_likes_received, likes_received)
+with(pf, cor.test(www_likes_received, likes_received))
 ```
 
 Response:
@@ -206,14 +206,20 @@ Notes:
 Notes:
 
 ```{r More Caution With Correlation}
-install.packages('alr3')
+install.packages('alr3',dependencies=TRUE)
+install.packages('MatrixModels',dependencies = TRUE)
 library(alr3)
+```
+
+```{r load data base mitchel}
+data(Mitchell)
 ```
 
 Create your plot!
 
 ```{r Temp vs Month}
-
+ggplot(data=mt, aes(x=Temp, y=Month)) +
+  geom_point()
 ```
 
 ***
