@@ -3,7 +3,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-Lesson 4
+Lesson 5
 ========================================================
 
 setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/")
@@ -181,13 +181,16 @@ ggplot(aes(x=www_likes_received, y=likes_received), data=pf) + geom_point()
 Notes:
 
 ```{r Strong Correlations}
-
+ggplot(aes(x=www_likes_received, y=likes_received), data=pf) + geom_point() +
+  xlim(0, quantile(pf$www_likes_received, 0.95)) +
+  ylim(0, quantile(pf$likes_received, 0.95)) +
+  geom_smooth(method = 'lm', color = 'red')
 ```
 
 What's the correlation betwen the two variables? Include the top 5% of values for the variable in the calculation and round to 3 decimal places.
 
 ```{r Correlation Calcuation}
-
+cor.test(www_likes_received, likes_received)
 ```
 
 Response:
