@@ -253,10 +253,10 @@ Response:
 
 Watch the solution video and check out the Instructor Notes!
 Notes:
-
+```{r A New Perspective}
 ggplot(data=Mitchell, aes(x=(Month%%12), y=Temp)) +
   geom_point()
-
+```
 ***
 
 ### Understanding Noise: Age to Age Months
