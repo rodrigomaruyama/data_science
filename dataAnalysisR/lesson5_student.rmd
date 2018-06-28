@@ -316,7 +316,20 @@ ggplot(aes(x=age_with_months, y=friend_count_mean),
 Notes:
 
 ```{r Smoothing Conditional Means}
+p1 <- ggplot(aes(x=age, y=friend_count_mean),
+       data = subset(pf.fc_by_age, age < 71)) +
+  geom_line() +
+  geom_smooth()
 
+p2 <- ggplot(aes(x=age_with_months, y=friend_count_mean),
+       data = subset(pf.fc_by_age_months, age_with_months < 71)) +
+  geom_line() +
+  geom_smooth()
+
+p3 <- ggplot(aes(x=round(age/5)*5, y=friend_count), data=subset(pf, age<71)) + geom_line(stat='summary', fun.y = mean)
+
+library(gridExtra)
+grid.arrange(p2, p1, p3, ncol=1)
 ```
 
 ***
