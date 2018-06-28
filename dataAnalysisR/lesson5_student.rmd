@@ -263,7 +263,7 @@ ggplot(data=Mitchell, aes(x=(Month%%12), y=Temp)) +
 Notes:
 
 ```{r Understanding Noise: Age to Age Months}
-pf.age_with_months <- pf$age + pf$dob_month
+pf$age_with_months <- pf$age + (1 - pf$dob_month / 12 )
 ```
 
 ***
@@ -271,7 +271,9 @@ pf.age_with_months <- pf$age + pf$dob_month
 ### Age with Months Means
 
 ```{r Age with Months Means}
-
+library(dplyr)
+pf.fc_by_age_months <- pf % %
+  group_by(age)
 ```
 
 Programming Assignment
