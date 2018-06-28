@@ -33,3 +33,7 @@ finding_donors/income.csv
 finding_donors/project_description.md
 finding_donors/supervisedLearningResume.png
 finding_donors/visuals.py
+big_data/turnstile_data_master_with_weather.csv
+big_data/.ipynb_checkpoints/*
+big_data/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+big_data/.ipynb_checkpoints/analyzing-subway-data-ndfdsi-checkpoint.ipynb
