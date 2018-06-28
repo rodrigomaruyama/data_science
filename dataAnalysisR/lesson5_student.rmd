@@ -305,7 +305,9 @@ Programming Assignment
 ### Noise in Conditional Means
 
 ```{r Noise in Conditional Means}
-
+ggplot(aes(x=age_with_months, y=friend_count_mean),
+       data = subset(pf.fc_by_age_months, age_with_months < 71)) +
+  geom_line()
 ```
 
 ***
