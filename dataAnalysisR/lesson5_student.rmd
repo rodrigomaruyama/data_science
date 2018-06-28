@@ -271,13 +271,32 @@ pf$age_with_months <- pf$age + (1 - pf$dob_month / 12 )
 ### Age with Months Means
 
 ```{r Age with Months Means}
-library(dplyr)
-pf.fc_by_age_months <- pf % %
-  group_by(age)
+pf.fc_by_age_months <- pf %>%
+  group_by(age_with_months) %>%
+  summarize(friend_count_mean = mean(friend_count),
+            friend_count_median = median(friend_count),
+            n = n()) %>%
+  arrange(age_with_months)
+
+head(pf.fc_by_age_months)
+```
+
+### Age with Months Means Alternate Solution
+
+```{r Age with Months Means}
+age_with_months_groups <- group_by(pf, age_with_months)
+
+pf.fc_by_age_months2 <- summarize( age_with_months_groups, friend_count_mean = mean(friend_count), friend_count_median = median(friend_count), n = n())
+
+pf.fc_by_age_months2 <- arrange(pf.fc_by_age_months2, age_with_months)
+
+head(pf.fc_by_age_months2)
+
 ```
 
 Programming Assignment
 ```{r Programming Assignment}
+
 
 ```
 
