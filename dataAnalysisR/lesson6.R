@@ -6,5 +6,7 @@ ggplot(data=diamonds, aes(x=price, y=x)) +
 cor.test(diamonds$price, diamonds$x)
 cor.test(diamonds$price, diamonds$y)
 cor.test(diamonds$price, diamonds$z)
-ggplot(data=diamonds, aes(x=price, y=depth)) +
-  geom_point(alpha= 1/100)
+ggplot(data=diamonds, aes(y=price, x=depth)) +
+  geom_point(alpha= 1/100) +
+  scale_y_continuous(breaks = seq(0, 20000, by = 2000)) +
+  scale_x_continuous(breaks = seq(40, 70, by = 1))
