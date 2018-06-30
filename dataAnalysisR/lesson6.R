@@ -49,3 +49,15 @@ cor.test(s_diamonds$price, s_diamonds$volume)
 ggplot(aes(y=price, x=volume), data=s_diamonds) +
   geom_point(alpha = 1/50) +
   geom_smooth(method = lm)
+
+# Quiz 13: 
+# https://rpubs.com/profversaggi/lesson_four_problem_set
+install.packages('dplyr')
+library(dplyr)
+diamondsByClarity <- diamonds %>%
+  group_by(clarity) %>%
+  summarise(mean_price = mean(price),
+            median_price = median(price),
+            min_price = min(price),
+            max_price = max(price),
+            n = n())
