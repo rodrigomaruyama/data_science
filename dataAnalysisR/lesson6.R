@@ -44,3 +44,8 @@ subset(diamonds, volume == 0)
 s_diamonds <- subset(diamonds, volume <= 800 & volume != 0)
 cor.test(s_diamonds$price, s_diamonds$volume)
 
+# Quiz 12: Adjustments - price vs. volume
+# https://ggplot2.tidyverse.org/reference/geom_smooth.html
+ggplot(aes(y=price, x=volume), data=s_diamonds) +
+  geom_point(alpha = 1/50) +
+  geom_smooth(method = lm)
