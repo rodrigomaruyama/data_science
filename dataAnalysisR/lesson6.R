@@ -94,3 +94,11 @@ final_df <- merge(final_df, gdp, by='name')
 names(final_df)[5] <- 'gdp'
 names(final_df)[4] <- 'sub_region'
 
+# Plots
+ggplot(data=final_df, aes(x=region, y=bad_teeth_indice)) +
+  geom_boxplot()
+
+# https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+ggplot(data=final_df, aes(x=sub_region, y=bad_teeth_indice)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
