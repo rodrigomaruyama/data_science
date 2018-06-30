@@ -50,7 +50,7 @@ ggplot(aes(y=price, x=volume), data=s_diamonds) +
   geom_point(alpha = 1/50) +
   geom_smooth(method = lm)
 
-# Quiz 13: 
+# Quiz 13: Mean Price by Clarity
 # https://rpubs.com/profversaggi/lesson_four_problem_set
 install.packages('dplyr')
 library(dplyr)
@@ -61,3 +61,16 @@ diamondsByClarity <- diamonds %>%
             min_price = min(price),
             max_price = max(price),
             n = n())
+
+# Quiz 14: Bar Charts of Mean Price
+diamonds_by_clarity <- group_by(diamonds, clarity)
+diamonds_mp_by_clarity <- summarise(diamonds_by_clarity, mean_price = mean(price))
+
+diamonds_by_color <- group_by(diamonds, color)
+diamonds_mp_by_color <- summarise(diamonds_by_color, mean_price = mean(price))
+
+p1 <- ggplot(data=diamonds_mp_by_clarity, aes(clarity, mean_price)) + geom_col()
+
+p2 <- ggplot(data=diamonds_mp_by_color, aes(color, mean_price)) + geom_col()
+
+grid.arrange(p1, p2, ncol=1)
