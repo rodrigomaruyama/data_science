@@ -74,3 +74,6 @@ p1 <- ggplot(data=diamonds_mp_by_clarity, aes(clarity, mean_price)) + geom_col()
 p2 <- ggplot(data=diamonds_mp_by_color, aes(color, mean_price)) + geom_col()
 
 grid.arrange(p1, p2, ncol=1)
+
+# Quiz 15: 
+
