@@ -21,13 +21,15 @@ ggplot(data=diamonds, aes(y=price, x=depth)) +
 cor.test(diamonds$price, diamonds$depth)
 
 # Quiz 8
-p1 <- ggplot(aes(x=price, y=carat), data=diamonds) +
+p1 <- ggplot(aes(y=price, x=carat), data=diamonds) +
   geom_point()
 
-p2 <- ggplot(aes(x=price, y=carat), data=diamonds[0:53400,]) +
+p2 <- ggplot(aes(y=price, x=carat), data=subset(diamonds, (price <= 18635 & carat <= 4.96))) +
   geom_point()
 
 install.packages('gridExtra')
 library(gridExtra)
 
 grid.arrange(p1, p2, ncol=2)
+
+
