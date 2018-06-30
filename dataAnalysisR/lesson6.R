@@ -19,3 +19,15 @@ ggplot(data=diamonds, aes(y=price, x=depth)) +
 
 # Quiz 7
 cor.test(diamonds$price, diamonds$depth)
+
+# Quiz 8
+p1 <- ggplot(aes(x=price, y=carat), data=diamonds) +
+  geom_point()
+
+p2 <- ggplot(aes(x=price, y=carat), data=diamonds[0:53400,]) +
+  geom_point()
+
+install.packages('gridExtra')
+library(gridExtra)
+
+grid.arrange(p1, p2, ncol=2)
