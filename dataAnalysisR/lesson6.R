@@ -32,4 +32,15 @@ library(gridExtra)
 
 grid.arrange(p1, p2, ncol=2)
 
+# Quiz 9
+diamonds$volume <- diamonds$x*diamonds$y*diamonds$z
+ggplot(aes(y=price, x=volume), data=diamonds) +
+  geom_point()
+
+# Quiz 10
+subset(diamonds, volume == 0)
+
+# Quiz 11: Correlations on Subsets
+s_diamonds <- subset(diamonds, volume <= 800 & volume != 0)
+cor.test(s_diamonds$price, s_diamonds$volume)
 
