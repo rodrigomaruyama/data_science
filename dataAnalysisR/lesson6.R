@@ -77,3 +77,20 @@ grid.arrange(p1, p2, ncol=1)
 
 # Quiz 15: 
 
+# Quiz 16:
+setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/")
+bt <- read.csv('indicator who bad_teeth.csv')
+c <- read.csv('countries.csv')
+gdp <- read.csv('gdp2016.csv')
+
+names(bt)[1] <- paste('name')
+names(bt)[2] <- paste('bad_teeth_indice')
+
+new_c <- c[,c('name', 'region', 'sub.region')]
+
+# https://www.statmethods.net/management/merging.html
+final_df <- merge(bt, new_c, by='name')
+final_df <- merge(final_df, gdp, by='name')
+names(final_df)[5] <- 'gdp'
+names(final_df)[4] <- 'sub_region'
+
