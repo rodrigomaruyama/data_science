@@ -66,8 +66,12 @@ Notes:
 Notes:
 
 ```{r}
-install.packages('reshape2')
-library(reshape2)
+#install.packages('reshape2')
+#library(reshape2)
+
+pf.fc_by_age_gender.wide <- dcast(pf.fc_by_age_gender, age ~ gender, value.var = 'median_friend_count')
+
+head(pf.fc_by_age_gender.wide)
 ```
 
 
@@ -77,7 +81,10 @@ library(reshape2)
 Notes:
 
 ```{r Ratio Plot}
-
+ggplot(aes(x=age, y=female/male),
+       data=pf.fc_by_age_gender.wide) +
+  geom_line() +
+  geom_hline(yintercept = 1, alpha = 0.3, linetype = 2)
 ```
 
 ***
