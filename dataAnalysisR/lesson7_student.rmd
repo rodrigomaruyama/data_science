@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 Lesson 7
 ========================================================
 # Installing packages
@@ -24,10 +29,15 @@ Notes:
 
 ```{r Third Qualitative Variable}
 pf.fc_by_age_gender <- pf %>%
+  filter(!is.na(gender)) %>%
   group_by(age, gender) %>%
   summarise(mean_friend_count = mean(friend_count),
             median_friend_count = median(friend_count),
-            n = n())
+            n = n()) %>%
+  ungroup() %>%
+  arrange(age)
+
+head(pf.fc_by_age_gender)
 ```
 
 ***
@@ -36,7 +46,8 @@ pf.fc_by_age_gender <- pf %>%
 Notes:
 
 ```{r Plotting Conditional Summaries}
-
+ggplot(aes(x=age, y=median_friend_count), data=pf.fc_by_age_gender) +
+  geom_line(aes(color=gender))
 ```
 
 ***
