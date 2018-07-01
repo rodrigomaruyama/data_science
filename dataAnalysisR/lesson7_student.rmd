@@ -93,7 +93,7 @@ ggplot(aes(x=age, y=female/male),
 Notes:
 
 ```{r Third Quantitative Variable}
-
+pf$year_joined <- floor(2014 - pf$tenure/365)
 ```
 
 ***
