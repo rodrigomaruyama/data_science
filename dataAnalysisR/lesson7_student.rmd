@@ -111,7 +111,10 @@ pf$year_joined.bucket <- cut(pf$year_joined, breaks=c(2004, 2009, 2011, 2012, 20
 Notes:
 
 ```{r Plotting it All Together}
-
+ggplot(aes(x=age, y=friend_count), 
+       data = subset(pf, !is.na(year_joined.bucket))) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = 'summary', fun.y = median)
 ```
 
 ***
