@@ -7,9 +7,12 @@ library(plotly)
 setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/")
 
 # Load the datasets
-bt <- read.csv('indicator who bad_teeth.csv')
-c <- read.csv('countries.csv')
-gdp <- read.csv('gdp2016.csv')
+bt <- read.csv('indicator who bad_teeth.csv') # https://www.gapminder.org/tools/#%24state%24time%24value=2004&delay:188.1419354838712;&entities%24filter%24;;&marker%24axis_x%24domainMin:null&domainMax:null&zoomedMin=194&zoomedMax=96846;&axis_y%24which=bad_teeth_per_child_12_yr&domainMin:null&domainMax:null;&color%24which=world_6region;;;&ui%24chart%24trails:false;;&chart-type=bubbles
+c <- read.csv('countries.csv') #https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv
+gdp <- read.csv('gdp2016_f.csv') #https://unstats.un.org/unsd/snaama/selbasicFast.asp
+
+# https://www.theguardian.com/news/datablog/2010/dec/07/world-education-rankings-maths-science-reading
+# https://docs.google.com/spreadsheets/d/1Rm4gr_BMteklQGIy1NapooVqSOWD9AxlhUmYFk73jHk/edit?hl=en&hl=en#gid=1
 education <- read.csv('education.csv')
 
 # Add a education mean score column
@@ -18,7 +21,6 @@ education$education_mean_score <- ((education$reading+education$math+education$s
 # Change columns names
 names(bt)[1] <- paste('name')
 names(bt)[2] <- paste('bad_teeth_indice')
-names(gdp)[2] <- paste('gdp')
 
 # Getting just what I want
 new_c <- c[,c('name', 'region', 'sub.region')]
@@ -41,10 +43,7 @@ final_df <- merge(final_df, education, by = 'name')
 p_educa_teeth <- ggplot(data = final_df, aes(x = bad_teeth_indice, y = education_mean_score, size = gdp, color = sub_region)) +
   geom_point() +
   ggtitle("Education x Bad Teeth Indicator x GDP x World Sub Region") +
-  labs(x="Bad Teeth Indicator",y="Education Mean Score") + 
-  theme(plot.title = element_text(family = "Trebuchet MS", color="#666666", face="bold", size=15, hjust=10)) +
-  theme(axis.title = element_text(family = "Trebuchet MS", color="#666666", face="bold", size=18, hjust = 5)) +
-  theme(legend.position="right")
+  labs(x="Bad Teeth Indicator",y="Education Mean Score") 
 
 ggplotly(p_educa_teeth) %>% 
   layout(title = "Education x Bad Teeth Indicator x GDP x World Sub Region",
@@ -55,8 +54,9 @@ ggplotly(p_educa_teeth) %>%
 ggplot(data = final_df, aes(x = bad_teeth_indice, y = education_mean_score, size = gdp, color = sub_region)) +
   geom_point() +
   ggtitle("Education x Bad Teeth Indicator x GDP x World Sub Region") +
-  labs(x="Bad Teeth Indicator",y="Education Mean Score") + 
-  theme(plot.title = element_text(family = "Trebuchet MS", color="#666666", face="bold", size=15, hjust=0)) +
-  theme(axis.title = element_text(family = "Trebuchet MS", color="#666666", face="bold", size=18, hjust = 0)) +
-  theme(legend.position="right")
+  labs(x="Bad Teeth Indicator",y="Education Mean Score")
   
+ggplot(data = final_df, aes(x = bad_teeth_indice, y = education_mean_score, size = gdp, color = region)) +
+  geom_point() +
+  ggtitle("Education x Bad Teeth Indicator x GDP x World Sub Region") +
+  labs(x="Bad Teeth Indicator",y="Education Mean Score")
