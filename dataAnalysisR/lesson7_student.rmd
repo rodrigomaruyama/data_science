@@ -161,6 +161,9 @@ ggplot(aes(x=tenure, y=friendships_initiated / tenure),
 Notes:
 
 ```{r Bias-Variance Tradeoff Revisited}
+ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_smooth(aes(color = year_joined.bucket))
 
 ggplot(aes(x = tenure, y = friendships_initiated / tenure),
        data = subset(pf, tenure >= 1)) +
