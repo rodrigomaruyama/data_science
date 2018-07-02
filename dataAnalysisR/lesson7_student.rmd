@@ -137,7 +137,7 @@ ggplot(aes(x=age, y=friend_count),
 Notes:
 
 ```{r Friending Rate}
-
+with(subset(pf, tenure >= 1), summary(friend_count / tenure))
 ```
 
 ***
