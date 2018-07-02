@@ -146,11 +146,13 @@ with(subset(pf, tenure >= 1), summary(friend_count / tenure))
 Notes:
 
 What is the median friend rate?
-
+0.2205
 What is the maximum friend rate?
-
+417
 ```{r Friendships Initiated}
-
+ggplot(aes(x=tenure, y=friendships_initiated / tenure),
+       data = subset(pf, tenure >= 1)) +
+  geom_line(aes(color = year_joined.bucket))
 ```
 
 ***
