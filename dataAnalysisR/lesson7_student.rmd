@@ -244,7 +244,8 @@ yo$all.purchases <- yo$strawberry + yo$blueberry + yo$pina.colada + yo$plain + y
 Notes:
 
 ```{r Prices over Time}
-
+ggplot(aes(x = time, y = price), data = yo) +
+  geom_point()
 ```
 
 ***
