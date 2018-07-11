@@ -9,8 +9,8 @@ Lesson 7
 ```{r Installing packages}
 setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/")
 pf <- read.delim('pseudo_facebook.tsv')
-install.packages('ggplot2')
-install.packages('dplyr')
+#install.packages('ggplot2')
+#install.packages('dplyr')
 library(ggplot2)
 suppressMessages(library(dplyr))
 ```
@@ -207,7 +207,17 @@ Notes:
 Notes:
 
 ```{r Histograms Revisited}
+yo <- read.csv('yogurt.csv')
+str(yo)
 
+# Change the id from an int to a factor
+yo$id <- factor(yo$id)
+str(yo)
+
+#ggplot(aes(x=price), data = yo) +
+  geom_histogram(binwidth = 5)
+
+hist(yo$price)
 ```
 
 ***
