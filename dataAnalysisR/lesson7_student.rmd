@@ -258,7 +258,14 @@ Notes:
 ### Looking at Samples of Households
 
 ```{r Looking at Sample of Households}
+set.seed(0)
+sample.ids <- sample(levels(yo$id),16)
 
+ggplot(aes(x = time, y = price),
+data = subset(yo, id %in% sample.ids))+
+facet_wrap(~ id)+
+geom_line()+
+geom_point(aes(size = all.purchase,), pch = 1)
 ```
 
 ***
