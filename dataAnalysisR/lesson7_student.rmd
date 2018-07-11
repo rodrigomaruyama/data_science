@@ -226,6 +226,15 @@ hist(yo$price)
 Notes:
 
 ```{r Number of Purchases}
+#summary(yo)
+#length(unique(yo$price))
+#table(yo$price)
+
+yo <- transform(yo, all.purchases = strawberry + blueberry + pina.colada + plain + mixed.berry)
+
+summary(yo$all.purchase)
+
+yo$all.purchases <- yo$strawberry + yo$blueberry + yo$pina.colada + yo$plain + yo$mixed.berry
 
 ```
 
