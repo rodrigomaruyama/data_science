@@ -32,14 +32,19 @@ ggplot(data = diamonds, aes(x=carat,y=price)) +
 
 ### Price and Carat Relationship
 Response:
+1. The price for carat < 1 have a limit around 1000.
+2. the price range for carat >= 1 is wide.
 
+```{r}
+
+```
 ***
 
 ### Frances Gerety
 Notes:
 
 #### A diamonds is
-
+Frances Gerety slogan: Diamond is forever.
 
 ***
 
@@ -71,7 +76,9 @@ library(memisc)
 # sample 10,000 diamonds from the data set
 set.seed(20022012)
 diamond_samp <- diamonds[sample(1:length(diamonds$price), 10000), ]
-ggpairs(diamond_samp, params = c(shape = I('.'), outlier.shape = I('.')))
+ggpairs(diamond_samp,
+  lower = list(continuous = wrap("points", shape = I('.'))),
+  upper = list(combo = wrap("box", outlier.shape = I('.'))))
 ```
 
 What are some things you notice in the ggpairs output?
@@ -83,7 +90,14 @@ Response:
 Notes:
 
 ```{r The Demand of Diamonds}
+library(gridExtra)
 
+plot1 <- qplot(diamonds$price, geom="histogram", binwidth = 100, fill = I('#099DD9')) + ggtitle('Price')
+
+plot2 <- qplot(diamonds$price, geom="histogram", binwidth = 0.01, fill = I('#F79420')) + scale_x_log10() + 
+  ggtitle('Price (log10)')
+
+grid.arrange(plot1, plot2, ncol=2)
 ```
 
 ***
