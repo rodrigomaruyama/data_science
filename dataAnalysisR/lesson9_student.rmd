@@ -162,10 +162,10 @@ Notes:
 Alter the code below.
 ```{r Price vs. Carat and Clarity}
 # install and load the RColorBrewer package
-install.packages('RColorBrewer')
+#install.packages('RColorBrewer')
 library(RColorBrewer)
 
-ggplot(aes(x = carat, y = price), data = diamonds) + 
+ggplot(aes(x = carat, y = price, colour = clarity), data = diamonds)+ 
   geom_point(alpha = 0.5, size = 1, position = 'jitter') +
   scale_color_brewer(type = 'div',
     guide = guide_legend(title = 'Clarity', reverse = T,
