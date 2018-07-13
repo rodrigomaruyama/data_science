@@ -181,7 +181,7 @@ ggplot(aes(x = carat, y = price, colour = clarity), data = diamonds)+
 
 ### Clarity and Price
 Response:
-
+Yes, because for the same carat we have different price for each clarity.
 ***
 
 ### Price vs. Carat and Cut
