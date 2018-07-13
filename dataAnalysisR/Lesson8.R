@@ -18,3 +18,6 @@ ggplot(data = pf, aes(x = tenure, y = prop_initiated)) + geom_line(aes(colour = 
 # https://ggplot2.tidyverse.org/reference/stat_summary.html
 
 ggplot(data = pf, aes(x = tenure, y = prop_initiated)) + geom_line(aes(colour = year_joined.bucket), stat = 'summary', fun.y = median) + geom_smooth()
+
+library(ggplot2)
+ggplot(data = diamonds, aes(x=cut, y=price/carat)) + geom_point(aes(colour = color)) + facet_wrap(~clarity)
