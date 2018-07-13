@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 Lesson 6
 ========================================================
 
@@ -9,6 +14,17 @@ Notes:
 ### Scatterplot Review
 
 ```{r Scatterplot Review}
+# https://stackoverflow.com/questions/50833379/r-and-ggplot-2-how-to-set-quantile-limits-for-axes-in-ggplot2-r-plots
+
+library(ggplot2)
+ggplot(data = diamonds, aes(x=carat,y=price)) + geom_point() +
+  coord_cartesian(ylim = c(min(diamonds$price), quantile(diamonds$price, 0.99)), xlim = c(min(diamonds$carat), quantile(diamonds$carat, 0.99)))
+
+# Video solution
+ggplot(data = diamonds, aes(x=carat,y=price)) +
+  scale_x_continuous(limits = c(0, quantile(diamonds$carat, 0.99))) +
+  scale_y_continuous(limits = c(0, quantile(diamonds$price, 0.99))) +
+  geom_point()
 
 ```
 
