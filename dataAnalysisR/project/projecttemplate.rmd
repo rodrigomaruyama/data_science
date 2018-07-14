@@ -27,8 +27,12 @@ a margin line to help you keep track of this guideline!
 # The other parameters for "message" and "warning" should also be set to FALSE
 # for other code chunks once you have verified that each plot comes out as you
 # want it to. This will clean up the flow of your report.
-
+install.packages("ggplot2", dependencies = TRUE) 
+install.packages("knitr", dependencies = TRUE)
+install.packages("dplyr", dependencies = TRUE)
 library(ggplot2)
+library(knitr)
+library(dplyr)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
