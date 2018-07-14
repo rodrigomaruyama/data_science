@@ -47,3 +47,4 @@ dataAnalysisR/*.jpg
 dataAnalysisR/ggpairs_plot.png
 dataAnalysisR/BigDiamonds.Rda
 dataAnalysisR/project/data/wineQualityWhites.csv
+dataAnalysisR/project/pictures/

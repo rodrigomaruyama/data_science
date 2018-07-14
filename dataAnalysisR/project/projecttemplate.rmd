@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 TITLE by YOUR_NAME_HERE
 ========================================================
 
@@ -30,19 +35,34 @@ a margin line to help you keep track of this guideline!
 install.packages("ggplot2", dependencies = TRUE) 
 install.packages("knitr", dependencies = TRUE)
 install.packages("dplyr", dependencies = TRUE)
+install.packages('GGally', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
+library(GGally)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
+wdf <- read.csv('data/wineQualityWhites.csv')
 
+# Remove the column X from Dataframe
+# https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946
+wdf$X <- NULL
 ```
 
 > **Tip**: Before you create any plots, it is a good idea to provide a short
 introduction into the dataset that you are planning to explore. Replace this
 quoted text with that general information!
+
+```{r echo=TRUE}
+head(wdf)
+```
+
+```{r echo=TRUE}
+summary(wdf)
+```
+```
 
 # Univariate Plots Section
 
@@ -54,6 +74,25 @@ There should be multiple code chunks and text sections; the first one below is
 just to help you get started.
 
 ```{r echo=FALSE, Univariate_Plots}
+
+unique(wdf$quality)
+
+# How to color the histograms
+# https://www.r-bloggers.com/how-to-make-a-histogram-with-ggplot2/
+
+ggplot(aes(x=fixed.acidity), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=volatile.acidity), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=citric.acid), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=residual.sugar), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=chlorides), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=free.sulfur.dioxide), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=total.sulfur.dioxide), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=density), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=pH), data = wdf) + geom_histogram(fill="blue", binwidth = 0.1)
+ggplot(aes(x=sulphates), data = wdf) + geom_histogram(fill="blue")
+ggplot(aes(x=alcohol), data = wdf) + geom_histogram(fill="blue", binwidth = 0.5)
+ggplot(aes(x=quality), data = wdf) + geom_histogram(fill="blue", binwidth = 1)
+
 
 ```
 
@@ -93,6 +132,10 @@ as well.
 
 ```{r echo=FALSE, Bivariate_Plots}
 
+# GGpairs
+# https://www.rdocumentation.org/packages/GGally/versions/1.4.0/topics/ggpairs
+ggpairs(wdf)
+
 ```
 
 # Bivariate Analysis
@@ -108,7 +151,11 @@ the dataset?
 (not the main feature(s) of interest)?
 
 ### What was the strongest relationship you found?
-
+# High correlations:
+# 0.839: density x residual.sugar
+# 0.53:  density x total.sulfur.dioxide
+# 0.616: total.sulfur.dioxide x free.sulfur.dioxide
+# 0.436: quality x alcohol
 
 # Multivariate Plots Section
 
