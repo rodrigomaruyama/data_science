@@ -3,7 +3,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-TITLE by YOUR_NAME_HERE
+TITLE by Rodrigo P Mauryama
 ========================================================
 
 ```{r setting the working directory}
@@ -227,3 +227,6 @@ future work that could be done with the dataset.
 
 > **Tip**: Don't forget to remove this, and the other **Tip** sections before
 saving your final work and knitting the final report!
+
+> **Genral resources**: 
+Style guide: http://adv-r.had.co.nz/Style.html
