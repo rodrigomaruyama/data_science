@@ -228,5 +228,5 @@ future work that could be done with the dataset.
 > **Tip**: Don't forget to remove this, and the other **Tip** sections before
 saving your final work and knitting the final report!
 
-> **Genral resources**: 
-Style guide: http://adv-r.had.co.nz/Style.html
+# General resources 
+> Style guide: http://adv-r.had.co.nz/Style.html <br>
