@@ -1,14 +1,14 @@
 ---
 output: html_document
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 TITLE by Rodrigo P Mauryama
 ========================================================
 
 ```{r setting the working directory}
 # cd Documents/dsNanodegree/machine-learning-master/projects/finding_donors/
-setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/")
+setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project")
 ```
 
 > **Tip**: You will see quoted sections like this throughout the template to
@@ -32,10 +32,10 @@ a margin line to help you keep track of this guideline!
 # The other parameters for "message" and "warning" should also be set to FALSE
 # for other code chunks once you have verified that each plot comes out as you
 # want it to. This will clean up the flow of your report.
-install.packages("ggplot2", dependencies = TRUE) 
-install.packages("knitr", dependencies = TRUE)
-install.packages("dplyr", dependencies = TRUE)
-install.packages('GGally', dependencies = TRUE)
+#install.packages("ggplot2", dependencies = TRUE) 
+#install.packages("knitr", dependencies = TRUE)
+#install.packages("dplyr", dependencies = TRUE)
+#install.packages('GGally', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -60,6 +60,15 @@ head(wdf)
 ```
 
 ```{r echo=TRUE}
+names(wdf)
+```
+
+```{r echo=TRUE}
+nrow(wdf)
+length(wdf)
+```
+
+```{r echo=TRUE}
 summary(wdf)
 ```
 ```
@@ -77,8 +86,6 @@ just to help you get started.
 
 unique(wdf$quality)
 
-# How to color the histograms
-# https://www.r-bloggers.com/how-to-make-a-histogram-with-ggplot2/
 
 ggplot(aes(x=fixed.acidity), data = wdf) + geom_histogram(fill="blue")
 ggplot(aes(x=volatile.acidity), data = wdf) + geom_histogram(fill="blue")
@@ -92,6 +99,10 @@ ggplot(aes(x=pH), data = wdf) + geom_histogram(fill="blue", binwidth = 0.1)
 ggplot(aes(x=sulphates), data = wdf) + geom_histogram(fill="blue")
 ggplot(aes(x=alcohol), data = wdf) + geom_histogram(fill="blue", binwidth = 0.5)
 ggplot(aes(x=quality), data = wdf) + geom_histogram(fill="blue", binwidth = 1)
+
+# Resources for this Chunk
+# How to color the histograms
+# https://www.r-bloggers.com/how-to-make-a-histogram-with-ggplot2/
 
 
 ```
@@ -110,17 +121,70 @@ gather your observations and add your own if you have other thoughts!
 
 ### What is the structure of your dataset?
 
+The Dataset have 4898 rows and 12 variables as below:
+
+1. "fixed.acidity"
+2. "volatile.acidity"
+3. "citric.acid"         
+4. "residual.sugar"
+5. "chlorides"
+6. "free.sulfur.dioxide" 
+7. "total.sulfur.dioxide"
+8. "density"
+9. "pH"                  
+10 "sulphates"
+11. "alcohol"
+12. "quality" 
+
+Summary of the Dataset:
+
+fixed.acidity    volatile.acidity  citric.acid     residual.sugar  
+ Min.   : 3.800   Min.   :0.0800   Min.   :0.0000   Min.   : 0.600  
+ 1st Qu.: 6.300   1st Qu.:0.2100   1st Qu.:0.2700   1st Qu.: 1.700  
+ Median : 6.800   Median :0.2600   Median :0.3200   Median : 5.200  
+ Mean   : 6.855   Mean   :0.2782   Mean   :0.3342   Mean   : 6.391  
+ 3rd Qu.: 7.300   3rd Qu.:0.3200   3rd Qu.:0.3900   3rd Qu.: 9.900  
+ Max.   :14.200   Max.   :1.1000   Max.   :1.6600   Max.   :65.800  
+   chlorides       free.sulfur.dioxide total.sulfur.dioxide
+ Min.   :0.00900   Min.   :  2.00      Min.   :  9.0       
+ 1st Qu.:0.03600   1st Qu.: 23.00      1st Qu.:108.0       
+ Median :0.04300   Median : 34.00      Median :134.0       
+ Mean   :0.04577   Mean   : 35.31      Mean   :138.4       
+ 3rd Qu.:0.05000   3rd Qu.: 46.00      3rd Qu.:167.0       
+ Max.   :0.34600   Max.   :289.00      Max.   :440.0       
+    density             pH          sulphates         alcohol     
+ Min.   :0.9871   Min.   :2.720   Min.   :0.2200   Min.   : 8.00  
+ 1st Qu.:0.9917   1st Qu.:3.090   1st Qu.:0.4100   1st Qu.: 9.50  
+ Median :0.9937   Median :3.180   Median :0.4700   Median :10.40  
+ Mean   :0.9940   Mean   :3.188   Mean   :0.4898   Mean   :10.51  
+ 3rd Qu.:0.9961   3rd Qu.:3.280   3rd Qu.:0.5500   3rd Qu.:11.40  
+ Max.   :1.0390   Max.   :3.820   Max.   :1.0800   Max.   :14.20  
+    quality     
+ Min.   :3.000  
+ 1st Qu.:5.000  
+ Median :6.000  
+ Mean   :5.878  
+ 3rd Qu.:6.000  
+ Max.   :9.000  
+
 ### What is/are the main feature(s) of interest in your dataset?
+
+The quality is the main feature of interest.
 
 ### What other features in the dataset do you think will help support your \
 investigation into your feature(s) of interest?
 
+Quality, pH, residual.sugar, alcohol.
+
 ### Did you create any new variables from existing variables in the dataset?
+
+No.
 
 ### Of the features you investigated, were there any unusual distributions? \
 Did you perform any operations on the data to tidy, adjust, or change the form \
 of the data? If so, why did you do this?
 
+No. I didn't change the original data.
 
 # Bivariate Plots Section
 
@@ -230,3 +294,5 @@ saving your final work and knitting the final report!
 
 # General resources 
 > Style guide: http://adv-r.had.co.nz/Style.html <br>
+> Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27
+> https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html
