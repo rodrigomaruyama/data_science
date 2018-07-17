@@ -1,7 +1,7 @@
 ---
 output: html_document
 editor_options: 
-  chunk_output_type: console
+chunk_output_type: console
 ---
 TITLE by Rodrigo P Mauryama
 ========================================================
@@ -36,8 +36,8 @@ a margin line to help you keep track of this guideline!
 #install.packages("knitr", dependencies = TRUE)
 #install.packages("dplyr", dependencies = TRUE)
 #install.packages('GGally', dependencies = TRUE)
-install.packages('tidyverse')
-install.packages('ggthemes')
+#install.packages('tidyverse')
+#install.packages('ggthemes')
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -91,9 +91,6 @@ just to help you get started.
 
 ```{r echo=FALSE, Univariate_Plots}
 
-unique(wdf$quality)
-
-
 p1 <- ggplot(aes(x=fixed.acidity), data = wdf) + geom_histogram(fill="blue")
 p2 <- ggplot(aes(x=volatile.acidity), data = wdf) + geom_histogram(fill="blue")
 p3 <- ggplot(aes(x=citric.acid), data = wdf) + geom_histogram(fill="blue")
@@ -117,6 +114,27 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 ```
 
 ![univariate](pictures/1_univariate.png)
+
+```{r}
+
+feature_list <- names(wdf)
+p <- list()
+a <- 0
+for (var in feature_list) {
+  a <- a + 1
+
+  p[[a]] <- ggplot(data = wdf, aes_string(x=var)) + geom_density(fill='#99CCFF') + geom_vline(aes_string(xintercept=mean(wdf[, var])), color='blue', size=0.5) + geom_vline(aes_string(xintercept=median(wdf[, var])), color='red', size=0.5) +    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.25)), linetype='dashed', size=0.5) +    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.75)), linetype='dashed', size=0.5)
+  
+}
+
+ggsave(file = 'pictures/2_univariate.png', do.call(grid.arrange, p))
+
+#https://www.biostars.org/p/234142/
+
+```
+
+![univariate](pictures/2_univariate.png)
+
 
 > **Tip**: Make sure that you leave a blank line between the start / end of
 each code block and the end / start of your Markdown text so that it is
@@ -357,13 +375,30 @@ grid.arrange(p1, p2, p3, p4, ncol = 4)
 
 ![1_multivariate](pictures/1_multivariate.png)
 
+```{r}
+ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  scale_x_continuous(limits = c(0.985, 1.005)) +
+  scale_y_continuous(limits = c(0, 25)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  geom_smooth(method='lm',formula=y~x)
+
+ggsave('pictures/smooth.png')
+```
+
+![smooth](pictures/smooth.png)
+
 # Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the \
 investigation. Were there features that strengthened each other in terms of \
 looking at your feature(s) of interest?
 
+As you saw in the ggpairs graph, the correlation between density and residual.sugar can be observed in the graphic above with a linear regression line over the previous one. I all of the 4 multivariate graphics we can observe a cluster for good wines and other for the midle ones and this can be a case for clustering methods in predictions models.
+
 ### Were there any interesting or surprising interactions between features?
+
+No.
 
 ### OPTIONAL: Did you create any models with your dataset? Discuss the \
 strengths and limitations of your model.
@@ -416,7 +451,10 @@ future work that could be done with the dataset.
 saving your final work and knitting the final report!
 
 # General resources 
+> Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality
 > Style guide: http://adv-r.had.co.nz/Style.html <br>
 > Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27 <br>
-> https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html <br>
-> http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/ <br>
+> Li Wang Exploration: https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html <br>
+> Colors in ggplot: http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/ <br>
+> More COlors in ggplot: http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually
+> Function to plot several graphics: https://rpubs.com/watanabe8760/white-wine
