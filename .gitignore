@@ -48,3 +48,6 @@ dataAnalysisR/ggpairs_plot.png
 dataAnalysisR/BigDiamonds.Rda
 dataAnalysisR/project/data/wineQualityWhites.csv
 dataAnalysisR/project/summary.csv
+nyc_subway_project/*.csv
+nyc_subway_project/*.pdf
+nyc_subway_project/FDSC_entregue/
