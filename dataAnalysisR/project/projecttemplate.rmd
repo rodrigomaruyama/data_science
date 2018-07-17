@@ -417,6 +417,6 @@ saving your final work and knitting the final report!
 
 # General resources 
 > Style guide: http://adv-r.had.co.nz/Style.html <br>
-> Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27
-> https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html
-> http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+> Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27 <br>
+> https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html <br>
+> http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/ <br>
