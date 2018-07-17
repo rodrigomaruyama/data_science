@@ -36,10 +36,15 @@ a margin line to help you keep track of this guideline!
 #install.packages("knitr", dependencies = TRUE)
 #install.packages("dplyr", dependencies = TRUE)
 #install.packages('GGally', dependencies = TRUE)
+install.packages('tidyverse')
+install.packages('ggthemes')
 library(ggplot2)
 library(knitr)
 library(dplyr)
 library(GGally)
+library(tidyverse)
+library(ggthemes)
+library(gridExtra)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -202,12 +207,69 @@ ggpairs(wdf)
 ```
 
 ```{r echo = TRUE}
-ggplot(data = wdf, aes(x = quality, y = alcohol)) +
+p1 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
   geom_boxplot(aes(group = cut_width(quality, 1)))
+
+p2 <- ggplot(data = wdf, aes(x = quality, y = pH)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)))
+
+p3 <- ggplot(data = wdf, aes(x = quality, y = density)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)))
+
+p4 <- ggplot(data = wdf, aes(x = quality, y = residual.sugar)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)))
+
+grid.arrange(p1, p2, p3, p4, ncol = 4)
+
+# Removing outliers for density and residual.sugar for better visualization
+
+p3 <- ggplot(data = wdf, aes(x = quality, y = density)) +
+  geom_boxplot(aes(group = cut_width(quality, 1))) +
+  scale_y_continuous(limits = c(0.98, 1.01))
+
+p4 <- ggplot(data = wdf, aes(x = quality, y = residual.sugar)) +
+  geom_boxplot(aes(group = cut_width(quality, 1))) +
+  scale_y_continuous(limits = c(0, 30))
+
+grid.arrange(p1, p2, p3, p4, ncol = 4)
+
+
+#  scale_colour_gradientn(colours=rainbow(4)) +
+#  scale_y_continuous(limits = c(0, 35))
 
 # Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
 # https://ggplot2.tidyverse.org/reference/geom_boxplot.html
 
+p1 <- ggplot(data = wdf, aes(x = pH, y = alcohol)) +
+  geom_point()
+
+p2 <- ggplot(data = wdf, aes(x = pH, y = residual.sugar)) +
+  geom_point()
+
+p3 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
+  geom_point()
+
+p4 <- ggplot(data = wdf, aes(x = pH, y = density)) +
+  geom_point()
+
+grid.arrange(p1, p2, p3, p4, ncol = 4)
+
+# Removing outliers for better visualization
+
+p2 <- ggplot(data = wdf, aes(x = pH, y = residual.sugar)) +
+  geom_point() +
+  scale_y_continuous(limits = c(0, 30))
+
+p3 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
+  geom_point() +
+  scale_y_continuous(limits = c(0, 30))
+
+p4 <- ggplot(data = wdf, aes(x = pH, y = density)) +
+  geom_point() +
+  scale_y_continuous(limits = c(0.98, 1.01))
+
+grid.arrange(p1, p2, p3, p4, ncol = 4)
+  
 ```
 
 # Bivariate Analysis
@@ -219,15 +281,25 @@ here. Use the questions below to guide your discussion.
 investigation. How did the feature(s) of interest vary with other features in \
 the dataset?
 
+quality x alcohol: The alcohol level for good wines have degrees between 12 and 13 and the variation for the data is very small compared with the others.
+
+quality x ph: In this feature we can't find a correlation because all qualities have around the pH value.
+
+quality x density: The good wines have a very small variance in his density but the difference between the others is in centesimal order.
+
+quality x residual.sugar: Following the other features, residual.sugar have a very small variance for good wines. around 2 times.
+
 ### Did you observe any interesting relationships between the other features \
 (not the main feature(s) of interest)?
+No, I didn't.
 
 ### What was the strongest relationship you found?
-# High correlations:
-# 0.839: density x residual.sugar
-# 0.53:  density x total.sulfur.dioxide
-# 0.616: total.sulfur.dioxide x free.sulfur.dioxide
-# 0.436: quality x alcohol
+ High correlations:
+
+ 0.839: density x residual.sugar
+ 0.53:  density x total.sulfur.dioxide
+ 0.616: total.sulfur.dioxide x free.sulfur.dioxide
+ 0.436: quality x alcohol
 
 # Multivariate Plots Section
 
@@ -304,3 +376,4 @@ saving your final work and knitting the final report!
 > Style guide: http://adv-r.had.co.nz/Style.html <br>
 > Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27
 > https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html
+> http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
