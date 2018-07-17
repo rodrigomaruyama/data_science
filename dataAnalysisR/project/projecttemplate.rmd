@@ -195,6 +195,8 @@ ggpairs(wdf)
 
 ```
 
+![ggpairs]['pictures/ggpairs_plot.png']
+
 ```{r echo = TRUE}
 p1 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
   geom_boxplot(aes(group = cut_width(quality, 1)))
