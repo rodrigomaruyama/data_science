@@ -1,7 +1,7 @@
 ---
 output: html_document
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 TITLE by Rodrigo P Mauryama
 ========================================================
@@ -71,7 +71,6 @@ length(wdf)
 ```{r echo=TRUE}
 summary(wdf)
 ```
-```
 
 # Univariate Plots Section
 
@@ -131,7 +130,7 @@ The Dataset have 4898 rows and 12 variables as below:
 6. "free.sulfur.dioxide" 
 7. "total.sulfur.dioxide"
 8. "density"
-9. "pH"                  
+9. "pH"
 10 "sulphates"
 11. "alcohol"
 12. "quality" 
@@ -194,11 +193,20 @@ yourself to relationships between a main output feature and one of the
 supporting variables. Try to look at relationships between supporting variables
 as well.
 
-```{r echo=FALSE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots}
 
 # GGpairs
 # https://www.rdocumentation.org/packages/GGally/versions/1.4.0/topics/ggpairs
 ggpairs(wdf)
+
+```
+
+```{r echo = TRUE}
+ggplot(data = wdf, aes(x = quality, y = alcohol)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)))
+
+# Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
+# https://ggplot2.tidyverse.org/reference/geom_boxplot.html
 
 ```
 
