@@ -94,25 +94,29 @@ just to help you get started.
 unique(wdf$quality)
 
 
-ggplot(aes(x=fixed.acidity), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=volatile.acidity), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=citric.acid), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=residual.sugar), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=chlorides), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=free.sulfur.dioxide), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=total.sulfur.dioxide), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=density), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=pH), data = wdf) + geom_histogram(fill="blue", binwidth = 0.1)
-ggplot(aes(x=sulphates), data = wdf) + geom_histogram(fill="blue")
-ggplot(aes(x=alcohol), data = wdf) + geom_histogram(fill="blue", binwidth = 0.5)
-ggplot(aes(x=quality), data = wdf) + geom_histogram(fill="blue", binwidth = 1)
+p1 <- ggplot(aes(x=fixed.acidity), data = wdf) + geom_histogram(fill="blue")
+p2 <- ggplot(aes(x=volatile.acidity), data = wdf) + geom_histogram(fill="blue")
+p3 <- ggplot(aes(x=citric.acid), data = wdf) + geom_histogram(fill="blue")
+p4 <- ggplot(aes(x=residual.sugar), data = wdf) + geom_histogram(fill="blue")
+p5 <- ggplot(aes(x=chlorides), data = wdf) + geom_histogram(fill="blue")
+p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) + geom_histogram(fill="blue")
+p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) + geom_histogram(fill="blue")
+p8 <- ggplot(aes(x=density), data = wdf) + geom_histogram(fill="blue")
+p9 <- ggplot(aes(x=pH), data = wdf) + geom_histogram(fill="blue", binwidth = 0.1)
+p10 <- ggplot(aes(x=sulphates), data = wdf) + geom_histogram(fill="blue")
+p11 <- ggplot(aes(x=alcohol), data = wdf) + geom_histogram(fill="blue", binwidth = 0.5)
+p12 <- ggplot(aes(x=quality), data = wdf) + geom_histogram(fill="blue", binwidth = 1)
+
+u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4)
+
+ggsave(file = 'pictures/1_univariate.png', u1)
 
 # Resources for this Chunk
 # How to color the histograms
 # https://www.r-bloggers.com/how-to-make-a-histogram-with-ggplot2/
-
-
 ```
+
+![univariate](pictures/1_univariate.png)
 
 > **Tip**: Make sure that you leave a blank line between the start / end of
 each code block and the end / start of your Markdown text so that it is
