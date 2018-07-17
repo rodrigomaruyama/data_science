@@ -296,7 +296,7 @@ No, I didn't.
 ### What was the strongest relationship you found?
  High correlations:
 
- 0.839: density x residual.sugar
+ 0.839: density x residual.sugar <br>
  0.53:  density x total.sulfur.dioxide
  0.616: total.sulfur.dioxide x free.sulfur.dioxide
  0.436: quality x alcohol
