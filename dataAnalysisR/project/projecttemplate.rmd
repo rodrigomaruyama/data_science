@@ -198,19 +198,21 @@ ggpairs(wdf)
 ![ggpairs](pictures/ggpairs_plot.png)
 
 ```{r echo = TRUE}
-p1 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
+p1 <- ggplot(data = wdf, aes(x = quality, y = alcohol, fill = quality)) +
   geom_boxplot(aes(group = cut_width(quality, 1)))
 
-p2 <- ggplot(data = wdf, aes(x = quality, y = pH)) +
+p2 <- ggplot(data = wdf, aes(x = quality, y = pH, fill = quality)) +
   geom_boxplot(aes(group = cut_width(quality, 1)))
 
-p3 <- ggplot(data = wdf, aes(x = quality, y = density)) +
+p3 <- ggplot(data = wdf, aes(x = quality, y = density, fill = quality)) +
   geom_boxplot(aes(group = cut_width(quality, 1)))
 
-p4 <- ggplot(data = wdf, aes(x = quality, y = residual.sugar)) +
+p4 <- ggplot(data = wdf, aes(x = quality, y = residual.sugar, fill = quality)) +
   geom_boxplot(aes(group = cut_width(quality, 1)))
 
-grid.arrange(p1, p2, p3, p4, ncol = 4)
+b1 <- grid.arrange(p1, p2, p3, p4, ncol = 4)
+
+ggsave(file = 'pictures/1_bivariate.png', b1)
 
 ```
 
@@ -219,15 +221,18 @@ grid.arrange(p1, p2, p3, p4, ncol = 4)
 ```{r}
 # Removing outliers for density and residual.sugar for better visualization
 
-p3 <- ggplot(data = wdf, aes(x = quality, y = density)) +
+p3 <- ggplot(data = wdf, aes(x = quality, y = density, fill = quality)) +
   geom_boxplot(aes(group = cut_width(quality, 1))) +
   scale_y_continuous(limits = c(0.98, 1.01))
 
-p4 <- ggplot(data = wdf, aes(x = quality, y = residual.sugar)) +
+p4 <- ggplot(data = wdf, aes(x = quality, y = residual.sugar, fill = quality)) +
   geom_boxplot(aes(group = cut_width(quality, 1))) +
   scale_y_continuous(limits = c(0, 30))
 
-grid.arrange(p1, p2, p3, p4, ncol = 4)
+b2 <- grid.arrange(p1, p2, p3, p4, ncol = 4)
+
+ggsave(file = 'pictures/2_bivariate.png', b2)
+
 ```
 
 ![2_bivariate](pictures/2_bivariate.png)
@@ -252,7 +257,9 @@ p3 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
 p4 <- ggplot(data = wdf, aes(x = pH, y = density)) +
   geom_point()
 
-grid.arrange(p1, p2, p3, p4, ncol = 4)
+b3 <- grid.arrange(p1, p2, p3, p4, ncol = 4)
+
+ggsave(file = 'pictures/3_bivariate.png', b3)
 ```
 
 ![3_bivariate](pictures/3_bivariate.png)
@@ -272,7 +279,9 @@ p4 <- ggplot(data = wdf, aes(x = pH, y = density)) +
   geom_point() +
   scale_y_continuous(limits = c(0.98, 1.01))
 
-grid.arrange(p1, p2, p3, p4, ncol = 4)
+b4 <- grid.arrange(p1, p2, p3, p4, ncol = 4)
+
+ggsave(file = 'pictures/4_bivariate.png', b4)
   
 ```
 
