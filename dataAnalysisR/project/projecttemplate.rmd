@@ -392,7 +392,8 @@ ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
   scale_x_continuous(limits = c(0.985, 1.005)) +
   scale_y_continuous(limits = c(0, 25)) +
   scale_colour_gradientn(colours=rainbow(10)) +
-  geom_smooth(method='lm',formula=y~x)
+  geom_smooth(method='lm',formula=y~x) +
+  ggtitle('Linear regression: Residual.sugar x Density x Quality')
 
 ggsave('pictures/smooth.png')
 ```
@@ -405,7 +406,7 @@ ggsave('pictures/smooth.png')
 investigation. Were there features that strengthened each other in terms of \
 looking at your feature(s) of interest?
 
-As you saw in the ggpairs graph, the correlation between density and residual.sugar can be observed in the graphic above with a linear regression line over the previous one. I all of the 4 multivariate graphics we can observe a cluster for good wines and other for the midle ones and this can be a case for clustering methods in predictions models.
+As you saw in the ggpairs graph, the correlation between density and residual.sugar can be observed in the graphic above with a linear regression line over the previous one. I all of the 4 multivariate graphics we can observe a slightly clustering for good wines and other for the midle ones. This can be a case for try a clustering methods in predictions models?
 
 ### Were there any interesting or surprising interactions between features?
 
@@ -413,6 +414,25 @@ No.
 
 ### OPTIONAL: Did you create any models with your dataset? Discuss the \
 strengths and limitations of your model.
+
+
+
+```{r }
+
+# PCA
+
+wdf.pca <- na.omit((wdf[, 1:11]))
+wdf.quality <- factor(wdf[,12])
+wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
+g <- ggbiplot(wdf.pca, obs.scale = 1, var.scale = 1, groups = wdf.quality, ellipse = TRUE, circle = TRUE) + scale_color_discrete(name = '') + theme(legend.direction = 'vertical', legend.position = 'right')
+g <- g + ggtitle('Principal component analysis - PCA')
+print(g)
+
+ggsave(file = 'pictures/pca.png', g)
+
+```
+
+![PCA](pictures/pca.png)
 
 ------
 
