@@ -439,6 +439,40 @@ ggsave(file = 'pictures/pca.png', g)
 
 ![PCA](pictures/pca.png)
 
+# Random Forest Model
+
+```{r }
+# Change the quality labels for something more convinient
+wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
+wdf$quality.2 <- as.factor(wdf$quality.2)
+set.seed(123)
+samp <- sample(nrow(wdf), 0.6 * nrow(wdf))
+
+# Creating train and test datasets
+train <- wdf[samp, ]
+test <- wdf[-samp, ]
+
+# Fitting the model
+model <- randomForest(quality.2 ~ . - quality, data = train)
+
+# Predicting the quality of wine with test dataset
+pred <- predict(model, newdata = test)
+
+# Comparing the predictions with the correct answer
+table(pred, test$quality.2)
+
+# Accuracy of our predictor
+(665 + 252 + 479) / nrow(test)
+```
+
+|pred|bad|good|normal|
+|---|---|---|---|
+|bad||479|11|125|
+|good|12|252|92|
+|normal|176|148|665|
+
+### Accuracy = 71.2%
+
 ------
 
 # Final Plots and Summary
@@ -487,7 +521,7 @@ future work that could be done with the dataset.
 saving your final work and knitting the final report!
 
 # General resources 
-> Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality
+> Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality <br>
 > Style guide: http://adv-r.had.co.nz/Style.html <br>
 > Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27 <br>
 > Li Wang Exploration: https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html <br>
@@ -496,3 +530,4 @@ saving your final work and knitting the final report!
 > Function to plot several graphics: https://rpubs.com/watanabe8760/white-wine <br>
 > https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html <br>
 > https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/ <br>
+> Random Forest Predictor: https://datascienceplus.com/predicting-wine-quality-using-random-forests/ <br>
