@@ -412,14 +412,13 @@ No.
 
 # PCA
 
-wdf.pca <- na.omit((wdf[, 1:11]))
 wdf.quality <- factor(wdf[,12])
 wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
 
 plot(wdf.pca, type = "l")
 #ggsave(file = 'pictures/variance_pca.png', p)
 
-g <- ggbiplot(wdf.pca, obs.scale = 1, var.scale = 1, groups = wdf.quality, ellipse = TRUE, circle = TRUE) + scale_color_discrete(name = '') + theme(legend.direction = 'vertical', legend.position = 'right')
+g <- ggbiplot(wdf.pca, obs.scale = 1, var.scale = 1, groups = wdf.quality, ellipse = TRUE, circle = TRUE, alpha = 0.1) + scale_color_discrete(name = '') + theme(legend.direction = 'vertical', legend.position = 'right')
 g <- g + ggtitle('Principal component analysis - PCA')
 print(g)
 
@@ -467,11 +466,51 @@ table(pred, test$quality.2)
 
 |pred|bad|good|normal|
 |---|---|---|---|
-|bad||479|11|125|
+|bad|479|11|125|
 |good|12|252|92|
 |normal|176|148|665|
 
 ### Accuracy = 71.2%
+
+# Random Forest Model after PCA
+
+```{r }
+# Creating train and test datasets
+wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
+wdf$quality.2 <- as.factor(wdf$quality.2)
+
+# New dataframe
+new_wdf.pca <- data.frame(wdf.pca$x)
+new_wdf.pca <- data.frame(new_wdf.pca[,1:8], quality = wdf$quality.2)
+
+# Creating train and test datasets
+set.seed(123)
+samp <- sample(nrow(wdf), 0.6 * nrow(wdf))
+train.pca <- new_wdf.pca[samp, ]
+test.pca <- new_wdf.pca[-samp, ]
+
+# Fitting the model
+model <- randomForest(quality ~ . - quality, data = train.pca)
+
+# Predicting the quality of wine with test dataset
+pred <- predict(model, newdata = test.pca)
+
+# Comparing the predictions with the correct answer
+table(pred, test$quality)
+
+# Accuracy of our predictor
+(456+238+698) / nrow(test.pca)
+```
+
+|pred|bad|good|normal|
+|---|---|---|---|
+|bad|456|11|104|
+|good|14|238|80|
+|normal|197|162|698|
+
+### Accuracy = 71.0%
+
+## Result: Accuracy (PCA + Random Forest) < Accuracy (Random Forest)
 
 ------
 
