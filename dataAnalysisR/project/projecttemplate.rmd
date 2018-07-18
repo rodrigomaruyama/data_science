@@ -189,8 +189,7 @@ Summary of the Dataset:
 
 The quality is the main feature of interest.
 
-### What other features in the dataset do you think will help support your \
-investigation into your feature(s) of interest?
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
 Quality, pH, residual.sugar, alcohol.
 
@@ -198,9 +197,7 @@ Quality, pH, residual.sugar, alcohol.
 
 No.
 
-### Of the features you investigated, were there any unusual distributions? \
-Did you perform any operations on the data to tidy, adjust, or change the form \
-of the data? If so, why did you do this?
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
 No. I didn't change the original data.
 
@@ -325,9 +322,7 @@ ggsave(file = 'pictures/4_bivariate.png', b4)
 > **Tip**: As before, summarize what you found in your bivariate explorations
 here. Use the questions below to guide your discussion.
 
-### Talk about some of the relationships you observed in this part of the \
-investigation. How did the feature(s) of interest vary with other features in \
-the dataset?
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
 
 quality x alcohol: The alcohol level for good wines have degrees between 12 and 13 and the variation for the data is very small compared with the others.
 
@@ -337,8 +332,7 @@ quality x density: The good wines have a very small variance in his density but 
 
 quality x residual.sugar: Following the other features, residual.sugar have a very small variance for good wines. around 2 times.
 
-### Did you observe any interesting relationships between the other features \
-(not the main feature(s) of interest)?
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 No, I didn't.
 
 ### What was the strongest relationship you found?
@@ -402,9 +396,7 @@ ggsave('pictures/smooth.png')
 
 # Multivariate Analysis
 
-### Talk about some of the relationships you observed in this part of the \
-investigation. Were there features that strengthened each other in terms of \
-looking at your feature(s) of interest?
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
 As you saw in the ggpairs graph, the correlation between density and residual.sugar can be observed in the graphic above with a linear regression line over the previous one. I all of the 4 multivariate graphics we can observe a slightly clustering for good wines and other for the midle ones. This can be a case for try a clustering methods in predictions models?
 
@@ -412,8 +404,7 @@ As you saw in the ggpairs graph, the correlation between density and residual.su
 
 No.
 
-### OPTIONAL: Did you create any models with your dataset? Discuss the \
-strengths and limitations of your model.
+### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
 
 
@@ -504,3 +495,4 @@ saving your final work and knitting the final report!
 > More COlors in ggplot: http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually <br>
 > Function to plot several graphics: https://rpubs.com/watanabe8760/white-wine <br>
 > https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html <br>
+> https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/ <br>
