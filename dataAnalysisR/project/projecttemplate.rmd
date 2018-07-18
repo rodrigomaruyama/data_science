@@ -117,6 +117,8 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 ```{r}
 
+# Using a for loop for better programming practice and to save lines of code :)
+
 feature_list <- names(wdf)
 p <- list()
 a <- 0
@@ -129,6 +131,7 @@ for (var in feature_list) {
 
 ggsave(file = 'pictures/2_univariate.png', do.call(grid.arrange, p))
 
+# Solving the error with aes_string in the geom_vline function
 #https://www.biostars.org/p/234142/
 
 ```
@@ -218,6 +221,14 @@ ggpairs(wdf)
 ```
 
 ![ggpairs](pictures/ggpairs_plot.png)
+
+```{r}
+
+ggsave(file = 'pictures/corrplot.png', corrplot.mixed(cor(wdf), tl.pos = "lt"))
+
+```
+
+![corrplot](pictures/corrplot.png)
 
 ```{r echo = TRUE}
 p1 <- ggplot(data = wdf, aes(x = quality, y = alcohol, fill = quality)) +
@@ -456,5 +467,6 @@ saving your final work and knitting the final report!
 > Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27 <br>
 > Li Wang Exploration: https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html <br>
 > Colors in ggplot: http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/ <br>
-> More COlors in ggplot: http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually
-> Function to plot several graphics: https://rpubs.com/watanabe8760/white-wine
+> More COlors in ggplot: http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually <br>
+> Function to plot several graphics: https://rpubs.com/watanabe8760/white-wine <br>
+> https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html <br>
