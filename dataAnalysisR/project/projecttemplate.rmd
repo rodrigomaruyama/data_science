@@ -171,6 +171,20 @@ table(wdf$quality.2)
 |good     |1060|
 |normal   |2198| 
 
+
+```{r }
+rating = c(1640, 1060, 2198)
+percent <- round(100*rating/sum(rating), 1)
+colors = c("red", "orange", "blue")
+pie(rating, labels = percent, col = rainbow(length(rating)), main = 'Wine quality Pie chart distribution') +
+  legend('topright', c('Bad', 'Normal', 'Good'), fill = rainbow(length(rating)))
+```
+
+pie color reference link: http://www.r-tutor.com/elementary-statistics/qualitative-data/pie-chart
+legend and percent reference link: https://www.tutorialspoint.com/r/r_pie_charts.htm
+
+![Pie chart](pictures/pie.png)
+
 # Univariate Analysis
 
 > **Tip**: Now that you've completed your univariate explorations, it's time to
