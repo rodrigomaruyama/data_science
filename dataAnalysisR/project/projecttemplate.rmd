@@ -30,6 +30,7 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 #install.packages('tidyverse')
 #install.packages('ggthemes')
 #install.packages('corrplot')
+#install.packages('ggbiplot)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -40,6 +41,7 @@ library(gridExtra)
 library(corrplot)
 library(grid)
 library(lattice)
+library(ggbiplot)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -57,9 +59,9 @@ names(wdf)
 
 ### Features names
 
-"fixed.acidity" "volatile.acidity"     "citric.acid"           "residual.sugar" <br>
-"chlorides"     "free.sulfur.dioxide"  "total.sulfur.dioxide"  "density"  <br>
-"pH"            "sulphates"            "alcohol"               "quality"        <br>
+|fixed.acidity|volatile.acidity|citric.acid|residual.sugar|
+|chlorides|free.sulfur.dioxide|total.sulfur.dioxide|density|
+|pH|sulphates|alcohol|quality|
 
 ```{r echo=TRUE}
 dim(wdf)
@@ -174,11 +176,11 @@ table(wdf$quality.2)
 
 ```
 
-|Quality.2|    |
-|---------|----|
-|bad      |1640|
-|good     |1060|
-|normal   |2198| 
+| Quality.2 |      |
+|-----------|------|
+| bad       | 1640 |
+| good      | 1060 |
+| normal    | 2198 |
 
 
 ```{r }
@@ -206,20 +208,20 @@ The Dataset have 4898 rows and 12 variables as below:
 
 #### Summary of the Dataset:
 
-| Feature             | unit                         | Min  | 1st Qu. | Median | Mean   | 2nd Qu. | Max    |
-|---------------------|------------------------------|------|---------|--------|--------|---------|--------|
-| fixed.acidity       | [g(tartaric acid)/dm^3]      | 3.80 | 6.30    | 6.80   | 6.86   | 7.30    | 14.20  |
-| volatile.acidity    | [g(acetic acid)/dm^3]        | 0.08 | 0.21    | 0.26   | 0.28   | 0.32    | 1.10   |
-| citric.acid         | [g/dm^3]                     | 0.00 | 0.27    | 0.32   | 0.33   | 0.39    | 1.66   |
-| residual.sugar      | [g/dm^3]                     | 0.60 | 1.70    | 5.20   | 6.39   | 9.90    | 65.80  |
-| chlorides           | [g(acetic acid)/dm^3]        | 0.01 | 0.04    | 0.04   | 0.05   | 0.05    | 0.35   |
-| free.sulfur.dioxide | [mg/dm^3]                    | 2.00 | 23.00   | 34.00  | 35.31  | 46.00   | 289.00 |
-| total.sulfur.dioxide| [g/cm^3]                     | 9.00 | 108.00  | 134.00 | 138.40 | 167.00  | 440.00 |
-| density             | [g/cm^3]                     | 0.99 | 0.99    | 0.99   | 0.99   | 1.00    | 1.04   |
-| pH                  |                              | 2.72 | 3.09    | 3.18   | 3.19   | 3.28    | 3.82   |
-| sulphates           | [g(potassium sulphate)/dm^3] | 0.22 | 0.41    | 0.47   | 0.49   | 0.55    | 1.08   |
-| alcohol             | [% vol.]                     | 8.00 | 9.50    | 10.40  | 10.51  | 11.40   | 14.20  |
-| quality             |                              | 3.00 | 5.00    | 6.00   | 5.88   | 6.00    | 9.00   |
+| Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 2nd Qu. | Max    |
+|----------------------|------------------------------|------|---------|--------|--------|---------|--------|
+| fixed.acidity        | [g(tartaric acid)/dm^3]      | 3.80 | 6.30    | 6.80   | 6.86   | 7.30    | 14.20  |
+| volatile.acidity     | [g(acetic acid)/dm^3]        | 0.08 | 0.21    | 0.26   | 0.28   | 0.32    | 1.10   |
+| citric.acid          | [g/dm^3]                     | 0.00 | 0.27    | 0.32   | 0.33   | 0.39    | 1.66   |
+| residual.sugar       | [g/dm^3]                     | 0.60 | 1.70    | 5.20   | 6.39   | 9.90    | 65.80  |
+| chlorides            | [g(acetic acid)/dm^3]        | 0.01 | 0.04    | 0.04   | 0.05   | 0.05    | 0.35   |
+| free.sulfur.dioxide  | [mg/dm^3]                    | 2.00 | 23.00   | 34.00  | 35.31  | 46.00   | 289.00 |
+| total.sulfur.dioxide | [g/cm^3]                     | 9.00 | 108.00  | 134.00 | 138.40 | 167.00  | 440.00 |
+| density              | [g/cm^3]                     | 0.99 | 0.99    | 0.99   | 0.99   | 1.00    | 1.04   |
+| pH                   |                              | 2.72 | 3.09    | 3.18   | 3.19   | 3.28    | 3.82   |
+| sulphates            | [g(potassium sulphate)/dm^3] | 0.22 | 0.41    | 0.47   | 0.49   | 0.55    | 1.08   |
+| alcohol              | [% vol.]                     | 8.00 | 9.50    | 10.40  | 10.51  | 11.40   | 14.20  |
+| quality              |                              | 3.00 | 5.00    | 6.00   | 5.88   | 6.00    | 9.00   |
 
 link: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086
 
@@ -235,11 +237,11 @@ Quality, pH, residual.sugar, alcohol and density are the main features.
 
 Yes, I created a new variable called quality.2 from quality as in the table below:
 
-| classification | Criterion | 
-|---|---|
-|Bad|3 > quality < 6|
-|Normal| quality = 6|
-|Good| quality > 6|
+| classification | Criterion       |
+|----------------|-----------------|
+| Bad            | 3 > quality < 6 |
+| Normal         | quality = 6     |
+| Good           | quality > 6     |
 
 ### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
@@ -264,6 +266,21 @@ ggsave(file = 'pictures/corrplot.png', corrplot.mixed(cor(wdf), tl.pos = "lt"))
 ```
 
 ![corrplot](pictures/corrplot.png)
+
+Looking at the "corrplot" result it is easy to detect the most correlated variables. In the table below there is a list with a few pairs with the highest correlation.
+
+|    | pair correlation                           | correlation |
+|----|--------------------------------------------|-------------|
+| 1  | density x residual.sugar                   | 0.84        |
+| 2  | total.sulfur.dioxide x free.sulfur.dioxide | 0.62        |
+| 3  | density x total.sulfur.dioxide             | 0.53        |
+| 4  | quality x alcohol                          | 0.44        |
+| 5  | total.sulfur.dioxide x residual.sugar      | 0.4         |
+| 6  | free.sulfur.dioxide x residual.sugar       | 0.3         |
+| 7  | density x free.sulfur.dioxide              | 0.29        |
+| 8  | citric.acid x fixed.acidity                | 0.29        |
+| 9  | density x fixed.acidity                    | 0.27        |
+| 10 | density x chlorides                        | 0.26        |
 
 ```{r}
 # Removing outliers for density and residual.sugar for better visualization
@@ -304,32 +321,38 @@ ggsave(file = 'pictures/2_1_bivariate.png', b2)
 # https://ggplot2.tidyverse.org/reference/geom_boxplot.html
 
 p1 <- ggplot(data = wdf, aes(x = pH, y = alcohol)) +
-  geom_point()
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x)
 
 p2 <- ggplot(data = wdf, aes(x = pH, y = residual.sugar)) +
   geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
   scale_y_continuous(limits = c(0, 30))
 
 p3 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
   geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
   scale_y_continuous(limits = c(0, 30))
 
 p4 <- ggplot(data = wdf, aes(x = pH, y = density)) +
   geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
   scale_y_continuous(limits = c(0.98, 1.01))
 
 p5 <- ggplot(data = wdf, aes(x = total.sulfur.dioxide, y = residual.sugar)) +
   geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
   scale_y_continuous(limits = c(0, 30))
 
 p6 <- ggplot(data = wdf, aes(x = total.sulfur.dioxide, y = density)) +
   geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
   scale_y_continuous(limits = c(0.98, 1.01))
 
 
 b4 <- grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter plot",gp=gpar(fontsize=15,font=3)))
 
-ggsave(file = 'pictures/4_1_bivariate.png', b4)
+ggsave(file = 'pictures/4_1_bivariate.png', b4, height=9, width=12, dpi=72)
   
 ```
 
@@ -447,11 +470,12 @@ ggsave(file = 'pictures/pca.png', g)
 
 ## Importance of components:
 
-|                        | PC1  | PC2  | PC3  | PC4   | PC5   | PC6   | PC7   | PC8   | PC9   | PC10  | PC11  |
-|------------------------|------|------|------|-------|-------|-------|-------|-------|-------|-------|-------|
-| Standard deviation     |1.7951|1.2551|1.1053|1.00922|0.98658|0.96889|0.85241|0.77418|0.64354|0.53804|0.14370|
-| Proportion of Variance |0.2929|0.1432|0.1111|0.09259|0.08848|0.08534|0.06605|0.05449|0.03765|0.02632|0.00188|
-| Cumulative Proportion  |0.2929|0.4361|0.5472|0.63979|0.72827|0.81361|0.87967|0.93416|0.97181|0.99812|1.00000|
+|                        | PC1    | PC2    | PC3    | PC4     | PC5     | PC6     | PC7     | PC8     | PC9     | PC10    | PC11    |
+|------------------------|--------|--------|--------|---------|---------|---------|---------|---------|---------|---------|---------|
+| Standard deviation     | 1.7951 | 1.2551 | 1.1053 | 1.00922 | 0.98658 | 0.96889 | 0.85241 | 0.77418 | 0.64354 | 0.53804 | 0.14370 |
+| Proportion of Variance | 0.2929 | 0.1432 | 0.1111 | 0.09259 | 0.08848 | 0.08534 | 0.06605 | 0.05449 | 0.03765 | 0.02632 | 0.00188 |
+| Cumulative Proportion  | 0.2929 | 0.4361 | 0.5472 | 0.63979 | 0.72827 | 0.81361 | 0.87967 | 0.93416 | 0.97181 | 0.99812 | 1.00000 |
+
 
 ![PCA](pictures/variance_pca.png)
 
@@ -483,11 +507,12 @@ table(pred, test$quality.2)
 (665 + 252 + 479) / nrow(test)
 ```
 
-|pred|bad|good|normal|
-|---|---|---|---|
-|bad|479|11|125|
-|good|12|252|92|
-|normal|176|148|665|
+| pred   | bad | good | normal |
+|--------|-----|------|--------|
+| bad    | 479 | 11   | 125    |
+| good   | 12  | 252  | 92     |
+| normal | 176 | 148  | 665    |
+
 
 ### Accuracy = 71.2%
 
@@ -521,11 +546,11 @@ table(pred, test$quality)
 (456+238+698) / nrow(test.pca)
 ```
 
-|pred|bad|good|normal|
-|---|---|---|---|
-|bad|456|11|104|
-|good|14|238|80|
-|normal|197|162|698|
+| pred   | bad | good | normal |
+|--------|-----|------|--------|
+| bad    | 456 | 11   | 104    |
+| good   | 14  | 238  | 80     |
+| normal | 197 | 162  | 698    |
 
 ### Accuracy = 71.0%
 
@@ -579,6 +604,8 @@ future work that could be done with the dataset.
 saving your final work and knitting the final report!
 
 # General resources 
+> markdown table formater: http://markdowntable.com/
+> Markdown basics: https://rmarkdown.rstudio.com/authoring_basics.html <br>
 > Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality <br>
 > Paper using this dataset with SVM predictor: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086 <br>
 > Style guide: http://adv-r.had.co.nz/Style.html <br>
