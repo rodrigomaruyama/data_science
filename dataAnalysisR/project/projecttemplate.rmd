@@ -5,7 +5,7 @@ chunk_output_type: console
 ---
 TITLE by Rodrigo P Maruyama
 ========================================================
-# Introduction
+# Table of contents
 
 1. Data Structure: 
   + Features names
@@ -46,7 +46,7 @@ TITLE by Rodrigo P Maruyama
 9. Resources
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, setting the working directory}
-setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project/pictures")
+setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project/")
 ```
 
 
@@ -96,7 +96,7 @@ Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313
 names(wdf)
 ```
 
-### Features names
+## Features names
 
 |fixed.acidity|volatile.acidity|citric.acid|residual.sugar|
 |chlorides|free.sulfur.dioxide|total.sulfur.dioxide|density|
@@ -106,11 +106,11 @@ names(wdf)
 dim(wdf)
 ```
 
-### Dataset size
+## Dataset size
 
 [1] 4898   12
 
-#### Saving the summary output in a file to better visualization
+### Summary of the Dataset:
 
 ```{r echo=TRUE}
 swdf <- summary(wdf)
@@ -122,7 +122,6 @@ write.csv(swdf, file = 'summary.csv')
 
 ```
 
-### Summary of the Dataset:
 
 | Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 2nd Qu. | Max    |
 |----------------------|------------------------------|------|---------|--------|--------|---------|--------|
@@ -142,6 +141,8 @@ write.csv(swdf, file = 'summary.csv')
 link for the units information: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086
 
 # Univariate Plots Section
+
+## Histogram fopr each feature
 
 ```{r echo=FALSE, Univariate_Plots}
 
@@ -181,7 +182,9 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 ![univariate](pictures/1_univariate.png)
 
-#### Figure 1. Histogram for all features in the dataset. We can observe that most of the graphic have a normal distribution or a right skeeled distribution.
+Figure 1. Histogram for all features in the dataset. We can observe that most of the graphic have a normal distribution or a right skeeled distribution.
+
+## Density plot for each feature with stat lines
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
@@ -215,7 +218,7 @@ ggsave(file = 'pictures/2_univariate.png', do.call(grid.arrange, p))
 
 ![univariate](pictures/2_univariate.png)
 
-#### Figure 2. In this section we can see the mean, median, 1st quantile and 3rd quantile over each density distribution.
+Figure 2. In this section we can see the mean, median, 1st quantile and 3rd quantile over each density distribution.
 
 ## Quality histogram in detail
 
@@ -232,6 +235,14 @@ In this figure we can see the Wine "Quality" Histogram with the Mean, Median, 1s
 ## Quality.2 feature creation
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+# | classification | Criterion       |
+# |----------------|-----------------|
+# | Bad            | 3 > quality < 6 |
+# | Normal         | quality = 6     |
+# | Good           | quality > 6     |
+
+
 wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
 wdf$quality.2 <- as.factor(wdf$quality.2)
 
@@ -247,11 +258,15 @@ table(wdf$quality.2)
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+# Pie plot creation with percent legend
+
 rating = c(1640, 1060, 2198)
 percent <- round(100*rating/sum(rating), 1)
 colors = c("red", "orange", "blue")
 pie(rating, labels = percent, col = rainbow(length(rating)), main = 'Wine quality Pie chart distribution') +
   legend('topright', c('Bad', 'Normal', 'Good'), fill = rainbow(length(rating)))
+
 ```
 
 pie color reference link: http://www.r-tutor.com/elementary-statistics/qualitative-data/pie-chart <br>
@@ -260,10 +275,6 @@ legend and percent reference link: https://www.tutorialspoint.com/r/r_pie_charts
 ![Pie chart](pictures/pie.png)
 
 # Univariate Analysis
-
-> **Tip**: Now that you've completed your univariate explorations, it's time to
-reflect on and summarize what you've found. Use the questions below to help you
-gather your observations and add your own if you have other thoughts!
 
 ### What is the structure of your dataset?
 
