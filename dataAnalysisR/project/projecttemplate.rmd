@@ -7,18 +7,9 @@ TITLE by Rodrigo P Mauryama
 ========================================================
 
 ```{r setting the working directory}
-# cd Documents/dsNanodegree/machine-learning-master/projects/finding_donors/
-setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project")
+setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project/pictures")
 ```
 
-> **Tip**: You will see quoted sections like this throughout the template to
-help you construct your report. Make sure that you remove these notes before
-you finish and submit your project!
-
-> **Tip**: One of the requirements of this project is that your code follows
-good formatting techniques, including limiting your lines to 80 characters or
-less. If you're using RStudio, go into Preferences \> Code \> Display to set up
-a margin line to help you keep track of this guideline!
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
 # Load all of the packages that you end up using in your analysis in this code
@@ -54,11 +45,9 @@ library(lattice)
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
 wdf <- read.csv('data/wineQualityWhites.csv')
-
-# Remove the column X from Dataframe
-# https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946
 wdf$X <- NULL
 ```
+Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946
 
 # The Dataset Sctructure
 
@@ -68,13 +57,12 @@ names(wdf)
 
 ### Features names
 
-[1] "fixed.acidity"        "volatile.acidity"     "citric.acid"          "residual.sugar" <br>
-[5] "chlorides"            "free.sulfur.dioxide"  "total.sulfur.dioxide" "density"        <br>
-[9] "pH"                   "sulphates"            "alcohol"              "quality"        <br>
+"fixed.acidity" "volatile.acidity"     "citric.acid"           "residual.sugar" <br>
+"chlorides"     "free.sulfur.dioxide"  "total.sulfur.dioxide"  "density"  <br>
+"pH"            "sulphates"            "alcohol"               "quality"        <br>
 
 ```{r echo=TRUE}
 dim(wdf)
-
 ```
 
 ### Dataset size
@@ -94,18 +82,30 @@ write.csv(swdf, file = 'summary.csv')
 
 ```{r echo=FALSE, Univariate_Plots}
 
-p1 <- ggplot(aes(x=fixed.acidity), data = wdf) + geom_histogram(fill='#99CCFF')
-p2 <- ggplot(aes(x=volatile.acidity), data = wdf) + geom_histogram(fill='#99CCFF')
-p3 <- ggplot(aes(x=citric.acid), data = wdf) + geom_histogram(fill='#99CCFF')
-p4 <- ggplot(aes(x=residual.sugar), data = wdf) + geom_histogram(fill='#99CCFF')
-p5 <- ggplot(aes(x=chlorides), data = wdf) + geom_histogram(fill='#99CCFF')
-p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) + geom_histogram(fill='#99CCFF')
-p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) + geom_histogram(fill='#99CCFF')
-p8 <- ggplot(aes(x=density), data = wdf) + geom_histogram(fill='#99CCFF')
-p9 <- ggplot(aes(x=pH), data = wdf) + geom_histogram(fill='#99CCFF', binwidth = 0.1)
-p10 <- ggplot(aes(x=sulphates), data = wdf) + geom_histogram(fill='#99CCFF')
-p11 <- ggplot(aes(x=alcohol), data = wdf) + geom_histogram(fill='#99CCFF', binwidth = 0.5)
-p12 <- ggplot(aes(x=quality), data = wdf) + geom_histogram(fill='#99CCFF', binwidth = 1)
+p1 <- ggplot(aes(x=fixed.acidity), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p2 <- ggplot(aes(x=volatile.acidity), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p3 <- ggplot(aes(x=citric.acid), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p4 <- ggplot(aes(x=residual.sugar), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p5 <- ggplot(aes(x=chlorides), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p8 <- ggplot(aes(x=density), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p9 <- ggplot(aes(x=pH), data = wdf) + 
+  geom_histogram(fill='#99CCFF', binwidth = 0.1)
+p10 <- ggplot(aes(x=sulphates), data = wdf) + 
+  geom_histogram(fill='#99CCFF')
+p11 <- ggplot(aes(x=alcohol), data = wdf) + 
+  geom_histogram(fill='#99CCFF', binwidth = 0.5)
+p12 <- ggplot(aes(x=quality), data = wdf) + 
+  geom_histogram(fill='#99CCFF', binwidth = 1)
 
 u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4)
 
@@ -118,7 +118,9 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 ![univariate](pictures/1_univariate.png)
 
-#### Figure 1. Histogram for all features in the dataset. We can observe that most of the graphic have a normal distribution or a right skeeled distribution.
+cat('Figure 1. Histogram for all features in the dataset. We can observe that, 
++ most of the graphic have a normal distribution or, 
++ a right skeeled distribution.')
 
 ```{r}
 
@@ -130,7 +132,16 @@ a <- 0
 for (var in feature_list) {
   a <- a + 1
 
-  p[[a]] <- ggplot(data = wdf, aes_string(x=var)) + geom_density(fill='#99CCFF') + geom_vline(aes_string(xintercept=mean(wdf[, var])), color='blue', size=0.5) + geom_vline(aes_string(xintercept=median(wdf[, var])), color='red', size=0.5) +    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.25)), linetype='dashed', size=0.5) +    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.75)), linetype='dashed', size=0.5)
+  p[[a]] <- ggplot(data = wdf, aes_string(x=var)) + 
+    geom_density(fill='#99CCFF') + 
+    geom_vline(aes_string(xintercept=mean(wdf[, var])), 
+               color='blue', size=0.5) + 
+    geom_vline(aes_string(xintercept=median(wdf[, var])), 
+               color='red', size=0.5) +    
+    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.25)), 
+               linetype='dashed', size=0.5) +    
+    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.75)), 
+               linetype='dashed', size=0.5)
   
 }
 
@@ -180,8 +191,8 @@ pie(rating, labels = percent, col = rainbow(length(rating)), main = 'Wine qualit
   legend('topright', c('Bad', 'Normal', 'Good'), fill = rainbow(length(rating)))
 ```
 
-pie color reference link: http://www.r-tutor.com/elementary-statistics/qualitative-data/pie-chart
-legend and percent reference link: https://www.tutorialspoint.com/r/r_pie_charts.htm
+pie color reference link: http://www.r-tutor.com/elementary-statistics/qualitative-data/pie-chart <br>
+legend and percent reference link: https://www.tutorialspoint.com/r/r_pie_charts.htm <br>
 
 ![Pie chart](pictures/pie.png)
 
