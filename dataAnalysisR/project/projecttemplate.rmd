@@ -197,7 +197,9 @@ The Dataset have 4898 rows and 12 variables as below:
 | sulphates           | [g(potassium sulphate)/dm^3] | 0.22 | 0.41    | 0.47   | 0.49   | 0.55    | 1.08   |
 | alcohol             | [% vol.]                     | 8.00 | 9.50    | 10.40  | 10.51  | 11.40   | 14.20  |
 | quality             |                              | 3.00 | 5.00    | 6.00   | 5.88   | 6.00    | 9.00   |
-https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086
+
+link: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086
+
 ### What is/are the main feature(s) of interest in your dataset?
 
 The quality is the main feature of interest.
