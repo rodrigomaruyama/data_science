@@ -163,11 +163,11 @@ table(wdf$quality.2)
 
 ```
 
-|Quality.2|
-|---|---|
-|bad|1640|
-|good|1060|
-|normal|2198| 
+|Quality.2|    |
+|---------|----|
+|bad      |1640|
+|good     |1060|
+|normal   |2198| 
 
 # Univariate Analysis
 
@@ -223,7 +223,7 @@ Quality, pH, residual.sugar, alcohol and density are the main features.
 
 Yes, I created a new variable called quality.2 from quality as in the table below:
 
-| classification || 
+| classification | Criterion | 
 |---|---|
 |Bad|3 > quality < 6|
 |Normal| quality = 6|
