@@ -5,8 +5,47 @@ chunk_output_type: console
 ---
 TITLE by Rodrigo P Maruyama
 ========================================================
+# Introduction
 
-```{r setting the working directory}
+1. Data Structure: 
+  + Features names
+  + Size
+  + Summary (mean, median, 1st and 3rd quantile, min and max values)
+
+2. Univariate Plots Section
+  + Histogram plot for each variable
+  + Density plot for each variable
+  + Quality histogram in detail
+  + Quality.2 feature creation
+  + Univariate analysis
+
+3. Bivariate Plots Section
+  + ggpairs plot
+  + corrplot
+  + Highest correlation pairs Table
+  + Bivariate Boxplots
+  + Bivariate Scatter plots with linear regression line
+  + Bivariate analysis
+
+4. Multivariate Plots Section
+  + Highest Correlated features plots
+  + Special Scatter plot with linear regression line
+  + Multivariate analysis
+
+5. Pricipal component analysis - PCA
+
+6. Models 
+  + Random Forest model
+  + Random Forest model with PCA
+  + SVM
+  
+7. Final Plots and Summary
+
+8. Reflection
+
+9. Resources
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, setting the working directory}
 setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project/pictures")
 ```
 
@@ -51,8 +90,8 @@ wdf$X <- NULL
 ```
 Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946
 
-[question_structure_dataset]: Dataset_structure
-# The Dataset Sctructure
+# The Dataset Structure
+
 ```{r echo=TRUE}
 names(wdf)
 ```
@@ -71,16 +110,19 @@ dim(wdf)
 
 [1] 4898   12
 
-### Saving the summary output in a file
+#### Saving the summary output in a file to better visualization
 
 ```{r echo=TRUE}
 swdf <- summary(wdf)
 swdf <- data.frame(val = unclass(swdf$coefficients))
 swdf <- t.data.frame(swdf)
 write.csv(swdf, file = 'summary.csv')
+
+# The markdown table was generated from the csv file by  https://www.tablesgenerator.com/markdown_tables
+
 ```
 
-#### Summary of the Dataset:
+### Summary of the Dataset:
 
 | Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 2nd Qu. | Max    |
 |----------------------|------------------------------|------|---------|--------|--------|---------|--------|
@@ -97,8 +139,7 @@ write.csv(swdf, file = 'summary.csv')
 | alcohol              | [% vol.]                     | 8.00 | 9.50    | 10.40  | 10.51  | 11.40   | 14.20  |
 | quality              |                              | 3.00 | 5.00    | 6.00   | 5.88   | 6.00    | 9.00   |
 
-link: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086
-
+link for the units information: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086
 
 # Univariate Plots Section
 
@@ -142,7 +183,7 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 #### Figure 1. Histogram for all features in the dataset. We can observe that most of the graphic have a normal distribution or a right skeeled distribution.
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
 # Using a for loop for better programming practice and to save lines of code :)
 
@@ -176,9 +217,9 @@ ggsave(file = 'pictures/2_univariate.png', do.call(grid.arrange, p))
 
 #### Figure 2. In this section we can see the mean, median, 1st quantile and 3rd quantile over each density distribution.
 
-### Quality histogram with mean, median, 1st and 3rd quantile
+## Quality histogram in detail
 
-```{r }
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 ggplot(data = wdf, aes(x=quality)) + geom_histogram(fill='#99CCFF', binwidth = 1) + geom_vline(aes_string(xintercept=mean(wdf$quality)), color='blue', size=0.5) + geom_vline(aes_string(xintercept=median(wdf$quality)), color='red', size=0.5) +    geom_vline(aes_string(xintercept=quantile(wdf$quality, 0.25)), linetype='dashed', size=0.5) +    geom_vline(aes_string(xintercept=quantile(wdf$quality, 0.75)), linetype='dashed', size=0.5) + ggtitle('Wine Quality Histogram')
 
 ggsave(file = 'pictures/quality_stat.png')
@@ -186,9 +227,11 @@ ggsave(file = 'pictures/quality_stat.png')
 
 ![Quality](pictures/quality_stat.png)
 
-#### In this figure we can see the Wine "Quality" Histogram with the Mean, Median, 1st and 3rd Quantile.
+In this figure we can see the Wine "Quality" Histogram with the Mean, Median, 1st and 3rd Quantile.
 
-```{r }
+## Quality.2 feature creation
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
 wdf$quality.2 <- as.factor(wdf$quality.2)
 
@@ -203,7 +246,7 @@ table(wdf$quality.2)
 | normal    | 2198 |
 
 
-```{r }
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 rating = c(1640, 1060, 2198)
 percent <- round(100*rating/sum(rating), 1)
 colors = c("red", "orange", "blue")
@@ -224,8 +267,7 @@ gather your observations and add your own if you have other thoughts!
 
 ### What is the structure of your dataset?
 
-See The [Dataset Sctructure section][question_structure_dataset]
-
+See The Dataset Sctructure section.
 
 ### What is/are the main feature(s) of interest in your dataset?
 
@@ -263,7 +305,7 @@ ggpairs with background: https://stackoverflow.com/questions/48104455/ggpairs-co
 
 ![ggpairs](pictures/ggpairs_plot.png)
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
 ggsave(file = 'pictures/corrplot.png', corrplot.mixed(cor(wdf), tl.pos = "lt"))
 
@@ -286,7 +328,7 @@ Looking at the "corrplot" result it is easy to detect the most correlated variab
 | 9  | density x fixed.acidity                    | 0.27        |
 | 10 | density x chlorides                        | 0.26        |
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Removing outliers for density and residual.sugar for better visualization
 
 p1 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
@@ -318,7 +360,7 @@ ggsave(file = 'pictures/2_1_bivariate.png', b2)
 
 ![2_bivariate](pictures/2_1_bivariate.png)
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Removing outliers for better visualization
 
 # Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
@@ -425,7 +467,7 @@ grid.arrange(p1, p2, p3, p4, ncol = 4)
 
 ![1_multivariate](pictures/1_multivariate.png)
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
   geom_point(alpha = 0.3) +
   scale_x_continuous(limits = c(0.985, 1.005)) +
@@ -451,9 +493,9 @@ No.
 
 ### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
+# Pricipal component analysis - PCA
 
-
-```{r }
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
 # PCA
 
@@ -487,7 +529,7 @@ ggsave(file = 'pictures/pca.png', g)
 
 # Random Forest Model
 
-```{r }
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Change the quality labels for something more convinient
 wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
 wdf$quality.2 <- as.factor(wdf$quality.2)
@@ -522,7 +564,7 @@ table(pred, test$quality.2)
 
 # Random Forest Model after PCA
 
-```{r }
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Creating train and test datasets
 wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
 wdf$quality.2 <- as.factor(wdf$quality.2)
@@ -608,6 +650,7 @@ future work that could be done with the dataset.
 saving your final work and knitting the final report!
 
 # General resources 
+> Marktable generator: https://www.tablesgenerator.com/markdown_tables
 > markdown table formater: http://markdowntable.com/
 > Markdown basics: https://rmarkdown.rstudio.com/authoring_basics.html <br>
 > Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality <br>
