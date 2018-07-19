@@ -118,9 +118,7 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 ![univariate](pictures/1_univariate.png)
 
-cat('Figure 1. Histogram for all features in the dataset. We can observe that, 
-+ most of the graphic have a normal distribution or, 
-+ a right skeeled distribution.')
+#### Figure 1. Histogram for all features in the dataset. We can observe that most of the graphic have a normal distribution or a right skeeled distribution.
 
 ```{r}
 
