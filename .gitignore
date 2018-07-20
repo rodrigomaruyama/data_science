@@ -53,3 +53,5 @@ nyc_subway_project/*.pdf
 nyc_subway_project/FDSC_entregue/
 dataAnalysisR/project/articles/
 dataAnalysisR/project/data/
+dataAnalysisR/project/.R*
+dataAnalysisR/project/r_project_rubric.pdf
