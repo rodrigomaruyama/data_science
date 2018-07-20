@@ -9,7 +9,6 @@ TITLE by Rodrigo P Maruyama
 # Table of contents
 
 1. Data Structure: 
-  + Features names
   + Size
   + Summary (mean, median, 1st and 3rd quantile, min and max values)
 
@@ -97,25 +96,15 @@ Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313
 
 # The Dataset Structure
 
-```{r echo=TRUE}
-names(wdf)
-```
-
-## Features names
-
-|fixed.acidity|volatile.acidity|citric.acid|residual.sugar|
-|chlorides|free.sulfur.dioxide|total.sulfur.dioxide|density|
-|pH|sulphates|alcohol|quality|
+## Dataset size
 
 ```{r echo=TRUE}
 dim(wdf)
 ```
 
-## Dataset size
-
 [1] 4898   12
 
-### Summary of the Dataset:
+## Summary of the Dataset:
 
 ```{r echo=TRUE}
 swdf <- summary(wdf)
@@ -335,52 +324,81 @@ ggsave(file = 'pictures/corrplot.png', corrplot.mixed(cor(wdf), tl.pos = "lt"))
 
 Looking at the "corrplot" result it is easy to detect the most correlated variables. In the table below there is a list with a few pairs with the highest correlation.
 
-|    | pair correlation                           | correlation |
+|    | Positive correlation                       | correlation |
 |----|--------------------------------------------|-------------|
 | 1  | density x residual.sugar                   | 0.84        |
 | 2  | total.sulfur.dioxide x free.sulfur.dioxide | 0.62        |
 | 3  | density x total.sulfur.dioxide             | 0.53        |
 | 4  | quality x alcohol                          | 0.44        |
-| 5  | total.sulfur.dioxide x residual.sugar      | 0.4         |
-| 6  | free.sulfur.dioxide x residual.sugar       | 0.3         |
-| 7  | density x free.sulfur.dioxide              | 0.29        |
-| 8  | citric.acid x fixed.acidity                | 0.29        |
-| 9  | density x fixed.acidity                    | 0.27        |
-| 10 | density x chlorides                        | 0.26        |
+
+|    | Negative correlation                       | correlation |
+|----|--------------------------------------------|-------------|
+| 1  | density x alcohol                          | -0.78       |
+| 2  | total.sulfur.dioxide x alcohol             | -0.45       |
+| 3  | alcohol x residual.sugar                   | -0.45       |
+
+|    | Zero correlation                           | correlation |
+|----|--------------------------------------------|-------------|
+| 1  | quality x citric.acid                      | ~ 0         |
+| 2  | sulphates x chlorides                      | ~ 0         |
+| 3  | density x volatily.acidity                 | ~ 0         |
+
 
 ## Bivariate Boxplots
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Removing outliers for density and residual.sugar for better visualization
 
-p1 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
-
-p2 <- ggplot(data = wdf, aes(x = quality, y = pH)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
-
-p3 <- ggplot(data = wdf, aes(x = quality, y = density)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0.98, 1.01))
-
-p4 <- ggplot(data = wdf, aes(x = quality, y = residual.sugar)) +
+# Positive correlation plots
+p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
   scale_y_continuous(limits = c(0, 25))
 
-p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = quality)) +
+p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') 
+
+p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
 
-p6 <- ggplot(data = wdf, aes(x = total.sulfur.dioxide, y = residual.sugar)) +
+# Negative correlation plots
+p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
+
+p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = alcohol)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
+
+p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 25))
+  scale_y_continuous(limits = c(0, 30))
 
-b2 <- grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3, top = textGrob("Bivariate Boxplots",gp=gpar(fontsize=15,font=3)))
+# Zero correlation
+p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  scale_y_continuous(limits = c(0, 1))
 
-ggsave(file = 'pictures/2_1_bivariate.png', b2)
+p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
+
+p9 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  scale_y_continuous(limits = c(0, 0.9))
+
+grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Boxplots with Positive Correlation",gp=gpar(fontsize=15,font=3)))
+
+grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Boxplots with Negative Correlation",gp=gpar(fontsize=15,font=3)))
+
+grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Boxplots with Zero Correlation",gp=gpar(fontsize=15,font=3)))
+
+ggsave(file = 'pictures/2_11_bivariate.png', grid1)
+ggsave(file = 'pictures/2_12_bivariate.png', grid2)
+ggsave(file = 'pictures/2_13_bivariate.png', grid3)
 
 ```
 
-![2_bivariate](pictures/2_1_bivariate.png)
+![2_11 bivariate](pictures/2_11_bivariate.png)
+
+![2_12 bivariate](pictures/2_12_bivariate.png)
+![2_13 bivariate](pictures/2_13_bivariate.png)
 
 ## Bivariate Scatter plots with linear regression line
 
@@ -580,28 +598,28 @@ plot(pred)
 | pred | 3 | 4 | 5  | 6   | 7    | 8   | 9  |   |
 |------|---|---|----|-----|------|-----|----|---|
 |      | 3 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-|      | 4 | 0 | 13 | 5   | 0    | 0   | 0  | 0 |
-|      | 5 | 8 | 82 | 914 | 0    | 0   | 0  | 0 |
-|      | 6 | 0 | 0  | 0   | 1289 | 0   | 0  | 0 |
-|      | 7 | 0 | 0  | 0   | 0    | 527 | 67 | 2 |
-|      | 8 | 0 | 0  | 0   | 0    | 2   | 29 | 1 |
+|      | 4 | 0 | 12 | 10  | 0    | 0   | 0  | 0 |
+|      | 5 | 9 | 92 | 875 | 0    | 0   | 0  | 0 |
+|      | 6 | 0 | 0  | 0   | 1315 | 0   | 0  | 0 |
+|      | 7 | 0 | 0  | 0   | 0    | 512 | 77 | 2 |
+|      | 8 | 0 | 0  | 0   | 0    | 1   | 34 | 0 |
 |      | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
 
 $diag
-[1] 0.943178
+[1] 0.9350119
 
 $kappa
-[1] 0.9143949
+[1] 0.9021252
 
 $rand
-[1] 0.9703057
+[1] 0.9668913
 
 $crand
-[1] 0.9336241
+[1] 0.9260062
 
 
 
-### Accuracy = 94.31%
+### Accuracy = 93.50%
 
 # Random Forest Model after PCA
 
@@ -687,27 +705,27 @@ plot(obj)
 
 ![svm_param_tune](pictures/svm_tune_output.png)
 
-Parameter tuning of 'svm':
+Parameter tuning of 'svm': <br>
 
-- sampling method: 10-fold cross validation 
+- sampling method: 10-fold cross validation  <br>
 
-- best parameters:
- gamma cost
-   0.5    4
+- best parameters: <br>
+ gamma cost <br>
+   0.5    4 <br>
 
 - best performance: 0.1028839 
 
-- Detailed performance results:
-  gamma cost     error dispersion
-1   0.5    4 0.1028839 0.03145175
-2   1.0    4 0.1792305 0.04547684
-3   2.0    4 0.3446035 0.04002241
-4   0.5    8 0.1053346 0.03037331
-5   1.0    8 0.1792305 0.04547684
-6   2.0    8 0.3446035 0.04002241
-7   0.5   16 0.1045182 0.02972115
-8   1.0   16 0.1792305 0.04547684
-9   2.0   16 0.3446035 0.04002241
+- Detailed performance results: <br>
+  gamma cost     error dispersion <br>
+1   0.5    4 0.1028839 0.03145175 <br>
+2   1.0    4 0.1792305 0.04547684 <br>
+3   2.0    4 0.3446035 0.04002241 <br>
+4   0.5    8 0.1053346 0.03037331 <br>
+5   1.0    8 0.1792305 0.04547684 <br>
+6   2.0    8 0.3446035 0.04002241 <br>
+7   0.5   16 0.1045182 0.02972115 <br>
+8   1.0   16 0.1792305 0.04547684 <br>
+9   2.0   16 0.3446035 0.04002241 <br>
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
@@ -735,17 +753,17 @@ classAgreement(table(pred = rpart.pred,true = test[,12]))
 |          | 8 | 0 | 0  | 0   | 0    | 12  | 32 | 0 |
 |          | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
 
-$diag
-[1] 0.8946509
+$diag <br>
+[1] 0.8946509 <br>
 
-$kappa
-[1] 0.8392621
+$kappa <br>
+[1] 0.8392621 <br>
 
-$rand
-[1] 0.9152265
+$rand <br>
+[1] 0.9152265 <br>
 
-$crand
-[1] 0.8130064
+$crand <br>
+[1] 0.8130064 <br>
 
 | rpart.pred | 3 | 4 | 5  | 6   | 7    | 8   | 9  |   |
 |------------|---|---|----|-----|------|-----|----|---|
@@ -757,17 +775,23 @@ $crand
 |            | 8 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
 |            | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
 
-$diag
-[1] 0.920784
+$diag <br>
+[1] 0.920784 <br>
 
-$kappa
-[1] 0.879869
+$kappa <br>
+[1] 0.879869 <br>
 
-$rand
-[1] 0.9625884
+$rand <br>
+[1] 0.9625884 <br>
 
-$crand
-[1] 0.917155
+$crand <br>
+[1] 0.917155 <br>
+
+
+| Model | Accuracy |
+|-------|----------|
+| SVM   | 0.8946   |
+| rpart | 0.9207   |
 
 
 # Final Plots and Summary
