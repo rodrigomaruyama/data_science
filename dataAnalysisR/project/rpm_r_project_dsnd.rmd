@@ -555,51 +555,64 @@ ggsave(file = 'pictures/pca.png', g)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Change the quality labels for something more convinient
-wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
-wdf$quality.2 <- as.factor(wdf$quality.2)
+#wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
+wdf$quality <- as.factor(wdf$quality)
+
 set.seed(123)
-samp <- sample(nrow(wdf), 0.6 * nrow(wdf))
+samp <- sample(nrow(wdf), 0.4 * nrow(wdf))
 
 # Creating train and test datasets
 train <- wdf[samp, ]
 test <- wdf[-samp, ]
 
 # Fitting the model
-model <- randomForest(quality.2 ~ . - quality, data = train)
+model <- randomForest(quality ~ . - quality, data = train)
 
 # Predicting the quality of wine with test dataset
 pred <- predict(model, newdata = test)
 
 # Comparing the predictions with the correct answer
-table(pred, test$quality.2)
-
-# Accuracy of our predictor
-(665 + 252 + 479) / nrow(test)
+table(pred, test$quality)
+classAgreement(table(pred, test$quality))
+plot(pred)
 ```
 
-| pred   | bad | good | normal |
-|--------|-----|------|--------|
-| bad    | 479 | 11   | 125    |
-| good   | 12  | 252  | 92     |
-| normal | 176 | 148  | 665    |
+pred    3    4    5    6    7    8    9
+   3    0    0    0    0    0    0    0
+   4    0   13    5    0    0    0    0
+   5    8   82  914    0    0    0    0
+   6    0    0    0 1289    0    0    0
+   7    0    0    0    0  527   67    2
+   8    0    0    0    0    2   29    1
+   9    0    0    0    0    0    0    0
+   
+$diag
+[1] 0.943178
+
+$kappa
+[1] 0.9143949
+
+$rand
+[1] 0.9703057
+
+$crand
+[1] 0.9336241
 
 
-### Accuracy = 71.2%
+
+### Accuracy = 94.31%
 
 # Random Forest Model after PCA
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
-# Creating train and test datasets
-wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
-wdf$quality.2 <- as.factor(wdf$quality.2)
 
 # New dataframe
 new_wdf.pca <- data.frame(wdf.pca$x)
-new_wdf.pca <- data.frame(new_wdf.pca[,1:8], quality = wdf$quality.2)
+new_wdf.pca <- data.frame(new_wdf.pca[,1:8], quality = wdf$quality)
 
 # Creating train and test datasets
 set.seed(123)
-samp <- sample(nrow(wdf), 0.6 * nrow(wdf))
+samp <- sample(nrow(wdf), 0.8 * nrow(wdf))
 train.pca <- new_wdf.pca[samp, ]
 test.pca <- new_wdf.pca[-samp, ]
 
@@ -610,19 +623,34 @@ model <- randomForest(quality ~ . - quality, data = train.pca)
 pred <- predict(model, newdata = test.pca)
 
 # Comparing the predictions with the correct answer
-table(pred, test$quality)
+table(pred, test.pca$quality)
+classAgreement(table(pred, test.pca$quality))
 
-# Accuracy of our predictor
-(456+238+698) / nrow(test.pca)
 ```
 
-| pred   | bad | good | normal |
-|--------|-----|------|--------|
-| bad    | 456 | 11   | 104    |
-| good   | 14  | 238  | 80     |
-| normal | 197 | 162  | 698    |
+pred   3   4   5   6   7   8   9
+   3   0   0   0   0   0   0   0
+   4   0   5   3   0   0   0   0
+   5   1  16 190  45   5   0   0
+   6   2  20 104 361  82  18   0
+   7   0   0   4  21  84   5   0
+   8   0   0   0   0   0  14   0
+   9   0   0   0   0   0   0   0
 
-### Accuracy = 71.0%
+$diag
+[1] 0.6673469
+
+$kappa
+[1] 0.4780199
+
+$rand
+[1] 0.6460612
+
+$crand
+[1] 0.2600683
+
+
+### Accuracy = 66.73%
 
 ## Result: Accuracy (PCA + Random Forest) < Accuracy (Random Forest)
 
@@ -715,7 +743,7 @@ saving your final work and knitting the final report!
 # General resources 
 > kernlab documentation: https://www.rdocumentation.org/packages/kernlab/versions/0.9-26/topics/ksvm <br>
 > Marktable generator: https://www.tablesgenerator.com/markdown_tables <br>
-> markdown table formater: http://markdowntable.com/ <br>
+  > markdown table formater: http://markdowntable.com/ <br>
 > Markdown basics: https://rmarkdown.rstudio.com/authoring_basics.html <br>
 > Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality <br>
 > Paper using this dataset with SVM predictor: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086 <br>
