@@ -199,7 +199,8 @@ for (var in feature_list) {
     geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.25)), 
                linetype='dashed', size=0.5) +    
     geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.75)), 
-               linetype='dashed', size=0.5)
+               linetype='dashed', size=0.5) +
+    ylab(NULL)
   
 }
 
