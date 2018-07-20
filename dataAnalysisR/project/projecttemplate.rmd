@@ -613,6 +613,20 @@ table(pred, test$quality)
 
 ## Result: Accuracy (PCA + Random Forest) < Accuracy (Random Forest)
 
+## Supported Vector Machines
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+set.seed(123)
+samp <- sample(nrow(wdf), 0.5 * nrow(wdf))
+# Creating train and test datasets
+train <- wdf[samp, ]
+test <- wdf[-samp, ]
+
+quality_train <- ksvm(quality~., data=train, kernel="rbfdot", kpar=list(sigma=0.05), C=5, cross=3)
+quality_pred <- predict(quality_train,test[,-58])
+table(quality_pred,test[,-58])
+```
 ------
 
 # Final Plots and Summary
@@ -661,8 +675,9 @@ future work that could be done with the dataset.
 saving your final work and knitting the final report!
 
 # General resources 
-> Marktable generator: https://www.tablesgenerator.com/markdown_tables
-> markdown table formater: http://markdowntable.com/
+> kernlab documentation: https://www.rdocumentation.org/packages/kernlab/versions/0.9-26/topics/ksvm <br>
+> Marktable generator: https://www.tablesgenerator.com/markdown_tables <br>
+> markdown table formater: http://markdowntable.com/ <br>
 > Markdown basics: https://rmarkdown.rstudio.com/authoring_basics.html <br>
 > Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality <br>
 > Paper using this dataset with SVM predictor: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086 <br>
