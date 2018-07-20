@@ -1,6 +1,7 @@
 ---
 output: html_document
 editor_options: 
+  chunk_output_type: console
 chunk_output_type: console
 ---
 TITLE by Rodrigo P Maruyama
@@ -62,16 +63,16 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 # The other parameters for "message" and "warning" should also be set to FALSE
 # for other code chunks once you have verified that each plot comes out as you
 # want it to. This will clean up the flow of your report.
-#install.packages("ggplot2", dependencies = TRUE) 
-#install.packages("knitr", dependencies = TRUE)
-#install.packages("dplyr", dependencies = TRUE)
-#install.packages('GGally', dependencies = TRUE)
-#install.packages('tidyverse', dependencies = TRUE)
-#install.packages('ggthemes', dependencies = TRUE)
-#install.packages('corrplot', dependencies = TRUE)
-#install.packages('ggbiplot, dependencies = TRUE)
-#install.packages('kernlab', dependencies = TRUE)
-#install.packages('caret', dependencies = TRUE)
+install.packages("ggplot2", dependencies = TRUE) 
+install.packages("knitr", dependencies = TRUE)
+install.packages("dplyr", dependencies = TRUE)
+install.packages('GGally', dependencies = TRUE)
+install.packages('tidyverse', dependencies = TRUE)
+install.packages('ggthemes', dependencies = TRUE)
+install.packages('corrplot', dependencies = TRUE)
+install.packages('ggbiplot', dependencies = TRUE)
+install.packages('e1071', dependencies = TRUE)
+install.packages('rpart', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -83,8 +84,8 @@ library(corrplot)
 library(grid)
 library(lattice)
 library(ggbiplot)
-library(kernlab)
-library(caret)
+library(e1071)
+library(rpart)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -630,28 +631,39 @@ table(pred, test$quality)
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
 set.seed(123)
-samp <- sample(nrow(wdf), 0.7 * nrow(wdf))
+samp <- sample(nrow(wdf), 0.5 * nrow(wdf))
 
 # Creating train datasets
 train <- wdf[samp, ]
-train_x <- train[,1:11]       # data
-train_y <- train[,'quality']  # label
+#train_x <- train[,1:11]       # data
+#train_y <- train[,'quality']  # label
 
 # Creating test datasets
 test <- wdf[-samp, ]
-test_x <- test[,1:11]   # data
-test_y <- test[,12]     # label
+#test_x <- test[,1:11]   # data
+#test_y <- test[,12]     # label
 
 # Transforming the variable to a factor
-train_y <- as.factor(train_y)
-test_y <- as.factor(test_y)
+train$quality <- as.factor(train$quality)
+test$quality <- as.factor(test$quality)
 
 #Kernlab -> ksvm
 #caret -> train
 
-svm_fit <- ksvm(train_data,train_label, kernel="rbfdot")
-quality_pred <- predict(svm_fit,test)
-table(quality_pred,test)
+obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
+summary(obj)
+plot(obj)
+
+#svm.model  <- svm(quality ~ ., data = train, cost = 100, gamma = 2, kernel = 'linear')
+svm.model  <- svm(quality ~ ., data = train, cost = 16, gamma = 1)
+svm.pred <- predict(svm.model,test[,-12])
+#table(svm.pred,test[,12])
+classAgreement(table(pred = svm.pred,true = test[,12]))
+
+rpart.model <- rpart(quality ~ ., data = train)
+rpart.pred <- predict(rpart.model, test[,-12], type = 'class')
+table(rpart.pred,test[,12])
+classAgreement(table(pred = rpart.pred,true = test[,12]))
 ```
 ------
 
