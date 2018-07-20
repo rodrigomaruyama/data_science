@@ -66,10 +66,12 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 #install.packages("knitr", dependencies = TRUE)
 #install.packages("dplyr", dependencies = TRUE)
 #install.packages('GGally', dependencies = TRUE)
-#install.packages('tidyverse')
-#install.packages('ggthemes')
-#install.packages('corrplot')
-#install.packages('ggbiplot)
+#install.packages('tidyverse', dependencies = TRUE)
+#install.packages('ggthemes', dependencies = TRUE)
+#install.packages('corrplot', dependencies = TRUE)
+#install.packages('ggbiplot, dependencies = TRUE)
+install.packages('kernlab', dependencies = TRUE)
+install.packages('caret', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -81,6 +83,8 @@ library(corrplot)
 library(grid)
 library(lattice)
 library(ggbiplot)
+library(kernlab)
+library(caret)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -618,14 +622,28 @@ table(pred, test$quality)
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
 set.seed(123)
-samp <- sample(nrow(wdf), 0.5 * nrow(wdf))
-# Creating train and test datasets
-train <- wdf[samp, ]
-test <- wdf[-samp, ]
+samp <- sample(nrow(wdf), 0.7 * nrow(wdf))
 
-quality_train <- ksvm(quality~., data=train, kernel="rbfdot", kpar=list(sigma=0.05), C=5, cross=3)
-quality_pred <- predict(quality_train,test[,-58])
-table(quality_pred,test[,-58])
+# Creating train datasets
+train <- wdf[samp, ]
+train_x <- train[,1:11]       # data
+train_y <- train[,'quality']  # label
+
+# Creating test datasets
+test <- wdf[-samp, ]
+test_x <- test[,1:11]   # data
+test_y <- test[,12]     # label
+
+# Transforming the variable to a factor
+train_y <- as.factor(train_y)
+test_y <- as.factor(test_y)
+
+#Kernlab -> ksvm
+#caret -> train
+
+svm_fit <- ksvm(train_data,train_label, kernel="rbfdot")
+quality_pred <- predict(svm_fit,test)
+table(quality_pred,test)
 ```
 ------
 
