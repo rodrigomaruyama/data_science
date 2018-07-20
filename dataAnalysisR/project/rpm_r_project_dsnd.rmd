@@ -408,6 +408,7 @@ ggsave(file = 'pictures/2_13_bivariate.png', grid3)
 # Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
 # https://ggplot2.tidyverse.org/reference/geom_boxplot.html
 
+# Positive correlation plots
 p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
   geom_point() +
   geom_smooth(method='lm',formula=y~x) +
@@ -423,6 +424,7 @@ p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
   geom_point() +
   geom_smooth(method='lm',formula=y~x)
 
+# Negative correlation plots
 p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
   geom_point() +
   geom_smooth(method='lm',formula=y~x) +
