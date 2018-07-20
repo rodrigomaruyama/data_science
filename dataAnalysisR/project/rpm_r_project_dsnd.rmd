@@ -70,8 +70,8 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 #install.packages('ggthemes', dependencies = TRUE)
 #install.packages('corrplot', dependencies = TRUE)
 #install.packages('ggbiplot, dependencies = TRUE)
-install.packages('kernlab', dependencies = TRUE)
-install.packages('caret', dependencies = TRUE)
+#install.packages('kernlab', dependencies = TRUE)
+#install.packages('caret', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -308,6 +308,8 @@ No. I didn't change the original data.
 
 # Bivariate Plots Section
 
+## GGPAIRS plot
+
 ```{r echo=TRUE, Bivariate_Plots}
 
 # GGpairs
@@ -326,6 +328,8 @@ ggsave(file = 'pictures/corrplot.png', corrplot.mixed(cor(wdf), tl.pos = "lt"))
 
 ```
 
+## CORRPLOT 
+
 ![corrplot](pictures/corrplot.png)
 
 Looking at the "corrplot" result it is easy to detect the most correlated variables. In the table below there is a list with a few pairs with the highest correlation.
@@ -342,6 +346,8 @@ Looking at the "corrplot" result it is easy to detect the most correlated variab
 | 8  | citric.acid x fixed.acidity                | 0.29        |
 | 9  | density x fixed.acidity                    | 0.27        |
 | 10 | density x chlorides                        | 0.26        |
+
+## Bivariate Boxplots
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Removing outliers for density and residual.sugar for better visualization
@@ -374,6 +380,8 @@ ggsave(file = 'pictures/2_1_bivariate.png', b2)
 ```
 
 ![2_bivariate](pictures/2_1_bivariate.png)
+
+## Bivariate Scatter plots with linear regression line
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 # Removing outliers for better visualization
@@ -419,7 +427,7 @@ ggsave(file = 'pictures/4_1_bivariate.png', b4, height=9, width=12, dpi=72)
 
 ![4_bivariate](pictures/4_1_bivariate.png)
 
-# Bivariate Analysis
+## Bivariate Analysis
 
 > **Tip**: As before, summarize what you found in your bivariate explorations
 here. Use the questions below to guide your discussion.
@@ -496,7 +504,7 @@ ggsave('pictures/smooth.png')
 
 ![smooth](pictures/smooth.png)
 
-# Multivariate Analysis
+## Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
@@ -617,7 +625,7 @@ table(pred, test$quality)
 
 ## Result: Accuracy (PCA + Random Forest) < Accuracy (Random Forest)
 
-## Supported Vector Machines
+# Supported Vector Machines
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
