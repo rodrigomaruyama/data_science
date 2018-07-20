@@ -322,7 +322,10 @@ ggsave(file = 'pictures/corrplot.png', corrplot.mixed(cor(wdf), tl.pos = "lt"))
 
 ![corrplot](pictures/corrplot.png)
 
-Looking at the "corrplot" result it is easy to detect the most correlated variables. In the table below there is a list with a few pairs with the highest correlation.
+Looking at the "ggpairs" and "corrplot" plots result it is easy to have a good idea
+about the correlations between the features. In the table below there is a list with a few pairs with the positive, negative and zero correlation. The positive correlation 
+have 4 rows but we will discharge the number 2 because those features have similar 
+properties.
 
 |    | Positive correlation                       | correlation |
 |----|--------------------------------------------|-------------|
@@ -352,36 +355,45 @@ Looking at the "corrplot" result it is easy to detect the most correlated variab
 # Positive correlation plots
 p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 25))
+  scale_y_continuous(limits = c(0, 25)) +
+  ggtitle('density X residual.sugar')
 
 p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') 
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('density X total.sulfur.dioxide')
 
 p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('quality X alcohol')
 
 # Negative correlation plots
 p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('density X alcohol')
 
 p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('total.sulfur.dioxide X alcohol')
 
 p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 30))
+  scale_y_continuous(limits = c(0, 30)) +
+  ggtitle('alcohol X residual.sugar')
 
 # Zero correlation
 p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 1))
+  scale_y_continuous(limits = c(0, 1)) +
+  ggtitle('quality X citric.acid')
 
 p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF')
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('sulphates X chlorides')
 
 p9 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 0.9))
+  scale_y_continuous(limits = c(0, 0.9)) +
+  ggtitle('density X volatile.acidity')
 
 grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Boxplots with Positive Correlation",gp=gpar(fontsize=15,font=3)))
 
@@ -398,6 +410,7 @@ ggsave(file = 'pictures/2_13_bivariate.png', grid3)
 ![2_11 bivariate](pictures/2_11_bivariate.png)
 
 ![2_12 bivariate](pictures/2_12_bivariate.png)
+
 ![2_13 bivariate](pictures/2_13_bivariate.png)
 
 ## Bivariate Scatter plots with linear regression line
