@@ -577,15 +577,16 @@ classAgreement(table(pred, test$quality))
 plot(pred)
 ```
 
-pred    3    4    5    6    7    8    9
-   3    0    0    0    0    0    0    0
-   4    0   13    5    0    0    0    0
-   5    8   82  914    0    0    0    0
-   6    0    0    0 1289    0    0    0
-   7    0    0    0    0  527   67    2
-   8    0    0    0    0    2   29    1
-   9    0    0    0    0    0    0    0
-   
+| pred | 3 | 4 | 5  | 6   | 7    | 8   | 9  |   |
+|------|---|---|----|-----|------|-----|----|---|
+|      | 3 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+|      | 4 | 0 | 13 | 5   | 0    | 0   | 0  | 0 |
+|      | 5 | 8 | 82 | 914 | 0    | 0   | 0  | 0 |
+|      | 6 | 0 | 0  | 0   | 1289 | 0   | 0  | 0 |
+|      | 7 | 0 | 0  | 0   | 0    | 527 | 67 | 2 |
+|      | 8 | 0 | 0  | 0   | 0    | 2   | 29 | 1 |
+|      | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+
 $diag
 [1] 0.943178
 
@@ -628,14 +629,15 @@ classAgreement(table(pred, test.pca$quality))
 
 ```
 
-pred   3   4   5   6   7   8   9
-   3   0   0   0   0   0   0   0
-   4   0   5   3   0   0   0   0
-   5   1  16 190  45   5   0   0
-   6   2  20 104 361  82  18   0
-   7   0   0   4  21  84   5   0
-   8   0   0   0   0   0  14   0
-   9   0   0   0   0   0   0   0
+| pred | 3 | 4 | 5  | 6   | 7   | 8  | 9  |   |
+|------|---|---|----|-----|-----|----|----|---|
+|      | 3 | 0 | 0  | 0   | 0   | 0  | 0  | 0 |
+|      | 4 | 0 | 5  | 3   | 0   | 0  | 0  | 0 |
+|      | 5 | 1 | 16 | 190 | 45  | 5  | 0  | 0 |
+|      | 6 | 2 | 20 | 104 | 361 | 82 | 18 | 0 |
+|      | 7 | 0 | 0  | 4   | 21  | 84 | 5  | 0 |
+|      | 8 | 0 | 0  | 0   | 0   | 0  | 14 | 0 |
+|      | 9 | 0 | 0  | 0   | 0   | 0  | 0  | 0 |
 
 $diag
 [1] 0.6673469
@@ -681,11 +683,39 @@ test$quality <- as.factor(test$quality)
 obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
 summary(obj)
 plot(obj)
+```
+
+![svm_param_tune](pictures/svm_tune_output.png)
+
+Parameter tuning of 'svm':
+
+- sampling method: 10-fold cross validation 
+
+- best parameters:
+ gamma cost
+   0.5    4
+
+- best performance: 0.1028839 
+
+- Detailed performance results:
+  gamma cost     error dispersion
+1   0.5    4 0.1028839 0.03145175
+2   1.0    4 0.1792305 0.04547684
+3   2.0    4 0.3446035 0.04002241
+4   0.5    8 0.1053346 0.03037331
+5   1.0    8 0.1792305 0.04547684
+6   2.0    8 0.3446035 0.04002241
+7   0.5   16 0.1045182 0.02972115
+8   1.0   16 0.1792305 0.04547684
+9   2.0   16 0.3446035 0.04002241
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
 #svm.model  <- svm(quality ~ ., data = train, cost = 100, gamma = 2, kernel = 'linear')
-svm.model  <- svm(quality ~ ., data = train, cost = 16, gamma = 1)
+svm.model  <- svm(quality ~ ., data = train, cost = 4, gamma = 0.5)
 svm.pred <- predict(svm.model,test[,-12])
-#table(svm.pred,test[,12])
+table(svm.pred,test[,12])
 classAgreement(table(pred = svm.pred,true = test[,12]))
 
 rpart.model <- rpart(quality ~ ., data = train)
@@ -694,6 +724,51 @@ table(rpart.pred,test[,12])
 classAgreement(table(pred = rpart.pred,true = test[,12]))
 ```
 ------
+
+| svm.pred |   | 3 | 4  | 5   | 6    | 7   | 8  | 9 |
+|----------|---|---|----|-----|------|-----|----|---|
+|          | 3 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+|          | 4 | 0 | 8  | 11  | 0    | 0   | 0  | 0 |
+|          | 5 | 5 | 69 | 664 | 3    | 2   | 0  | 0 |
+|          | 6 | 4 | 11 | 48  | 1106 | 28  | 11 | 0 |
+|          | 7 | 0 | 0  | 0   | 0    | 381 | 52 | 2 |
+|          | 8 | 0 | 0  | 0   | 0    | 12  | 32 | 0 |
+|          | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+
+$diag
+[1] 0.8946509
+
+$kappa
+[1] 0.8392621
+
+$rand
+[1] 0.9152265
+
+$crand
+[1] 0.8130064
+
+| rpart.pred | 3 | 4 | 5  | 6   | 7    | 8   | 9  |   |
+|------------|---|---|----|-----|------|-----|----|---|
+|            | 3 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+|            | 4 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+|            | 5 | 9 | 88 | 723 | 0    | 0   | 0  | 0 |
+|            | 6 | 0 | 0  | 0   | 1109 | 0   | 0  | 0 |
+|            | 7 | 0 | 0  | 0   | 0    | 423 | 95 | 2 |
+|            | 8 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+|            | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
+
+$diag
+[1] 0.920784
+
+$kappa
+[1] 0.879869
+
+$rand
+[1] 0.9625884
+
+$crand
+[1] 0.917155
+
 
 # Final Plots and Summary
 
