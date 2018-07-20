@@ -408,43 +408,68 @@ ggsave(file = 'pictures/2_13_bivariate.png', grid3)
 # Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
 # https://ggplot2.tidyverse.org/reference/geom_boxplot.html
 
-p1 <- ggplot(data = wdf, aes(x = pH, y = alcohol)) +
+p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_y_continuous(limits = c(0, 30))
+
+p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01))
+
+p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
   geom_point() +
   geom_smooth(method='lm',formula=y~x)
 
-p2 <- ggplot(data = wdf, aes(x = pH, y = residual.sugar)) +
+p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01))
+
+p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = alcohol)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) 
+
+p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
   geom_point() +
   geom_smooth(method='lm',formula=y~x) +
   scale_y_continuous(limits = c(0, 30))
 
-p3 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
+# Zero correlation
+p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) 
+
+p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
   geom_point() +
   geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0, 30))
+  scale_x_continuous(limits = c(0, 0.2))
 
-p4 <- ggplot(data = wdf, aes(x = pH, y = density)) +
+p9 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity)) +
   geom_point() +
   geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0.98, 1.01))
+  scale_y_continuous(limits = c(0, 0.9)) +
+  scale_x_continuous(limits = c(0.98, 1.01))
 
-p5 <- ggplot(data = wdf, aes(x = total.sulfur.dioxide, y = residual.sugar)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0, 30))
+grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Scatter plot with Positive Correlation",gp=gpar(fontsize=15,font=3)))
 
-p6 <- ggplot(data = wdf, aes(x = total.sulfur.dioxide, y = density)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0.98, 1.01))
+grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter plot with Negative Correlation",gp=gpar(fontsize=15,font=3)))
 
+grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Scatter plot with Zero Correlation",gp=gpar(fontsize=15,font=3)))
 
-b4 <- grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter plot",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/4_1_bivariate.png', b4, height=9, width=12, dpi=72)
+ggsave(file = 'pictures/4_11_bivariate.png', grid1)
+ggsave(file = 'pictures/4_12_bivariate.png', grid2)
+ggsave(file = 'pictures/4_13_bivariate.png', grid3)
   
 ```
 
-![4_bivariate](pictures/4_1_bivariate.png)
+![4_11 bivariate](pictures/4_11_bivariate.png)
+
+![4_12 bivariate](pictures/4_12_bivariate.png)
+
+![4_13 bivariate](pictures/4_13_bivariate.png)
 
 ## Bivariate Analysis
 
