@@ -1,8 +1,10 @@
 ---
-output: html_document
-editor_options: 
-  chunk_output_type: console
 chunk_output_type: console
+editor_options:
+  chunk_output_type: console
+output:
+  html_document: default
+  pdf_document: default
 ---
 TITLE by Rodrigo P Maruyama
 ========================================================
@@ -10,7 +12,7 @@ TITLE by Rodrigo P Maruyama
 
 1. Data Structure: 
   + Size
-  + Summary (mean, median, 1st and 3rd quantile, min and max values)
+  + Summary 
 
 2. Univariate Plots Section
   + Histogram plot for each variable
@@ -22,9 +24,9 @@ TITLE by Rodrigo P Maruyama
 3. Bivariate Plots Section
   + ggpairs plot
   + corrplot
-  + Highest correlation pairs Table
+  + Positive, Negative and Zero Correlation Table
   + Bivariate Boxplots
-  + Bivariate Scatter plots with linear regression line
+  + Bivariate Scatter plots with linear regression
   + Bivariate analysis
 
 4. Multivariate Plots Section
@@ -54,24 +56,17 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 # Load all of the packages that you end up using in your analysis in this code
 # chunk.
 
-# Notice that the parameter "echo" was set to FALSE for this code chunk. This
-# prevents the code from displaying in the knitted HTML output. You should set
-# echo=FALSE for all code chunks in your file, unless it makes sense for your
-# report to show the code that generated a particular plot.
-
-# The other parameters for "message" and "warning" should also be set to FALSE
-# for other code chunks once you have verified that each plot comes out as you
-# want it to. This will clean up the flow of your report.
-install.packages("ggplot2", dependencies = TRUE) 
-install.packages("knitr", dependencies = TRUE)
-install.packages("dplyr", dependencies = TRUE)
-install.packages('GGally', dependencies = TRUE)
-install.packages('tidyverse', dependencies = TRUE)
-install.packages('ggthemes', dependencies = TRUE)
-install.packages('corrplot', dependencies = TRUE)
-install.packages('ggbiplot', dependencies = TRUE)
-install.packages('e1071', dependencies = TRUE)
-install.packages('rpart', dependencies = TRUE)
+#install.packages("ggplot2", dependencies = TRUE) 
+#install.packages("knitr", dependencies = TRUE)
+#install.packages("dplyr", dependencies = TRUE)
+#install.packages('GGally', dependencies = TRUE)
+#install.packages('tidyverse', dependencies = TRUE)
+#install.packages('ggthemes', dependencies = TRUE)
+#install.packages('corrplot', dependencies = TRUE)
+#install.packages('ggbiplot', dependencies = TRUE)
+#install.packages('e1071', dependencies = TRUE)
+#install.packages('rpart', dependencies = TRUE)
+#install.packages('randomForest', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -85,6 +80,7 @@ library(lattice)
 library(ggbiplot)
 library(e1071)
 library(rpart)
+library(randomForest)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -92,7 +88,16 @@ library(rpart)
 wdf <- read.csv('data/wineQualityWhites.csv')
 wdf$X <- NULL
 ```
-Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946
+
+# Introduction
+
+We will study a white wine dataset with 4898 observations and 12 features. One 
+of then is the quality of the wine from 0 to 10, and the others are chemical 
+information. You can find a summary regarding the features in the table below.
+
+Dataset link: [here](https://archive.ics.uci.edu/ml/datasets/wine+quality)
+Article link: [here](https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086) and [here](https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086)
+
 
 # The Dataset Structure
 
@@ -106,14 +111,11 @@ dim(wdf)
 
 ## Summary of the Dataset:
 
-```{r echo=TRUE}
+```{r echo=FALSE}
 swdf <- summary(wdf)
 swdf <- data.frame(val = unclass(swdf$coefficients))
 swdf <- t.data.frame(swdf)
 write.csv(swdf, file = 'summary.csv')
-
-# The markdown table was generated from the csv file by  https://www.tablesgenerator.com/markdown_tables
-
 ```
 
 
@@ -132,11 +134,9 @@ write.csv(swdf, file = 'summary.csv')
 | alcohol              | [% vol.]                     | 8.00 | 9.50    | 10.40  | 10.51  | 11.40   | 14.20  |
 | quality              |                              | 3.00 | 5.00    | 6.00   | 5.88   | 6.00    | 9.00   |
 
-link for the units information: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086
-
 # Univariate Plots Section
 
-## Histogram fopr each feature
+## Histogram for each feature
 
 ```{r echo=FALSE, Univariate_Plots}
 
@@ -176,7 +176,8 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 ![univariate](pictures/1_univariate.png)
 
-Figure 1. Histogram for all features in the dataset. We can observe that most of the graphic have a normal distribution or a right skeeled distribution.
+Histogram for all features in the dataset. We can observe that most of the 
+graphic have a normal right skeeled distribution and 
 
 ## Density plot for each feature with stat lines
 
@@ -205,9 +206,6 @@ for (var in feature_list) {
 }
 
 ggsave(file = 'pictures/2_univariate.png', do.call(grid.arrange, p))
-
-# Solving the error with aes_string in the geom_vline function
-#https://www.biostars.org/p/234142/
 
 ```
 
@@ -245,11 +243,11 @@ table(wdf$quality.2)
 
 ```
 
-| Quality.2 |      |
-|-----------|------|
-| bad       | 1640 |
-| good      | 1060 |
-| normal    | 2198 |
+ Quality.2 |      
+-----------|------
+ bad       | 1640 
+ good      | 1060 
+ normal    | 2198 
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
@@ -264,8 +262,6 @@ pie(rating, labels = percent, col = rainbow(length(rating)), main = 'Wine qualit
 
 ```
 
-pie color reference link: http://www.r-tutor.com/elementary-statistics/qualitative-data/pie-chart <br>
-legend and percent reference link: https://www.tutorialspoint.com/r/r_pie_charts.htm <br>
 
 ![Pie chart](pictures/pie.png)
 
@@ -273,7 +269,7 @@ legend and percent reference link: https://www.tutorialspoint.com/r/r_pie_charts
 
 ### What is the structure of your dataset?
 
-See The Dataset Sctructure section.
+The White wine dataset have
 
 ### What is/are the main feature(s) of interest in your dataset?
 
@@ -281,7 +277,27 @@ The quality is the main feature of interest.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
-Quality, pH, residual.sugar, alcohol and density are the main features.
+https://winefolly.com/review/wine-characteristics/
+
+We know from specialist that the basics characiteristics for a good wine are:
+
+1. Sweetness
+2. Acidity
+3. Tannin
+4. Alcohol (average glass of wine contains around 11-13% alcohol)
+5. Body
+
+With those characteristics in mind and looking into are dataset I will focus 
+on the following variables:
+
+1. quality
+2. pH
+3. residual.sugar
+4. alcohol
+
+Once Tannin is correlated with phenolic compounds and we don't have this variable
+ in our dataset and Body is like a interpretation over the impression
+
 
 ### Did you create any new variables from existing variables in the dataset?
 
@@ -303,19 +319,16 @@ No. I didn't change the original data.
 
 ```{r echo=TRUE, Bivariate_Plots}
 
-# GGpairs
-# https://www.rdocumentation.org/packages/GGally/versions/1.4.0/topics/ggpairs
 ggpairs(wdf) + theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank())
 
 ```
 
-ggpairs with background: https://stackoverflow.com/questions/48104455/ggpairs-correlation-values-without-gridlines
 
 ![ggpairs](pictures/ggpairs_plot.png)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
-ggsave(file = 'pictures/corrplot.png', corrplot.mixed(cor(wdf), tl.pos = "lt"))
+c <- corrplot.mixed(cor(wdf), tl.pos = "lt")
 
 ```
 
@@ -346,7 +359,6 @@ properties.
 | 1  | quality x citric.acid                      | ~ 0         |
 | 2  | sulphates x chlorides                      | ~ 0         |
 | 3  | density x volatily.acidity                 | ~ 0         |
-
 
 ## Bivariate Boxplots
 
@@ -435,8 +447,7 @@ p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
   scale_x_continuous(limits = c(0.98, 1.01))
 
 p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x)
+  geom_point()
 
 # Negative correlation plots
 p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
@@ -455,8 +466,7 @@ p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
 
 # Zero correlation
 p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) 
+  geom_point()
 
 p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
   geom_point() +
@@ -522,47 +532,48 @@ create here are justified by the plots you explored in the previous section. If
 you plan on creating any mathematical models, this is the section where you
 will do that.
 
-```{r echo=FALSE, Multivariate_Plots}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
 
-p1 <- ggplot(data = wdf, aes(x = pH, y = alcohol, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  scale_colour_gradientn(colours=rainbow(10))
+# Multivariate plots with Linear Regression
 
-p2 <- ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
+p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
   geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
   scale_x_continuous(limits = c(0.98, 1.01)) +
   scale_y_continuous(limits = c(0, 30)) +
-  scale_colour_gradientn(colours=rainbow(10))
-
-p3 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  scale_y_continuous(limits = c(0, 30)) +
-  scale_colour_gradientn(colours=rainbow(10))
-
-p4 <- ggplot(data = wdf, aes(x = total.sulfur.dioxide, y = density, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  scale_y_continuous(limits = c(0.98, 1.01)) +
-  scale_colour_gradientn(colours=rainbow(10))
-
-grid.arrange(p1, p2, p3, p4, ncol = 4)
-
-```
-
-![1_multivariate](pictures/1_multivariate.png)
-
-```{r echo=FALSE, message=FALSE, warning=FALSE, description}
-ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  scale_x_continuous(limits = c(0.985, 1.005)) +
-  scale_y_continuous(limits = c(0, 25)) +
   scale_colour_gradientn(colours=rainbow(10)) +
-  geom_smooth(method='lm',formula=y~x) +
-  ggtitle('Linear regression: Residual.sugar x Density x Quality')
+  ggtitle('density X residual.sugar X quality')
 
-ggsave('pictures/smooth.png')
+p2 <- ggplot(data = wdf, aes(x = density, y = alcohol, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  ggtitle('density X alcohol X quality')
+
+p3 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0, 0.2)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  ggtitle('sulphates X chlorides X quality')
+
+p4 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_y_continuous(limits = c(0, 0.9)) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  ggtitle('density X volatile.acidity X quality')
+
+
+grid_multivariate <- grid.arrange(p1, p2, p3, p4, ncol = 2, top = textGrob("Multivariate Plots",gp=gpar(fontsize=15,font=3)))
+
+ggsave(file = 'pictures/2_multivariate.png', grid_multivariate)
+
 ```
 
-![smooth](pictures/smooth.png)
+![1_multivariate](pictures/2_multivariate.png)
 
 ## Multivariate Analysis
 
@@ -574,95 +585,161 @@ As you saw in the ggpairs graph, the correlation between density and residual.su
 
 No.
 
-### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+# Machine Learning Models
 
-# Pricipal component analysis - PCA
+## Creating Training and Test Datasets
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+# Creating train and test datasets
+wdf <- read.csv('data/wineQualityWhites.csv')
+wdf$X <- NULL
+wdf$quality <- as.factor(wdf$quality)
+
+# Removing Outliers
+wdf <- subset(wdf, wdf$density < quantile(wdf$density, 0.99) & wdf$residual.sugar < quantile(wdf$residual.sugar, 0.99))
+
+set.seed(123)
+samp <- sample(nrow(wdf), 0.4 * nrow(wdf))
+train <- wdf[samp, ]
+test <- wdf[-samp, ]
+```
+
+## Random Forest Model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+# Fitting the model
+model <- randomForest(quality ~ . - quality, data = train)
+pred <- predict(model, newdata = test)
+table(pred, test$quality)
+classAgreement(table(pred, test$quality))
+```
+
+pred   3   4   5   6   7   8   9
+   3   0   1   0   0   0   0   0
+   4   0  10  10   0   0   0   0
+   5   3  59 556 213   8   1   0
+   6   6  30 315 989 261  39   1
+   7   0   4   4 113 243  37   1
+   8   0   0   0   0   1  34   0
+   9   0   0   0   0   0   0   0
+
+$diag
+[1] 0.6233413
+
+$kappa
+[1] 0.4110515
+
+$rand
+[1] 0.6294723
+
+$crand
+[1] 0.2100274
+
+# Tuning the parameters SVM
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
+summary(obj)
+plot(obj)
+```
+
+![svm_param_tune](pictures/svm_tune_output.png)
+
+- best parameters: <br>
+ gamma cost <br>
+     1   16 <br>
+     
+# Supported Vector Machines
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+# SVM
+svm.model  <- svm(quality ~ ., data = train, cost = 16, gamma = 1)
+svm.pred <- predict(svm.model,test[,-12])
+table(svm.pred,test[,12])
+classAgreement(table(pred = svm.pred,true = test[,12]))
+```
+
+# Rpart
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+#rpart
+rpart.model <- rpart(quality ~ ., data = train)
+rpart.pred <- predict(rpart.model, test[,-12], type = 'class')
+table(rpart.pred,test[,12])
+classAgreement(table(pred = rpart.pred,true = test[,12]))
+```
+
+
+svm.pred   3   4   5   6   7   8   9
+       3   0   0   0   0   0   0   0
+       4   0   6  10   4   2   0   0
+       5   3  36 442 175  31   3   0
+       6   5  44 247 791 176  25   1
+       7   1   2  23 131 205  34   1
+       8   0   0   1   8   9  33   0
+       9   0   0   0   0   0   0   0
+
+$diag:  0.6031033
+$kappa: 0.3887747
+$rand:  0.6288438
+$crand: 0.1912697
+
+
+rpart.pred   3   4   5   6   7   8   9
+         3   0   0   0   0   0   0   0
+         4   0   0   0   0   0   0   0
+         5   1  46 387 222  26   2   0
+         6   8  40 333 840 340  75   2
+         7   0   2   3  47  57  18   0
+         8   0   0   0   0   0   0   0
+         9   0   0   0   0   0   0   0
+
+$diag:  0.5242956
+$kappa: 0.2146333
+$rand:  0.5293917
+$crand: 0.07682751
+
+## Pricipal component analysis - PCA
+
+To better understand how the features are correlated I ran a PCA algorithm and
+I did the plot for the PCA Components and a graphic with Variance x Number of 
+Component to decide how many Components I will use in the following models.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
 # PCA
-
-wdf.quality <- factor(wdf[,12])
 wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
 
+# Variance plot
 plot(wdf.pca, type = "l")
 abline(h=0.6, v=8, col="blue")
-#ggsave(file = 'pictures/variance_pca.png', p)
 
-g <- ggbiplot(wdf.pca, obs.scale = 1, var.scale = 1, groups = wdf.quality, ellipse = TRUE, circle = TRUE, alpha = 0.1) + scale_color_discrete(name = '') + theme(legend.direction = 'vertical', legend.position = 'right')
-g <- g + ggtitle('Principal component analysis - PCA')
-print(g)
+# PCA components plots
+g <- ggbiplot(wdf.pca, obs.scale = 1, var.scale = 1, ellipse = TRUE, circle = TRUE, alpha = 0.1) + scale_color_discrete(name = '') + theme(legend.direction = 'vertical', legend.position = 'right') + ggtitle('Principal component analysis - PCA')
 
 ggsave(file = 'pictures/pca.png', g)
 
 ```
 
-## Importance of components:
-
-|                        | PC1    | PC2    | PC3    | PC4     | PC5     | PC6     | PC7     | PC8     | PC9     | PC10    | PC11    |
-|------------------------|--------|--------|--------|---------|---------|---------|---------|---------|---------|---------|---------|
-| Standard deviation     | 1.7951 | 1.2551 | 1.1053 | 1.00922 | 0.98658 | 0.96889 | 0.85241 | 0.77418 | 0.64354 | 0.53804 | 0.14370 |
-| Proportion of Variance | 0.2929 | 0.1432 | 0.1111 | 0.09259 | 0.08848 | 0.08534 | 0.06605 | 0.05449 | 0.03765 | 0.02632 | 0.00188 |
-| Cumulative Proportion  | 0.2929 | 0.4361 | 0.5472 | 0.63979 | 0.72827 | 0.81361 | 0.87967 | 0.93416 | 0.97181 | 0.99812 | 1.00000 |
 
 
 ![PCA](pictures/variance_pca.png)
 
+Looking at this graphic it is easy to indentify that we can run the models with
+8 components.
+
 ![PCA](pictures/pca.png)
 
-# Random Forest Model
+In this graphic we can confirm some teories about the correlation between the 
+variables. For example we expect negative correlation with alcohol and residual.sugar
+once the alcohol needs sugar to be produced. pH and citric.acid and fixed.acidity
+also need to have negative correlation once the lowest pH means very acid solution.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, description}
-# Change the quality labels for something more convinient
-#wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal', 'good'))
-wdf$quality <- as.factor(wdf$quality)
-
-set.seed(123)
-samp <- sample(nrow(wdf), 0.4 * nrow(wdf))
-
-# Creating train and test datasets
-train <- wdf[samp, ]
-test <- wdf[-samp, ]
-
-# Fitting the model
-model <- randomForest(quality ~ . - quality, data = train)
-
-# Predicting the quality of wine with test dataset
-pred <- predict(model, newdata = test)
-
-# Comparing the predictions with the correct answer
-table(pred, test$quality)
-classAgreement(table(pred, test$quality))
-plot(pred)
-```
-
-| pred | 3 | 4 | 5  | 6   | 7    | 8   | 9  |   |
-|------|---|---|----|-----|------|-----|----|---|
-|      | 3 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-|      | 4 | 0 | 12 | 10  | 0    | 0   | 0  | 0 |
-|      | 5 | 9 | 92 | 875 | 0    | 0   | 0  | 0 |
-|      | 6 | 0 | 0  | 0   | 1315 | 0   | 0  | 0 |
-|      | 7 | 0 | 0  | 0   | 0    | 512 | 77 | 2 |
-|      | 8 | 0 | 0  | 0   | 0    | 1   | 34 | 0 |
-|      | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-
-$diag
-[1] 0.9350119
-
-$kappa
-[1] 0.9021252
-
-$rand
-[1] 0.9668913
-
-$crand
-[1] 0.9260062
-
-
-
-### Accuracy = 93.50%
-
-# Random Forest Model after PCA
+# New PCA Datasets  
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
@@ -675,164 +752,63 @@ set.seed(123)
 samp <- sample(nrow(wdf), 0.8 * nrow(wdf))
 train.pca <- new_wdf.pca[samp, ]
 test.pca <- new_wdf.pca[-samp, ]
+```
 
-# Fitting the model
+# Random Forest Model after PCA
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, description}
+
+# Fitting the model, Predict and Accuracy
 model <- randomForest(quality ~ . - quality, data = train.pca)
-
-# Predicting the quality of wine with test dataset
 pred <- predict(model, newdata = test.pca)
-
-# Comparing the predictions with the correct answer
 table(pred, test.pca$quality)
 classAgreement(table(pred, test.pca$quality))
 
 ```
 
-| pred | 3 | 4 | 5  | 6   | 7   | 8  | 9  |   |
-|------|---|---|----|-----|-----|----|----|---|
-|      | 3 | 0 | 0  | 0   | 0   | 0  | 0  | 0 |
-|      | 4 | 0 | 5  | 3   | 0   | 0  | 0  | 0 |
-|      | 5 | 1 | 16 | 190 | 45  | 5  | 0  | 0 |
-|      | 6 | 2 | 20 | 104 | 361 | 82 | 18 | 0 |
-|      | 7 | 0 | 0  | 4   | 21  | 84 | 5  | 0 |
-|      | 8 | 0 | 0  | 0   | 0   | 0  | 14 | 0 |
-|      | 9 | 0 | 0  | 0   | 0   | 0  | 0  | 0 |
+pred   3   4   5   6   7   8   9
+   3   0   0   0   0   0   0   0
+   4   0   5   3   0   0   0   0
+   5   1  16 190  45   5   0   0
+   6   2  20 104 361  82  18   0
+   7   0   0   4  21  84   5   0
+   8   0   0   0   0   0  14   0
+   9   0   0   0   0   0   0   0
 
-$diag
-[1] 0.6673469
-
-$kappa
-[1] 0.4780199
-
-$rand
-[1] 0.6460612
-
-$crand
-[1] 0.2600683
-
-
-### Accuracy = 66.73%
-
-## Result: Accuracy (PCA + Random Forest) < Accuracy (Random Forest)
+$diag:  0.6673469
+$kappa: 0.4780199
+$rand:  0.6460612
+$crand: 0.2600683
 
 # Supported Vector Machines
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
-set.seed(123)
-samp <- sample(nrow(wdf), 0.5 * nrow(wdf))
-
-# Creating train datasets
-train <- wdf[samp, ]
-#train_x <- train[,1:11]       # data
-#train_y <- train[,'quality']  # label
-
-# Creating test datasets
-test <- wdf[-samp, ]
-#test_x <- test[,1:11]   # data
-#test_y <- test[,12]     # label
-
-# Transforming the variable to a factor
-train$quality <- as.factor(train$quality)
-test$quality <- as.factor(test$quality)
-
-#Kernlab -> ksvm
-#caret -> train
-
-obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
-summary(obj)
-plot(obj)
+# SVM
+svm.model  <- svm(quality ~ ., data = train.pca, cost = 10, gamma = 0.5)
+svm.pred <- predict(svm.model,test.pca[,-12])
+table(svm.pred,test.pca[,"quality"])
+classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
 ```
 
-![svm_param_tune](pictures/svm_tune_output.png)
-
-Parameter tuning of 'svm': <br>
-
-- sampling method: 10-fold cross validation  <br>
-
-- best parameters: <br>
- gamma cost <br>
-   0.5    4 <br>
-
-- best performance: 0.1028839 
-
-- Detailed performance results: <br>
-  gamma cost     error dispersion <br>
-1   0.5    4 0.1028839 0.03145175 <br>
-2   1.0    4 0.1792305 0.04547684 <br>
-3   2.0    4 0.3446035 0.04002241 <br>
-4   0.5    8 0.1053346 0.03037331 <br>
-5   1.0    8 0.1792305 0.04547684 <br>
-6   2.0    8 0.3446035 0.04002241 <br>
-7   0.5   16 0.1045182 0.02972115 <br>
-8   1.0   16 0.1792305 0.04547684 <br>
-9   2.0   16 0.3446035 0.04002241 <br>
-
+# Rpart
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
-
-#svm.model  <- svm(quality ~ ., data = train, cost = 100, gamma = 2, kernel = 'linear')
-svm.model  <- svm(quality ~ ., data = train, cost = 4, gamma = 0.5)
-svm.pred <- predict(svm.model,test[,-12])
-table(svm.pred,test[,12])
-classAgreement(table(pred = svm.pred,true = test[,12]))
-
-rpart.model <- rpart(quality ~ ., data = train)
-rpart.pred <- predict(rpart.model, test[,-12], type = 'class')
-table(rpart.pred,test[,12])
-classAgreement(table(pred = rpart.pred,true = test[,12]))
+#rpart
+rpart.model <- rpart(quality ~ ., data = train.pca)
+rpart.pred <- predict(rpart.model, test.pca[,-12], type = 'class')
+table(rpart.pred,test.pca[,"quality"])
+classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
 ```
-------
-
-| svm.pred |   | 3 | 4  | 5   | 6    | 7   | 8  | 9 |
-|----------|---|---|----|-----|------|-----|----|---|
-|          | 3 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-|          | 4 | 0 | 8  | 11  | 0    | 0   | 0  | 0 |
-|          | 5 | 5 | 69 | 664 | 3    | 2   | 0  | 0 |
-|          | 6 | 4 | 11 | 48  | 1106 | 28  | 11 | 0 |
-|          | 7 | 0 | 0  | 0   | 0    | 381 | 52 | 2 |
-|          | 8 | 0 | 0  | 0   | 0    | 12  | 32 | 0 |
-|          | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-
-$diag <br>
-[1] 0.8946509 <br>
-
-$kappa <br>
-[1] 0.8392621 <br>
-
-$rand <br>
-[1] 0.9152265 <br>
-
-$crand <br>
-[1] 0.8130064 <br>
-
-| rpart.pred | 3 | 4 | 5  | 6   | 7    | 8   | 9  |   |
-|------------|---|---|----|-----|------|-----|----|---|
-|            | 3 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-|            | 4 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-|            | 5 | 9 | 88 | 723 | 0    | 0   | 0  | 0 |
-|            | 6 | 0 | 0  | 0   | 1109 | 0   | 0  | 0 |
-|            | 7 | 0 | 0  | 0   | 0    | 423 | 95 | 2 |
-|            | 8 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-|            | 9 | 0 | 0  | 0   | 0    | 0   | 0  | 0 |
-
-$diag <br>
-[1] 0.920784 <br>
-
-$kappa <br>
-[1] 0.879869 <br>
-
-$rand <br>
-[1] 0.9625884 <br>
-
-$crand <br>
-[1] 0.917155 <br>
 
 
-| Model | Accuracy |
-|-------|----------|
-| SVM   | 0.8946   |
-| rpart | 0.9207   |
+## Results from the Models 
+
+| Model               | Accuracy | Accuracy with PCA |
+|---------------------|----------|-------------------|
+| Random Forest       |  0.6233  |      0.6673       |
+| SVM                 |  0.6031  |      0.6285       |
+| rpart               |  0.5242  |      0.5040       |
 
 
 # Final Plots and Summary
@@ -872,29 +848,42 @@ make sure you justify why you chose each plot by describing what it shows.
 
 # Reflection
 
-> **Tip**: Here's the final step! Reflect on the exploration you performed and
-the insights you found. What were some of the struggles that you went through?
-What went well? What was surprising? Make sure you include an insight into
-future work that could be done with the dataset.
-
-> **Tip**: Don't forget to remove this, and the other **Tip** sections before
-saving your final work and knitting the final report!
+The models I made didn't perform as well as I expected. The accuracy with PCA 
+was a good choice to try to eliminate useless information in the dataset and we 
+could see in the results some accuracy improvement. Removing the outliers we got 
+a better result with and without PCA of around 3%.
 
 # General resources 
-> kernlab documentation: https://www.rdocumentation.org/packages/kernlab/versions/0.9-26/topics/ksvm <br>
-> Marktable generator: https://www.tablesgenerator.com/markdown_tables <br>
-  > markdown table formater: http://markdowntable.com/ <br>
-> Markdown basics: https://rmarkdown.rstudio.com/authoring_basics.html <br>
-> Dataset link: https://archive.ics.uci.edu/ml/datasets/wine+quality <br>
-> Paper using this dataset with SVM predictor: https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086 <br>
-> Style guide: http://adv-r.had.co.nz/Style.html <br>
-> Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27 <br>
-> Li Wang Exploration: https://rstudio-pubs-static.s3.amazonaws.com/233884_fb6cc2130fff4a06b4c1fcaafed66a6b.html <br>
-> Colors in ggplot: http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/ <br>
-> More COlors in ggplot: http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually <br>
-> Function to plot several graphics: https://rpubs.com/watanabe8760/white-wine <br>
-> https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html <br>
-> https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/ <br>
-> Random Forest Predictor: https://datascienceplus.com/predicting-wine-quality-using-random-forests/ <br>
-> How to implement PCA before the Random Forest: https://www.analyticsvidhya.com/blog/2016/03/practical-guide-principal-component-analysis-python/ <br> 
-> Insert a line in plot: http://www.sthda.com/english/wiki/abline-r-function-an-easy-way-to-add-straight-lines-to-a-plot-using-r-software <br>
+
+## Handle data
+Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946 <br>
+
+
+## Style and Markdown tools and cheatsheet
+
+Marktable generator: https://www.tablesgenerator.com/markdown_tables <br>
+markdown table formater: http://markdowntable.com/ <br>
+Markdown basics: https://rmarkdown.rstudio.com/authoring_basics.html <br>
+Style guide: http://adv-r.had.co.nz/Style.html <br>
+Histogram colors: https://www.r-bloggers.com/how-to-make-a-histogram-with-ggplot2/ <br>
+
+## Wine related articles
+Sulfite regulation USA: https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&sid=33fc0c0194b58b6fe95208945b5c637a&rgn=div5&view=text&node=27:1.0.1.1.2&idno=27 <br>
+Wine Characteristics: https://winefolly.com/review/wine-characteristics/ <br>
+
+## GGplot, GGPAIRS, Corrplot and other Visualizations tips and tricks 
+Colors in ggplot: http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/ <br>
+More COlors in ggplot: http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually <br>
+Insert a line in plot: http://www.sthda.com/english/wiki/abline-r-function-an-easy-way-to-add-straight-lines-to-a-plot-using-r-software <br>
+Corrplot: https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html <br>
+aes_string in the geom_vline: https://www.biostars.org/p/234142/ <br>
+Pie color reference link: http://www.r-tutor.com/elementary-statistics/qualitative-data/pie-chart <br>
+Legend and percent reference link: https://www.tutorialspoint.com/r/r_pie_charts.htm <br>
+GGpairs: https://www.rdocumentation.org/packages/GGally/versions/1.4.0/topics/ggpairs <br>
+Ggpairs with background: https://stackoverflow.com/questions/48104455/ggpairs-correlation-values-without-gridlines <br>
+ggbipplot documentation: https://www.rdocumentation.org/packages/ggbiplot/versions/0.55 <br>
+
+## PCA and Machine Learning Models
+PCA: https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/ <br>
+Random Forest Predictor: https://datascienceplus.com/predicting-wine-quality-using-random-forests/ <br>
+Random Forest + PCA: https://www.analyticsvidhya.com/blog/2016/03/practical-guide-principal-component-analysis-python/ <br> 
