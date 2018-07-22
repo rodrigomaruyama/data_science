@@ -56,17 +56,17 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 # Load all of the packages that you end up using in your analysis in this code
 # chunk.
 
-#install.packages("ggplot2", dependencies = TRUE) 
-#install.packages("knitr", dependencies = TRUE)
-#install.packages("dplyr", dependencies = TRUE)
-#install.packages('GGally', dependencies = TRUE)
-#install.packages('tidyverse', dependencies = TRUE)
-#install.packages('ggthemes', dependencies = TRUE)
-#install.packages('corrplot', dependencies = TRUE)
-#install.packages('ggbiplot', dependencies = TRUE)
-#install.packages('e1071', dependencies = TRUE)
-#install.packages('rpart', dependencies = TRUE)
-#install.packages('randomForest', dependencies = TRUE)
+# install.packages("ggplot2", dependencies = TRUE) 
+# install.packages("knitr", dependencies = TRUE)
+# install.packages("dplyr", dependencies = TRUE)
+# install.packages('GGally', dependencies = TRUE)
+# install.packages('tidyverse', dependencies = TRUE)
+# install.packages('ggthemes', dependencies = TRUE)
+# install.packages('corrplot', dependencies = TRUE)
+# install.packages('ggbiplot', dependencies = TRUE)
+# install.packages('e1071', dependencies = TRUE)
+# install.packages('rpart', dependencies = TRUE)
+# install.packages('randomForest', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -320,7 +320,7 @@ ggpairs(wdf) + theme(panel.grid.minor = element_blank(), panel.grid.major = elem
 ```
 
 
-![ggpairs](pictures/ggpairs_plot_)
+![ggpairs](pictures/ggpairs_plot_outliers.png)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, description}
 
@@ -344,17 +344,17 @@ properties.
 | 3  | density x total.sulfur.dioxide             | 0.53        | 0.55                 |
 | 4  | quality x alcohol                          | 0.44        | 0.44                 |
 
-    | Negative correlation                       | correlation | correlation outliers  |
-----|--------------------------------------------|-------------|-----------------------|
- 1  | density x alcohol                          | -0.78       | -0.81                 |
- 2  | total.sulfur.dioxide x alcohol             | -0.45       | -0.46                 |
- 3  | alcohol x residual.sugar                   | -0.45       | -0.48                 |
+|    | Negative correlation                       | correlation | correlation outliers  |
+|----|--------------------------------------------|-------------|-----------------------|
+| 1  | density x alcohol                          | -0.78       | -0.81                 |
+| 2  | total.sulfur.dioxide x alcohol             | -0.45       | -0.46                 |
+| 3  | alcohol x residual.sugar                   | -0.45       | -0.48                 |
 
-    | Zero correlation                           | correlation | correlation outliers  |
-----|--------------------------------------------|-------------|-----------------------|
- 1  | quality x citric.acid                      | ~ 0         | ~ 0                   |
- 2  | sulphates x chlorides                      | ~ 0         |  0.06                 |
- 3  | density x volatily.acidity                 | ~ 0         | -0.03                 |
+|    | Zero correlation                           | correlation | correlation outliers  |
+|----|--------------------------------------------|-------------|-----------------------|
+| 1  | quality x citric.acid                      | ~ 0         | ~ 0                   |
+| 2  | sulphates x chlorides                      | ~ 0         |  0.06                 |
+| 3  | density x volatily.acidity                 | ~ 0         | -0.03                 |
 
 ## Bivariate Boxplots
 
