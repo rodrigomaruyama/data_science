@@ -46,28 +46,16 @@ TITLE by Rodrigo P Maruyama
 
 9. Resources
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'set working directory'}
+
+```r
 setwd("C:/Users/maru/Documents/finding_donors/dataAnalysisR/project/")
 ```
 
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'install packages'}
 
- install.packages("ggplot2", dependencies = TRUE)
- install.packages("knitr", dependencies = TRUE)
- install.packages("dplyr", dependencies = TRUE)
- install.packages('GGally', dependencies = TRUE)
- install.packages('tidyverse', dependencies = TRUE)
- install.packages('ggthemes', dependencies = TRUE)
- install.packages('corrplot', dependencies = TRUE)
- install.packages('ggbiplot2', dependencies = TRUE)
- install.packages('e1071', dependencies = TRUE)
- install.packages('rpart', dependencies = TRUE)
- install.packages('randomForest', dependencies = TRUE)
- install.packages('ggfortify', dependencies = TRUE)
-```
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'lilbrary'}
+
+```r
 library(ggfortify)
 library(ggplot2)
 library(knitr)
@@ -84,7 +72,8 @@ library(rpart)
 library(randomForest)
 ```
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'load dataset'}
+
+```r
 # Load the Data
 wdf <- read.csv('data/wineQualityWhites.csv')
 wdf$X <- NULL
@@ -103,14 +92,20 @@ Article link: [here](https://www.semanticscholar.org/paper/Modeling-wine-prefere
 
 ## Dataset size
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'dataset size'}
+
+```r
 dim(wdf)
+```
+
+```
+## [1] 4898   12
 ```
 
 
 ## Summary of the Dataset:
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'summary dataset'}
+
+```r
 swdf <- summary(wdf)
 swdf <- t.data.frame(swdf)
 write.csv(swdf, file = 'summary.csv')
@@ -136,46 +131,15 @@ write.csv(swdf, file = 'summary.csv')
 
 ## Histogram for each feature
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, histogram}
-
-p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p2 <- ggplot(aes(x=volatile.acidity), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p3 <- ggplot(aes(x=citric.acid), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p4 <- ggplot(aes(x=residual.sugar), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p5 <- ggplot(aes(x=chlorides), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p8 <- ggplot(aes(x=density), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p9 <- ggplot(aes(x=pH), data = wdf) +
-  geom_histogram(fill='#99CCFF', binwidth = 0.1)
-p10 <- ggplot(aes(x=sulphates), data = wdf) +
-  geom_histogram(fill='#99CCFF')
-p11 <- ggplot(aes(x=alcohol), data = wdf) +
-  geom_histogram(fill='#99CCFF', binwidth = 0.5)
-p12 <- ggplot(aes(x=quality), data = wdf) +
-  geom_histogram(fill='#99CCFF', binwidth = 1)
-
-u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/1_univariate.png', u1)
-
-```
+![plot of chunk histogram](figure/histogram-1.png)
 
 ![Histogram](pictures/1_univariate.png)
 
 Histogram for all features in the dataset. We can observe that most of the
 graphic have a normal distribution with a tendency for a positive skeew. The next section we will remove the outliers based on our observation on the plots below and re-plot the Histograms again.
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'remove outliers'}
 
+```r
 wdf <- subset(wdf, wdf$fixed.acidity < 11)
 wdf <- subset(wdf, wdf$volatile.acidity < 0.75)
 wdf <- subset(wdf, wdf$citric.acid < 1)
@@ -184,7 +148,6 @@ wdf <- subset(wdf, wdf$chlorides < 0.10)
 wdf <- subset(wdf, wdf$free.sulfur.dioxide < 125)
 wdf <- subset(wdf, wdf$total.sulfur.dioxide < 350)
 wdf <- subset(wdf, wdf$density < 1.005)
-
 ```
 
 ![Histogram without outliers](pictures/histogram_univariate_outliers.png)
@@ -193,33 +156,7 @@ Histograms re-ploted without outliers.
 
 ## Density plot for each feature with stat lines
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'loop for density plots'}
 
-# Using a for loop for better programming practice and to save lines of code :)
-
-feature.list <- names(wdf)
-p <- list()
-a <- 0
-for (var in feature.list) {
-  a <- a + 1
-
-  p[[a]] <- ggplot(data = wdf, aes_string(x=var)) +
-    geom_density(fill='#99CCFF') +
-    geom_vline(aes_string(xintercept=mean(wdf[, var])),
-               color='blue', size=0.5) +
-    geom_vline(aes_string(xintercept=median(wdf[, var])),
-               color='red', size=0.5) +
-    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.25)),
-               linetype='dashed', size=0.5) +
-    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.75)),
-               linetype='dashed', size=0.5) +
-    ylab(NULL)
-
-}
-
-ggsave(file = 'pictures/density_univariate_outliers.png', do.call(grid.arrange, p))
-
-```
 
 ![univariate density plots without outliers](pictures/density_univariate_outliers.png)
 
@@ -227,8 +164,8 @@ In this plot and from the histograms above we can see the mean, median, 1st quan
 
 ## Quality.2 feature creation
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, quality.2}
 
+```r
 # | classification | Criterion       |
 # |----------------|-----------------|
 # | Bad            | 3 > quality < 6 |
@@ -240,6 +177,15 @@ wdf$quality.2 <- ifelse(wdf$quality < 6, 'bad', ifelse(wdf$quality == 6, 'normal
 wdf$quality.2 <- as.factor(wdf$quality.2)
 
 table(wdf$quality.2)
+```
+
+```
+## 
+##    bad   good normal 
+##   1565   1055   2139
+```
+
+```r
 wdf$quality.2 <- NULL
 ```
 
@@ -250,8 +196,8 @@ wdf$quality.2 <- NULL
  normal    |     2198     |           2139
 
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'pie chart'}
 
+```r
 # Pie plot creation with percent legend
 
 rating = as.numeric(c(1565, 2139, 1055))
@@ -259,8 +205,9 @@ percent <- round(100*rating/sum(rating), 1)
 colors = c("red", "orange", "blue")
 lable <- c('Bad', 'Normal', 'Good')
 pie(rating, labels = lable, main = 'Wine quality Pie chart distribution', col = colors)
-
 ```
+
+![plot of chunk pie chart](figure/pie chart-1.png)
 
 ![Pie chart](pictures/pie_outlier.png)
 
@@ -310,22 +257,13 @@ No. I didn't change the original data.
 
 ## GGPAIRS plot
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, ggpairs}
-
-ggpairs(wdf, title = 'GGPAIRS') + 
-  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(), axis.line=element_blank(), axis.text=element_blank())
-```
+![plot of chunk ggpairs](figure/ggpairs-1.png)
 
 ![Ggpairs](pictures/ggpairs_plot_outliers.png)
 
 ## CORRPLOT
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, corrplot}
-
-cor.wdf <- cor(wdf)
-c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
-
-```
+![plot of chunk corrplot](figure/corrplot-1.png)
 
 ![Corrplot](pictures/corrplot_outliers.png)
 
@@ -355,63 +293,7 @@ properties.
 
 ## Bivariate Boxplots
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'bivariate boxplots'}
-# Removing outliers for density and residual.sugar for better visualization
-
-# Positive correlation plots
-p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 25)) +
-  ggtitle('density X residual.sugar')
-
-p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('density X total.sulfur.dioxide')
-
-p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('quality X alcohol')
-
-# Negative correlation plots
-p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('density X alcohol')
-
-p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('total.sulfur.dioxide X alcohol')
-
-p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 30)) +
-  ggtitle('alcohol X residual.sugar')
-
-# Zero correlation
-p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 1)) +
-  ggtitle('quality X citric.acid')
-
-p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('sulphates X chlorides')
-
-p9 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 0.9)) +
-  ggtitle('density X volatile.acidity')
-
-grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Boxplots with Positive Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Boxplots with Negative Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Boxplots with Zero Correlation",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/1_boxplot_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/2_boxplot_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
-
-```
+![plot of chunk bivariate boxplots](figure/bivariate boxplots-1.png)![plot of chunk bivariate boxplots](figure/bivariate boxplots-2.png)![plot of chunk bivariate boxplots](figure/bivariate boxplots-3.png)
 
 ![Bivariate Boxplots](pictures/1_boxplot_bivariate_outliers.png)
 
@@ -422,68 +304,7 @@ ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
 
 ## Bivariate Scatter plots with linear regression line
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'bivariate scatter plots'}
-# Removing outliers for better visualization
-
-# Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
-# https://ggplot2.tidyverse.org/reference/geom_boxplot.html
-
-# Positive correlation plots
-p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01)) +
-  scale_y_continuous(limits = c(0, 30))
-
-p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01))
-
-p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
-  geom_point()
-
-# Negative correlation plots
-p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01))
-
-p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = alcohol)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x)
-
-p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0, 30))
-
-# Zero correlation
-p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
-  geom_point()
-
-p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0, 0.2))
-
-p9 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0, 0.9)) +
-  scale_x_continuous(limits = c(0.98, 1.01))
-
-grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Scatter plot with Positive Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter plot with Negative Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Scatter plot with Zero Correlation",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/1_scatterplot_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/2_scatterplot_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/3_scatterplot_bivariate_outliers.png', grid3)
-
-```
+![plot of chunk bivariate scatter plots](figure/bivariate scatter plots-1.png)![plot of chunk bivariate scatter plots](figure/bivariate scatter plots-2.png)![plot of chunk bivariate scatter plots](figure/bivariate scatter plots-3.png)
 
 ![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate_outliers.png)
 
@@ -534,46 +355,7 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 
 # Multivariate Plots Section
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'multivariate plots'}
-
-# Multivariate plots with Linear Regression
-
-p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01)) +
-  scale_y_continuous(limits = c(0, 30)) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X residual.sugar X quality')
-
-p2 <- ggplot(data = wdf, aes(x = density, y = alcohol, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01)) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X alcohol X quality')
-
-p3 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0, 0.2)) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('sulphates X chlorides X quality')
-
-p4 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0, 0.9)) +
-  scale_x_continuous(limits = c(0.98, 1.01)) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X volatile.acidity X quality')
-
-
-grid_multivariate <- grid.arrange(p1, p2, p3, p4, ncol = 2, top = textGrob("Multivariate Plots",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/2_multivariate_outliers.png', grid_multivariate)
-
-```
+![plot of chunk multivariate plots](figure/multivariate plots-1.png)
 
 ![Multivariate scatter plot](pictures/2_multivariate_outliers.png)
 
@@ -590,8 +372,8 @@ We can confirm the correlation between density and residual.sugar in the ggpairs
 
 ## Creating Training and Test Datasets
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'reloading dataset for ML'}
 
+```r
 # Creating train and test datasets
 wdf <- read.csv('data/wineQualityWhites.csv')
 wdf$X <- NULL
@@ -605,49 +387,158 @@ test <- wdf[-samp, ]
 
 ## Random Forest Model
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Random Forest'}
 
+```r
 # Random Forest
 model <- randomForest(quality ~ . - quality, data = train)
 pred <- predict(model, newdata = test)
 table(pred, test$quality)
+```
+
+```
+##     
+## pred    3    4    5    6    7    8    9
+##    3    0    0    0    0    0    0    0
+##    4    0   10    1    0    0    0    0
+##    5   10   58  552  216   13    1    0
+##    6    6   34  317 1008  284   42    1
+##    7    0    2    7  107  222   18    2
+##    8    0    0    0    1    1   26    0
+##    9    0    0    0    0    0    0    0
+```
+
+```r
 classAgreement(table(pred, test$quality))
+```
+
+```
+## $diag
+## [1] 0.6185777
+## 
+## $kappa
+## [1] 0.3953482
+## 
+## $rand
+## [1] 0.6163505
+## 
+## $crand
+## [1] 0.1937039
 ```
 
 ![Random Forest](pictures/RF_1.PNG)
 
 # Tuning the parameters SVM
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM parameters'}
 
-obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
-summary(obj)
-plot(obj)
 ```
+## 
+## Parameter tuning of 'svm':
+## 
+## - sampling method: 10-fold cross validation 
+## 
+## - best parameters:
+##  gamma cost
+##    0.5    4
+## 
+## - best performance: 0.4165097 
+## 
+## - Detailed performance results:
+##   gamma cost     error dispersion
+## 1   0.5    4 0.4165097 0.04025219
+## 2   1.0    4 0.4287650 0.03797280
+## 3   2.0    4 0.4394976 0.03947698
+## 4   0.5    8 0.4231450 0.04125171
+## 5   1.0    8 0.4292752 0.03964314
+## 6   2.0    8 0.4394976 0.03947698
+## 7   0.5   16 0.4236525 0.04311762
+## 8   1.0   16 0.4313161 0.03835629
+## 9   2.0   16 0.4394976 0.03947698
+```
+
+![plot of chunk SVM parameters](figure/SVM parameters-1.png)
 
 ![SVM tuning](pictures/svm_tune_output_outliers.png)
 
 # Supported Vector Machines
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, SVM}
 
+```r
 # SVM
 svm.model  <- svm(quality ~ ., data = train, cost = 16, gamma = 1)
 svm.pred <- predict(svm.model,test[,-12])
 table(svm.pred,test[,12])
+```
+
+```
+##         
+## svm.pred    3    4    5    6    7    8    9
+##        3    0    0    0    0    0    0    0
+##        4    0    7    4    3    0    0    0
+##        5    1   29  429  168   17    3    0
+##        6   15   68  429 1069  275   46    2
+##        7    0    0   15   89  216    8    1
+##        8    0    0    0    3   12   30    0
+##        9    0    0    0    0    0    0    0
+```
+
+```r
 classAgreement(table(pred = svm.pred,true = test[,12]))
+```
+
+```
+## $diag
+## [1] 0.5957809
+## 
+## $kappa
+## [1] 0.3483179
+## 
+## $rand
+## [1] 0.5797115
+## 
+## $crand
+## [1] 0.1481319
 ```
 
 ![SVM](pictures/SVM_1.PNG)
 
 # Rpart
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, Rpart}
+
+```r
 # rpart
 rpart.model <- rpart(quality ~ ., data = train)
 rpart.pred <- predict(rpart.model, test[,-12], type = 'class')
 table(rpart.pred,test[,12])
+```
+
+```
+##           
+## rpart.pred   3   4   5   6   7   8   9
+##          3   0   0   0   0   0   0   0
+##          4   0   0   0   0   0   0   0
+##          5   4  51 492 316  29   0   0
+##          6  12  53 382 972 421  73   2
+##          7   0   0   3  44  70  14   1
+##          8   0   0   0   0   0   0   0
+##          9   0   0   0   0   0   0   0
+```
+
+```r
 classAgreement(table(pred = rpart.pred,true = test[,12]))
+```
+
+```
+## $diag
+## [1] 0.5219462
+## 
+## $kappa
+## [1] 0.2113672
+## 
+## $rand
+## [1] 0.5303407
+## 
+## $crand
+## [1] 0.07252576
 ```
 
 ![Rpart](pictures/rpart_1.PNG)
@@ -659,22 +550,7 @@ To better understand how the features are correlated I ran a PCA algorithm and
 I did the plot for the PCA Components and a graphic with Variance x Number of
 Component to decide how many Components I will use in the following models.
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, PCA}
-
-# PCA
-wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
-
-# Variance plot
-plot(wdf.pca, type = "l")
-abline(h=0.55, v=8, col="blue")
-
-# PCA components plots
-g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
-
-
-ggsave(file = 'pictures/pca_outliers.png', g)
-
-```
+![plot of chunk PCA](figure/PCA-1.png)
 
 ![PCA components](pictures/variance_pca_outliers.png)
 
@@ -690,8 +566,8 @@ also need to have negative correlation once the lowest pH means very acid soluti
 
 # New PCA Datasets
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'New PCA dataset'}
 
+```r
 # New dataframe
 new_wdf.pca <- data.frame(wdf.pca$x)
 new_wdf.pca <- data.frame(new_wdf.pca[,1:8], quality = wdf$quality)
@@ -705,48 +581,166 @@ test.pca <- new_wdf.pca[-samp, ]
 
 # Random Forest Model after PCA
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Random Forest PCA'}
 
+```r
 # Random Forest
 model <- randomForest(quality ~ . - quality, data = train.pca)
 pred <- predict(model, newdata = test.pca)
 table(pred, test.pca$quality)
-classAgreement(table(pred, test.pca$quality))
+```
 
+```
+##     
+## pred   3   4   5   6   7   8   9
+##    3   0   0   0   0   0   0   0
+##    4   0   5   3   0   0   0   0
+##    5   1  16 190  45   5   0   0
+##    6   2  20 104 361  82  18   0
+##    7   0   0   4  21  84   5   0
+##    8   0   0   0   0   0  14   0
+##    9   0   0   0   0   0   0   0
+```
+
+```r
+classAgreement(table(pred, test.pca$quality))
+```
+
+```
+## $diag
+## [1] 0.6673469
+## 
+## $kappa
+## [1] 0.4780199
+## 
+## $rand
+## [1] 0.6460612
+## 
+## $crand
+## [1] 0.2600683
 ```
 
 ![Random Forest](pictures/RF_2.PNG)
 
 # Supported Vector Machines PCA
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM parameters PCA'}
 
+```r
 # Tune parameters for new dataset
 obj <- tune.svm(quality~., data = train.pca, gamma = 2^(-1:1),cost = 2^(2:4))
 summary(obj)
+```
+
+```
+## 
+## Parameter tuning of 'svm':
+## 
+## - sampling method: 10-fold cross validation 
+## 
+## - best parameters:
+##  gamma cost
+##      2   16
+## 
+## - best performance: 0.3511933 
+## 
+## - Detailed performance results:
+##   gamma cost     error dispersion
+## 1   0.5    4 0.3892237 0.02190168
+## 2   1.0    4 0.3624263 0.02604457
+## 3   2.0    4 0.3519593 0.03454578
+## 4   0.5    8 0.3904947 0.02398771
+## 5   1.0    8 0.3519606 0.02734123
+## 6   2.0    8 0.3527246 0.03608491
+## 7   0.5   16 0.3833512 0.02405009
+## 8   1.0   16 0.3552782 0.02570829
+## 9   2.0   16 0.3511933 0.03571409
+```
+
+```r
 plot(obj)
 ```
 
+![plot of chunk SVM parameters PCA](figure/SVM parameters PCA-1.png)
+
 ![SVM tuning with PCA](pictures/svm_tune_output_outliers_pca.png)
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM PCA'}
+
+```r
 # SVM
 svm.model  <- svm(quality ~ ., data = train.pca, cost = 8, gamma = 2)
 svm.pred <- predict(svm.model,test.pca[,-12])
 table(svm.pred,test.pca[,"quality"])
+```
+
+```
+##         
+## svm.pred   3   4   5   6   7   8   9
+##        3   0   0   0   0   0   0   0
+##        4   0   3   0   2   0   0   0
+##        5   0   7 160  45  10   1   0
+##        6   3  31 131 359  82  19   0
+##        7   0   0  10  20  78   4   0
+##        8   0   0   0   1   1  13   0
+##        9   0   0   0   0   0   0   0
+```
+
+```r
 classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
+```
+
+```
+## $diag
+## [1] 0.6255102
+## 
+## $kappa
+## [1] 0.4069812
+## 
+## $rand
+## [1] 0.6028163
+## 
+## $crand
+## [1] 0.1885932
 ```
 
 ![SVM](pictures/SVM_2.PNG)
 
 # Rpart
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Rpart PCA'}
+
+```r
 # rpart
 rpart.model <- rpart(quality ~ ., data = train.pca)
 rpart.pred <- predict(rpart.model, test.pca[,-12], type = 'class')
 table(rpart.pred,test.pca[,"quality"])
+```
+
+```
+##           
+## rpart.pred   3   4   5   6   7   8   9
+##          3   0   0   0   0   0   0   0
+##          4   0   0   0   0   0   0   0
+##          5   1  13 148  81  16   1   0
+##          6   2  28 153 346 155  36   0
+##          7   0   0   0   0   0   0   0
+##          8   0   0   0   0   0   0   0
+##          9   0   0   0   0   0   0   0
+```
+
+```r
 classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
+```
+
+```
+## $diag
+## [1] 0.5040816
+## 
+## $kappa
+## [1] 0.1712546
+## 
+## $rand
+## [1] 0.4840862
+## 
+## $crand
+## [1] 0.04486528
 ```
 
 ![Rpart](pictures/rpart_2.PNG)
@@ -763,25 +757,19 @@ classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
 # Final Plots and Summary
 
 ### Plot One
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot one'}
 
-```
 
 ### Description One
 
 
 ### Plot Two
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot Two'}
 
-```
 
 ### Description Two
 
 
 ### Plot Three
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot Three'}
 
-```
 
 ### Description Three
 
