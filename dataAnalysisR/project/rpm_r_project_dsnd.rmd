@@ -49,7 +49,7 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 ```
 
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'install packages'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'install packages'}
 
  install.packages("ggplot2", dependencies = TRUE)
  install.packages("knitr", dependencies = TRUE)
@@ -62,6 +62,11 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
  install.packages('e1071', dependencies = TRUE)
  install.packages('rpart', dependencies = TRUE)
  install.packages('randomForest', dependencies = TRUE)
+ install.packages('ggfortify', dependencies = TRUE)
+```
+
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'lilbrary'}
+library(ggfortify)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -157,12 +162,13 @@ p11 <- ggplot(aes(x=alcohol), data = wdf) +
 p12 <- ggplot(aes(x=quality), data = wdf) +
   geom_histogram(fill='#99CCFF', binwidth = 1)
 
-# u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
+u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
 
-# ggsave(file = 'pictures/1_univariate.png', u1)
+ggsave(file = 'pictures/1_univariate.png', u1)
 
 ```
 
+![Histogram](pictures/1_univariate.png)
 
 Histogram for all features in the dataset. We can observe that most of the
 graphic have a normal distribution with a tendency for a positive skeew. The next section we will remove the outliers based on our observation on the plots below and re-plot the Histograms again.
@@ -180,7 +186,7 @@ wdf <- subset(wdf, wdf$density < 1.005)
 
 ```
 
-![univariate histogram without outliers](pictures/histogram_univariate_outliers.png)
+![Histogram without outliers](pictures/histogram_univariate_outliers.png)
 
 Histograms re-ploted without outliers.
 
@@ -255,6 +261,7 @@ pie(rating, labels = lable, main = 'Wine quality Pie chart distribution', col = 
 
 ```
 
+![Pie chart](pictures/pie_outlier.png)
 
 # Univariate Analysis
 
@@ -308,6 +315,7 @@ ggpairs(wdf, title = 'GGPAIRS') +
   theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(), axis.line=element_blank(), axis.text=element_blank())
 ```
 
+![Ggpairs](pictures/ggpairs_plot_outliers.png)
 
 ## CORRPLOT
 
@@ -318,7 +326,7 @@ c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT gr
 
 ```
 
-
+![Corrplot](pictures/corrplot_outliers.png)
 
 Looking at the "ggpairs" and "corrplot" plots result it is easy to have a good idea
 about the correlations between the features. In the table below there is a list with a few pairs with the positive, negative and zero correlation. The positive correlation
@@ -398,11 +406,17 @@ grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Boxplots w
 
 grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Boxplots with Zero Correlation",gp=gpar(fontsize=15,font=3)))
 
-ggsave(file = 'pictures/2_11_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/2_12_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/2_13_bivariate_outliers.png', grid3)
+ggsave(file = 'pictures/1_boxplot_bivariate_outliers.png', grid1)
+ggsave(file = 'pictures/2_boxplot_bivariate_outliers.png', grid2)
+ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
 
 ```
+
+![Bivariate Boxplots](pictures/1_boxplot_bivariate.png)
+
+![Bivariate Boxplots](pictures/2_boxplot_bivariate.png)
+
+![Bivariate Boxplots](pictures/3_boxplot_bivariate.png)
 
 
 ## Bivariate Scatter plots with linear regression line
@@ -469,6 +483,15 @@ ggsave(file = 'pictures/4_12_bivariate_outliers.png', grid2)
 ggsave(file = 'pictures/4_13_bivariate_outliers.png', grid3)
 
 ```
+
+![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate.png)
+
+![Negative Correlation 
+Bivariate Scatterplot](pictures/2_scatterplot_bivariate.png)
+
+![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate.png)
+
+
 
 ## Bivariate Analysis
 
@@ -552,6 +575,7 @@ ggsave(file = 'pictures/2_multivariate_outliers.png', grid_multivariate)
 
 ```
 
+![Multivariate scatter plot](pictures/2_multivariate_outliers.png)
 
 ## Multivariate Analysis
 
@@ -600,7 +624,7 @@ summary(obj)
 plot(obj)
 ```
 
-
+![SVM tuning](pictures/svm_tune_output_outliers.png)
 
 # Supported Vector Machines
 
@@ -650,11 +674,12 @@ ggsave(file = 'pictures/pca_outliers.png', g)
 
 ```
 
+![PCA components](pictures/variance_pca_outliers.png)
 
 Looking at this graphic it is easy to indentify that we can run the models with
 8 components without loosing accuracy in our model.
 
-![PCA](pictures/pca_outliers.png)
+![PCA components](pictures/pca_outliers.png)
 
 In this graphic we can confirm some teories about the correlation between the
 variables. For example we expect negative correlation with alcohol and residual.sugar
@@ -699,7 +724,7 @@ summary(obj)
 plot(obj)
 ```
 
-
+![SVM tuning with PCA](pictures/svm_tune_output_outliers_pca.png)
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM PCA'}
 # SVM
@@ -708,8 +733,6 @@ svm.pred <- predict(svm.model,test.pca[,-12])
 table(svm.pred,test.pca[,"quality"])
 classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
 ```
-
-
 
 
 # Rpart
