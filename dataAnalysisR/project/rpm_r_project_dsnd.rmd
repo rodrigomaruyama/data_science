@@ -77,7 +77,6 @@ library(gridExtra)
 library(corrplot)
 library(grid)
 library(lattice)
-library(ggbiplot)
 library(e1071)
 library(rpart)
 library(randomForest)
@@ -412,11 +411,11 @@ ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
 
 ```
 
-![Bivariate Boxplots](pictures/1_boxplot_bivariate.png)
+![Bivariate Boxplots](pictures/1_boxplot_bivariate_outliers.png)
 
-![Bivariate Boxplots](pictures/2_boxplot_bivariate.png)
+![Bivariate Boxplots](pictures/2_boxplot_bivariate_outliers.png)
 
-![Bivariate Boxplots](pictures/3_boxplot_bivariate.png)
+![Bivariate Boxplots](pictures/3_boxplot_bivariate_outliers.png)
 
 
 ## Bivariate Scatter plots with linear regression line
@@ -478,18 +477,17 @@ grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter pl
 
 grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Scatter plot with Zero Correlation",gp=gpar(fontsize=15,font=3)))
 
-ggsave(file = 'pictures/4_11_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/4_12_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/4_13_bivariate_outliers.png', grid3)
+ggsave(file = 'pictures/1_scatterplot_bivariate_outliers.png', grid1)
+ggsave(file = 'pictures/2_scatterplot_bivariate_outliers.png', grid2)
+ggsave(file = 'pictures/3_scatterplot_bivariate_outliers.png', grid3)
 
 ```
 
-![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate.png)
+![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate_outliers.png)
 
-![Negative Correlation 
-Bivariate Scatterplot](pictures/2_scatterplot_bivariate.png)
+![Negative Correlation Bivariate Scatterplot](pictures/2_scatterplot_bivariate_outliers.png)
 
-![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate.png)
+![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate_outliers.png)
 
 
 
@@ -614,6 +612,7 @@ table(pred, test$quality)
 classAgreement(table(pred, test$quality))
 ```
 
+![Random Forest](pictures/RF_1.PNG)
 
 # Tuning the parameters SVM
 
@@ -637,6 +636,7 @@ table(svm.pred,test[,12])
 classAgreement(table(pred = svm.pred,true = test[,12]))
 ```
 
+![SVM](pictures/SVM_1.PNG)
 
 # Rpart
 
@@ -648,7 +648,7 @@ table(rpart.pred,test[,12])
 classAgreement(table(pred = rpart.pred,true = test[,12]))
 ```
 
-
+![Rpart](pictures/rpart_1.PNG)
 
 
 ## Pricipal component analysis - PCA
@@ -705,7 +705,7 @@ test.pca <- new_wdf.pca[-samp, ]
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Random Forest PCA'}
 
-# Fitting the model, Predict and Accuracy
+# Random Forest
 model <- randomForest(quality ~ . - quality, data = train.pca)
 pred <- predict(model, newdata = test.pca)
 table(pred, test.pca$quality)
@@ -713,6 +713,7 @@ classAgreement(table(pred, test.pca$quality))
 
 ```
 
+![Random Forest](pictures/RF_2.PNG)
 
 # Supported Vector Machines PCA
 
@@ -734,6 +735,7 @@ table(svm.pred,test.pca[,"quality"])
 classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
 ```
 
+![SVM](pictures/SVM_2.PNG)
 
 # Rpart
 
@@ -745,6 +747,7 @@ table(rpart.pred,test.pca[,"quality"])
 classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
 ```
 
+![Rpart](pictures/rpart_2.PNG)
 
 ## Results from the Models
 
