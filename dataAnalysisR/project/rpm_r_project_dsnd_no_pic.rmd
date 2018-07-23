@@ -45,7 +45,7 @@ TITLE by Rodrigo P Maruyama
 9. Resources
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'set working directory'}
-# setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project/")
+setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project/")
 ```
 
 
@@ -304,8 +304,8 @@ No. I didn't change the original data.
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, ggpairs}
 
-ggpairs(wdf) + theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank())
-
+ggpairs(wdf, title = 'GGPAIRS') + 
+  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(), axis.line=element_blank(), axis.text=element_blank())
 ```
 
 
@@ -313,7 +313,8 @@ ggpairs(wdf) + theme(panel.grid.minor = element_blank(), panel.grid.major = elem
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, corrplot}
 
-c <- corrplot.mixed(cor(wdf), tl.pos = "lt")
+cor.wdf <- cor(wdf)
+c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
 
 ```
 
