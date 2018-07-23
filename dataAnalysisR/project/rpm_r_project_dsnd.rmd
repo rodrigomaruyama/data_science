@@ -51,17 +51,17 @@ setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/fin
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'install packages'}
 
-# install.packages("ggplot2", dependencies = TRUE)
-# install.packages("knitr", dependencies = TRUE)
-# install.packages("dplyr", dependencies = TRUE)
-# install.packages('GGally', dependencies = TRUE)
-# install.packages('tidyverse', dependencies = TRUE)
-# install.packages('ggthemes', dependencies = TRUE)
-# install.packages('corrplot', dependencies = TRUE)
-# install.packages('ggbiplot2', dependencies = TRUE)
-# install.packages('e1071', dependencies = TRUE)
-# install.packages('rpart', dependencies = TRUE)
-# install.packages('randomForest', dependencies = TRUE)
+ install.packages("ggplot2", dependencies = TRUE)
+ install.packages("knitr", dependencies = TRUE)
+ install.packages("dplyr", dependencies = TRUE)
+ install.packages('GGally', dependencies = TRUE)
+ install.packages('tidyverse', dependencies = TRUE)
+ install.packages('ggthemes', dependencies = TRUE)
+ install.packages('corrplot', dependencies = TRUE)
+ install.packages('ggbiplot2', dependencies = TRUE)
+ install.packages('e1071', dependencies = TRUE)
+ install.packages('rpart', dependencies = TRUE)
+ install.packages('randomForest', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -643,7 +643,8 @@ plot(wdf.pca, type = "l")
 abline(h=0.55, v=8, col="blue")
 
 # PCA components plots
-g <- ggbiplot(wdf.pca, obs.scale = 1, var.scale = 1, ellipse = TRUE, circle = TRUE, alpha = 0.1) + scale_color_discrete(name = '') + theme(legend.direction = 'vertical', legend.position = 'right') + ggtitle('Principal component analysis - PCA')
+g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
+
 
 ggsave(file = 'pictures/pca_outliers.png', g)
 
