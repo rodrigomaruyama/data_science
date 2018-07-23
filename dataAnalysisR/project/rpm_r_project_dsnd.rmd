@@ -51,7 +51,7 @@ setwd("C:/Users/maru/Documents/finding_donors/dataAnalysisR/project/")
 ```
 
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'install packages'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'install packages'}
 
  install.packages("ggplot2", dependencies = TRUE)
  install.packages("knitr", dependencies = TRUE)
@@ -136,7 +136,7 @@ write.csv(swdf, file = 'summary.csv')
 
 ## Histogram for each feature
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, histogram}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, histogram}
 
 p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
   geom_histogram(fill='#99CCFF')
@@ -193,7 +193,7 @@ Histograms re-ploted without outliers.
 
 ## Density plot for each feature with stat lines
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'loop for density plots'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'loop for density plots'}
 
 # Using a for loop for better programming practice and to save lines of code :)
 
@@ -311,7 +311,7 @@ No. I didn't change the original data.
 
 ## GGPAIRS plot
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, ggpairs}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, ggpairs}
 
 ggpairs(wdf, title = 'GGPAIRS') + 
   theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(), axis.line=element_blank(), axis.text=element_blank())
@@ -321,7 +321,7 @@ ggpairs(wdf, title = 'GGPAIRS') +
 
 ## CORRPLOT
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, corrplot}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, corrplot}
 
 cor.wdf <- cor(wdf)
 c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
@@ -356,7 +356,7 @@ properties.
 
 ## Bivariate Boxplots
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'bivariate boxplots'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'bivariate boxplots'}
 # Removing outliers for density and residual.sugar for better visualization
 
 # Positive correlation plots
@@ -423,7 +423,7 @@ ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
 
 ## Bivariate Scatter plots with linear regression line
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'bivariate scatter plots'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'bivariate scatter plots'}
 # Removing outliers for better visualization
 
 # Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
@@ -535,7 +535,7 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 
 # Multivariate Plots Section
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'multivariate plots'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'multivariate plots'}
 
 # Multivariate plots with Linear Regression
 
@@ -619,7 +619,7 @@ classAgreement(table(pred, test$quality))
 
 # Tuning the parameters SVM
 
-```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'SVM parameters'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'SVM parameters'}
 
 obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
 summary(obj)
@@ -660,7 +660,7 @@ To better understand how the features are correlated I ran a PCA algorithm and
 I did the plot for the PCA Components and a graphic with Variance x Number of
 Component to decide how many Components I will use in the following models.
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, PCA}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, PCA}
 
 # PCA
 wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
