@@ -53,6 +53,20 @@ setwd("C:/Users/maru/Documents/finding_donors/dataAnalysisR/project/")
 
 
 
+```r
+ install.packages("ggplot2", dependencies = TRUE)
+ install.packages("knitr", dependencies = TRUE)
+ install.packages("dplyr", dependencies = TRUE)
+ install.packages('GGally', dependencies = TRUE)
+ install.packages('tidyverse', dependencies = TRUE)
+ install.packages('ggthemes', dependencies = TRUE)
+ install.packages('corrplot', dependencies = TRUE)
+ install.packages('ggbiplot2', dependencies = TRUE)
+ install.packages('e1071', dependencies = TRUE)
+ install.packages('rpart', dependencies = TRUE)
+ install.packages('randomForest', dependencies = TRUE)
+ install.packages('ggfortify', dependencies = TRUE)
+```
 
 
 ```r
@@ -132,6 +146,36 @@ write.csv(swdf, file = 'summary.csv')
 ## Histogram for each feature
 
 
+```r
+p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p2 <- ggplot(aes(x=volatile.acidity), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p3 <- ggplot(aes(x=citric.acid), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p4 <- ggplot(aes(x=residual.sugar), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p5 <- ggplot(aes(x=chlorides), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p8 <- ggplot(aes(x=density), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p9 <- ggplot(aes(x=pH), data = wdf) +
+  geom_histogram(fill='#99CCFF', binwidth = 0.1)
+p10 <- ggplot(aes(x=sulphates), data = wdf) +
+  geom_histogram(fill='#99CCFF')
+p11 <- ggplot(aes(x=alcohol), data = wdf) +
+  geom_histogram(fill='#99CCFF', binwidth = 0.5)
+p12 <- ggplot(aes(x=quality), data = wdf) +
+  geom_histogram(fill='#99CCFF', binwidth = 1)
+
+u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
+
+ggsave(file = 'pictures/1_univariate.png', u1)
+```
 
 ![Histogram](pictures/1_univariate.png)
 
@@ -157,6 +201,31 @@ Histograms re-ploted without outliers.
 ## Density plot for each feature with stat lines
 
 
+```r
+# Using a for loop for better programming practice and to save lines of code :)
+
+feature.list <- names(wdf)
+p <- list()
+a <- 0
+for (var in feature.list) {
+  a <- a + 1
+
+  p[[a]] <- ggplot(data = wdf, aes_string(x=var)) +
+    geom_density(fill='#99CCFF') +
+    geom_vline(aes_string(xintercept=mean(wdf[, var])),
+               color='blue', size=0.5) +
+    geom_vline(aes_string(xintercept=median(wdf[, var])),
+               color='red', size=0.5) +
+    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.25)),
+               linetype='dashed', size=0.5) +
+    geom_vline(aes_string(xintercept=quantile(wdf[, var], 0.75)),
+               linetype='dashed', size=0.5) +
+    ylab(NULL)
+
+}
+
+ggsave(file = 'pictures/density_univariate_outliers.png', do.call(grid.arrange, p))
+```
 
 Density plots for each feature with stats lines
 
@@ -257,12 +326,20 @@ No. I didn't change the original data.
 ## GGPAIRS plot
 
 
+```r
+ggpairs(wdf, title = 'GGPAIRS') + 
+  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(), axis.line=element_blank(), axis.text=element_blank())
+```
 
 ![Ggpairs](pictures/ggpairs_plot_outliers.png)
 
 ## CORRPLOT
 
 
+```r
+cor.wdf <- cor(wdf)
+c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
+```
 
 ![Corrplot](pictures/corrplot_outliers.png)
 
@@ -293,6 +370,62 @@ properties.
 ## Bivariate Boxplots
 
 
+```r
+# Removing outliers for density and residual.sugar for better visualization
+
+# Positive correlation plots
+p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  scale_y_continuous(limits = c(0, 25)) +
+  ggtitle('density X residual.sugar')
+
+p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('density X total.sulfur.dioxide')
+
+p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('quality X alcohol')
+
+# Negative correlation plots
+p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('density X alcohol')
+
+p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = alcohol)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('total.sulfur.dioxide X alcohol')
+
+p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  scale_y_continuous(limits = c(0, 30)) +
+  ggtitle('alcohol X residual.sugar')
+
+# Zero correlation
+p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  scale_y_continuous(limits = c(0, 1)) +
+  ggtitle('quality X citric.acid')
+
+p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  ggtitle('sulphates X chlorides')
+
+p9 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity)) +
+  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  scale_y_continuous(limits = c(0, 0.9)) +
+  ggtitle('density X volatile.acidity')
+
+grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Boxplots with Positive Correlation",gp=gpar(fontsize=15,font=3)))
+
+grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Boxplots with Negative Correlation",gp=gpar(fontsize=15,font=3)))
+
+grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Boxplots with Zero Correlation",gp=gpar(fontsize=15,font=3)))
+
+ggsave(file = 'pictures/1_boxplot_bivariate_outliers.png', grid1)
+ggsave(file = 'pictures/2_boxplot_bivariate_outliers.png', grid2)
+ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
+```
 
 ![Bivariate Boxplots](pictures/1_boxplot_bivariate_outliers.png)
 
@@ -304,6 +437,67 @@ properties.
 ## Bivariate Scatter plots with linear regression line
 
 
+```r
+# Removing outliers for better visualization
+
+# Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
+# https://ggplot2.tidyverse.org/reference/geom_boxplot.html
+
+# Positive correlation plots
+p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_y_continuous(limits = c(0, 30))
+
+p2 <- ggplot(data = wdf, aes(x = density, y = total.sulfur.dioxide)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01))
+
+p3 <- ggplot(data = wdf, aes(x = quality, y = alcohol)) +
+  geom_point()
+
+# Negative correlation plots
+p4 <- ggplot(data = wdf, aes(x = density, y = alcohol)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01))
+
+p5 <- ggplot(data = wdf, aes(y = total.sulfur.dioxide, x = alcohol)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x)
+
+p6 <- ggplot(data = wdf, aes(x = alcohol, y = residual.sugar)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_y_continuous(limits = c(0, 30))
+
+# Zero correlation
+p7 <- ggplot(data = wdf, aes(x = quality, y = citric.acid)) +
+  geom_point()
+
+p8 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0, 0.2))
+
+p9 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity)) +
+  geom_point() +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_y_continuous(limits = c(0, 0.9)) +
+  scale_x_continuous(limits = c(0.98, 1.01))
+
+grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Scatter plot with Positive Correlation",gp=gpar(fontsize=15,font=3)))
+
+grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter plot with Negative Correlation",gp=gpar(fontsize=15,font=3)))
+
+grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Scatter plot with Zero Correlation",gp=gpar(fontsize=15,font=3)))
+
+ggsave(file = 'pictures/1_scatterplot_bivariate_outliers.png', grid1)
+ggsave(file = 'pictures/2_scatterplot_bivariate_outliers.png', grid2)
+ggsave(file = 'pictures/3_scatterplot_bivariate_outliers.png', grid3)
+```
 
 ![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate_outliers.png)
 
@@ -355,6 +549,44 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 # Multivariate Plots Section
 
 
+```r
+# Multivariate plots with Linear Regression
+
+p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_y_continuous(limits = c(0, 30)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  ggtitle('density X residual.sugar X quality')
+
+p2 <- ggplot(data = wdf, aes(x = density, y = alcohol, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  ggtitle('density X alcohol X quality')
+
+p3 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0, 0.2)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  ggtitle('sulphates X chlorides X quality')
+
+p4 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity, colour = quality)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method='lm',formula=y~x) +
+  scale_y_continuous(limits = c(0, 0.9)) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_colour_gradientn(colours=rainbow(10)) +
+  ggtitle('density X volatile.acidity X quality')
+
+
+grid_multivariate <- grid.arrange(p1, p2, p3, p4, ncol = 2, top = textGrob("Multivariate Plots",gp=gpar(fontsize=15,font=3)))
+
+ggsave(file = 'pictures/2_multivariate_outliers.png', grid_multivariate)
+```
 
 ![Multivariate scatter plot](pictures/2_multivariate_outliers.png)
 
@@ -429,6 +661,11 @@ classAgreement(table(pred, test$quality))
 # Tuning the parameters SVM
 
 
+```r
+obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
+summary(obj)
+plot(obj)
+```
 
 ![SVM tuning](pictures/svm_tune_output_outliers.png)
 
@@ -523,7 +760,25 @@ To better understand how the features are correlated I ran a PCA algorithm and
 I did the plot for the PCA Components and a graphic with Variance x Number of
 Component to decide how many Components I will use in the following models.
 
+
+```r
+# PCA
+wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
+
+# Variance plot
+plot(wdf.pca, type = "l")
+abline(h=0.55, v=8, col="blue")
+```
+
 ![plot of chunk PCA](figure/PCA-1.png)
+
+```r
+# PCA components plots
+g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
+
+
+ggsave(file = 'pictures/pca_outliers.png', g)
+```
 
 ![PCA components](pictures/variance_pca_outliers.png)
 
