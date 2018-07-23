@@ -247,7 +247,7 @@ wdf$quality.2 <- NULL
 
 # Pie plot creation with percent legend
 
-rating = as.numeric(c(1565, 1055, 2139))
+rating = as.numeric(c(1565, 2139, 1055))
 percent <- round(100*rating/sum(rating), 1)
 colors = c("red", "orange", "blue")
 lable <- c('Bad', 'Normal', 'Good')
@@ -469,12 +469,6 @@ ggsave(file = 'pictures/4_13_bivariate_outliers.png', grid3)
 
 ```
 
-![Postive Correlation bivariate](pictures/4_11_bivariate_outliers.png)
-
-![Negative Correlation bivariate](pictures/4_12_bivariate_outliers.png)
-
-![Zero Correlation bivariate](pictures/4_13_bivariate_outliers.png)
-
 ## Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
@@ -557,7 +551,6 @@ ggsave(file = 'pictures/2_multivariate_outliers.png', grid_multivariate)
 
 ```
 
-![1_multivariate](pictures/2_multivariate_outliers.png)
 
 ## Multivariate Analysis
 
@@ -606,7 +599,6 @@ summary(obj)
 plot(obj)
 ```
 
-![svm_param_tune](pictures/svm_tune_output_outliers.png)
 
 
 # Supported Vector Machines
@@ -657,8 +649,6 @@ ggsave(file = 'pictures/pca_outliers.png', g)
 ```
 
 
-![PCA](pictures/variance_pca_outliers.png)
-
 Looking at this graphic it is easy to indentify that we can run the models with
 8 components without loosing accuracy in our model.
 
@@ -707,8 +697,6 @@ summary(obj)
 plot(obj)
 ```
 
-
-![svm_tune_output_outliers_pca](pictures/svm_tune_output_outliers_pca.png)
 
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM PCA'}
