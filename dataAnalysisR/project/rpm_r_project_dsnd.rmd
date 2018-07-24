@@ -68,7 +68,7 @@ TITLE by Rodrigo P Maruyama
 ## Working directory
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'set working directory'}
-setwd("C:/Users/maru/Documents/finding_donors/dataAnalysisR/project/")
+setwd("D://Documents/ead/Udacity/dsNanodegree/dataAnalysisR/project/")
 ```
 
 ## Package Instalation
@@ -711,7 +711,7 @@ Component to decide how many Components I will use in the following models.
 wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
 ```
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, Plot PCA}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot PCA'}
 # Variance plot
 plot(wdf.pca, type = "l")
 abline(h=0.55, v=8, col="blue")
@@ -901,8 +901,6 @@ Write function: https://stat.ethz.ch/R-manual/R-devel/library/base/html/write.ht
 Get current Date and Time: https://stat.ethz.ch/R-manual/R-devel/library/base/html/Sys.time.html <br>
 Concatenate Strings: https://stat.ethz.ch/R-manual/R-devel/library/base/html/paste.html <br>
 Format function: https://www.rdocumentation.org/packages/base/versions/3.5.1/topics/format <br>
-
-
 
 ## Style and Markdown tools and cheatsheet
 
