@@ -41,7 +41,7 @@ TITLE by Rodrigo P Maruyama
   + Multivariate analysis
 
 
-7. Machine Learning
+7. [Machine Learning](#ml)
   + Random Forest model
   + Tuning SVM parameters
   + SVM
@@ -76,18 +76,21 @@ setwd("D://Documents/ead/Udacity/dsNanodegree/dataAnalysisR/project/")
 
 
 ```r
- install.packages("ggplot2", dependencies = TRUE)
- install.packages("knitr", dependencies = TRUE)
- install.packages("dplyr", dependencies = TRUE)
- install.packages('GGally', dependencies = TRUE)
- install.packages('tidyverse', dependencies = TRUE)
- install.packages('ggthemes', dependencies = TRUE)
- install.packages('corrplot', dependencies = TRUE)
- install.packages('ggbiplot2', dependencies = TRUE)
- install.packages('e1071', dependencies = TRUE)
- install.packages('rpart', dependencies = TRUE)
- install.packages('randomForest', dependencies = TRUE)
- install.packages('ggfortify', dependencies = TRUE)
+install.packages('kable')
+install.packages("markdown", dependencies = TRUE)
+install.packages("knitr", dependencies = TRUE)
+install.packages("ggplot2", dependencies = TRUE)
+install.packages("knitr", dependencies = TRUE)
+install.packages("dplyr", dependencies = TRUE)
+install.packages('GGally', dependencies = TRUE)
+install.packages('tidyverse', dependencies = TRUE)
+install.packages('ggthemes', dependencies = TRUE)
+install.packages('corrplot', dependencies = TRUE)
+install.packages('ggbiplot2', dependencies = TRUE)
+install.packages('e1071', dependencies = TRUE)
+install.packages('rpart', dependencies = TRUE)
+install.packages('randomForest', dependencies = TRUE)
+install.packages('ggfortify', dependencies = TRUE)
 ```
 
 ## Libraries 
@@ -108,8 +111,9 @@ library(lattice)
 library(e1071)
 library(rpart)
 library(randomForest)
-require(knitr) 
-require(markdown)
+library(knitr) 
+library(markdown)
+library(htmlTable)
 ```
 
 
@@ -357,7 +361,8 @@ No. I didn't change the original data.
 
 ```r
 ggpairs(wdf, title = 'GGPAIRS') + 
-  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(), axis.line=element_blank(), axis.text=element_blank())
+  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(),         
+  axis.line=element_blank(), axis.text=element_blank())
 ```
 
 ![Ggpairs](pictures/ggpairs_plot_outliers.png)
@@ -633,7 +638,7 @@ We can confirm the correlation between density and residual.sugar in the ggpairs
  multivariate graphics we can observe a concentration for good wines instead
  normal and bad ones.
 
-# Machine Learning Models
+# Machine Learning Models[#ml]
 
 ## Creating Training and Test Datasets
 
@@ -658,21 +663,46 @@ test <- wdf[-samp, ]
 # Random Forest
 model <- randomForest(quality ~ . - quality, data = train)
 rf.pred <- predict(model, newdata = test)
-table(pred, test$quality)
+table(rf.pred, test$quality)
 ```
 
 ```
-## Error in table(pred, test$quality): object 'pred' not found
+##        
+## rf.pred    3    4    5    6    7    8    9
+##       3    0    0    0    0    0    0    0
+##       4    0   10    1    0    0    0    0
+##       5   10   58  552  216   13    1    0
+##       6    6   34  317 1008  284   42    1
+##       7    0    2    7  107  222   18    2
+##       8    0    0    0    1    1   26    0
+##       9    0    0    0    0    0    0    0
+```
+
+```r
+classAgreement(table(rf.pred, test$quality))
+```
+
+```
+## $diag
+## [1] 0.6185777
+## 
+## $kappa
+## [1] 0.3953482
+## 
+## $rand
+## [1] 0.6163505
+## 
+## $crand
+## [1] 0.1937039
 ```
 
 ```r
 acc.rf <- classAgreement(table(rf.pred, test$quality))[1]
 time <- Sys.time() 
 str <- paste('rf', time, as.numeric(acc.rf), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+write(str, file = 'data/accuracy_models.csv', append = TRUE)
 ```
 
-![Random Forest](pictures/RF_1.PNG)
 
 ## Tuning the parameters SVM
 
@@ -729,10 +759,8 @@ classAgreement(table(pred = svm.pred,true = test[,12]))
 acc.svm <- classAgreement(table(svm.pred, test$quality))[1]
 time <- Sys.time() 
 str <- paste('svm', time, as.numeric(acc.svm), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+write(str, file = 'data/accuracy_models.csv', append = TRUE)
 ```
-
-![SVM](pictures/SVM_1.PNG)
 
 ## Rpart
 
@@ -778,11 +806,8 @@ classAgreement(table(pred = rpart.pred,true = test[,12]))
 acc.rpart <- classAgreement(table(rpart.pred, test$quality))[1]
 time <- Sys.time() 
 str <- paste('rpart', time, as.numeric(acc.rpart), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+write(str, file = 'data/accuracy_models.csv', append = TRUE)
 ```
-
-![Rpart](pictures/rpart_1.PNG)
-
 
 ## Pricipal component analysis - PCA
 
@@ -878,10 +903,8 @@ classAgreement(table(rf.pred, test.pca$quality))
 acc.rf.pca <- classAgreement(table(rf.pred, test.pca$quality))[1]
 time <- Sys.time() 
 str <- paste('rf.pca', time, as.numeric(acc.rf.pca), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+write(str, file = 'data/accuracy_models.csv', append = TRUE)
 ```
-
-![Random Forest](pictures/RF_2.PNG)
 
 ## Supported Vector Machines PCA
 
@@ -937,10 +960,8 @@ classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
 acc.svm.pca <- classAgreement(table(svm.pred, test.pca$quality))[1]
 time <- Sys.time() 
 str <- paste('svm.pca', Sys.time(), as.numeric(acc.svm.pca), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+write(str, file = 'data/accuracy_models.csv', append = TRUE)
 ```
-
-![SVM](pictures/SVM_2.PNG)
 
 ## Rpart
 
@@ -986,17 +1007,15 @@ classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
 acc.rpart.pca <- classAgreement(table(rpart.pred, test.pca$quality))[1]
 time <- Sys.time() 
 str <- paste('rpart.pca', Sys.time(), as.numeric(acc.rpart.pca), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+write(str, file = 'data/accuracy_models.csv', append = TRUE)
 ```
-
-![Rpart](pictures/rpart_2.PNG)
 
 ## The Accuracy average for each Model
 
 
 ```r
 # load the dataset
-acc.df <- read.csv(file = 'accuracy_models.csv')
+acc.df <- read.csv(file = 'data/accuracy_models.csv')
 
 # Random Forest
 mean.acc.rf <- mean(subset(acc.df, acc.df$model == 'rf')$accuracy)
@@ -1024,55 +1043,45 @@ mean.acc.rpart <- as.numeric(mean.acc.rpart)*100
 mean.acc.rpart.pca <- mean(subset(acc.df, acc.df$model == 'rpart.pca')$accuracy)
 mean.acc.rpart.pca <- format(mean.acc.rpart.pca, digits = 4)
 mean.acc.rpart.pca <- as.numeric(mean.acc.rpart.pca)*100
-
-# Print the results
-paste('Random Forest Mean Accuracy: ', mean.acc.rf, '%', sep = '')
 ```
 
-```
-## [1] "Random Forest Mean Accuracy: 63.48%"
-```
+
+
 
 ```r
-paste('SVM Mean Accuracy: ', mean.acc.svm, '%', sep = '')
+htmlTable(acc.matrix,
+          css.cell = ("padding-left: 1em; padding-right: 1em;"), 
+          header =  c('Random Forest', 'SVM', 'Rpart'),
+          rnames = c('RAW Data', 'PCA Data'),
+          caption="Accuracy Mean")
 ```
 
-```
-## [1] "SVM Mean Accuracy: 59.58%"
-```
-
-```r
-paste('Rpart Mean Accuracy: ', mean.acc.rpart, '%', sep = '')
-```
-
-```
-## [1] "Rpart Mean Accuracy: 52.19%"
-```
-
-```r
-paste('Random Forest Mean Accuracy: ', mean.acc.rf.pca, '%', sep = '')
-```
-
-```
-## [1] "Random Forest Mean Accuracy: 66.39%"
-```
-
-```r
-paste('SVM Mean Accuracy: ', mean.acc.svm.pca, '%', sep = '')
-```
-
-```
-## [1] "SVM Mean Accuracy: 62.55%"
-```
-
-```r
-paste('Rpart Mean Accuracy: ', mean.acc.rpart.pca, '%', sep = '')
-```
-
-```
-## [1] "Rpart Mean Accuracy: 50.41%"
-```
-
+<table class='gmisc_table' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='4' style='text-align: left;'>
+Accuracy Mean</td></tr>
+<tr>
+<th style='border-bottom: 1px solid grey; border-top: 2px solid grey;'> </th>
+<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Random Forest</th>
+<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>SVM</th>
+<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Rpart</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: left;'>RAW Data</td>
+<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>62.55</td>
+<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>59.58</td>
+<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>52.19</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: left;'>PCA Data</td>
+<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>66.59</td>
+<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>62.55</td>
+<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>50.41</td>
+</tr>
+</tbody>
+</table>
 
 # Final Plots and Summary
 
