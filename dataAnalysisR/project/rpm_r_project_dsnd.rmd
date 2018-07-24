@@ -9,18 +9,26 @@ TITLE by Rodrigo P Maruyama
 ========================================================
 # Table of contents
 
-1. Data Structure:
+1. Initial Setup
+  + Working Directory 
+  + Package Installation
+  + Libraries
+  
+2. Introduction
+  
+3. Data Structure:
   + Size
   + Summary
 
-2. Univariate Plots Section
-  + Histogram plot for each variable
+4. Univariate Plots Section
+  + Bar plot for each variable
+  + Outliers
+  + Replot - Bar plot for each variable 
   + Density plot for each variable
-  + Quality histogram in detail
   + Quality.2 feature creation
   + Univariate analysis
 
-3. Bivariate Plots Section
+5. Bivariate Plots Section
   + ggpairs plot
   + corrplot
   + Positive, Negative and Zero Correlation Table
@@ -28,23 +36,32 @@ TITLE by Rodrigo P Maruyama
   + Bivariate Scatter plots with linear regression
   + Bivariate analysis
 
-4. Multivariate Plots Section
+6. Multivariate Plots Section
   + Highest Correlated features plots
-  + Special Scatter plot with linear regression line
   + Multivariate analysis
 
-5. Pricipal component analysis - PCA
 
-6. Models
+7. Machine Learning
   + Random Forest model
-  + Random Forest model with PCA
+  + Tuning SVM parameters
   + SVM
+  + Rpart
+  + Pricipal component analysis - PCA
+  + Load new Dataset
+  + Random Forest
+  + Tuning SVM parameters
+  + SVM
+  + Rpart
+  + Accuracy Average
 
-7. Final Plots and Summary
+8. Final Plots and Summary
+  + Plot One
+  + Plot two
+  + Plot Three
 
-8. Reflection
+9. Reflection
 
-9. Resources
+10. Resources
 
 # Initial Setup
 
@@ -124,7 +141,7 @@ write.csv(swdf, file = 'summary.csv')
 ```
 
 
-| Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 2nd Qu. | Max    |
+| Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 3rd Qu. | Max    |
 |----------------------|------------------------------|------|---------|--------|--------|---------|--------|
 | fixed.acidity        | [g(tartaric acid)/dm^3]      | 3.80 | 6.30    | 6.80   | 6.86   | 7.30    | 14.20  |
 | volatile.acidity     | [g(acetic acid)/dm^3]        | 0.08 | 0.21    | 0.26   | 0.28   | 0.32    | 1.10   |
@@ -193,6 +210,9 @@ wdf <- subset(wdf, wdf$total.sulfur.dioxide < 350)
 wdf <- subset(wdf, wdf$density < 1.005)
 
 ```
+
+
+## Histogram without outliers
 
 ![Histogram without outliers](pictures/1_univariate_outliers.png)
 
@@ -273,7 +293,7 @@ pie(rating, labels = lable, main = 'Wine quality Pie chart distribution', col = 
 
 ![Pie chart](pictures/pie_outlier.png)
 
-# Univariate Analysis
+## Univariate Analysis
 
 ### What is the structure of your dataset?
 
@@ -293,7 +313,7 @@ From [Wine specialists](https://winefolly.com/review/wine-characteristics/) the 
 4. Alcohol
 5. Body
 
-Tannin is correlated with phenolic compounds and we don't have this variable in our dataset, and Body is a mix from all characteristics mentioned above. Then I will focusing on the following variables:
+Tannin is correlated with phenolic compounds however we don't have this variable in our dataset, and Body is a mix from all characteristics mentioned above. Then, I will focusing on the following variables:
 
 1. quality
 2. pH
@@ -338,9 +358,11 @@ c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT gr
 ![Corrplot](pictures/corrplot_outliers.png)
 
 Looking at the "ggpairs" and "corrplot" plots result it is easy to have a good idea
-about the correlations between the features. In the table below there is a list with a few pairs with the positive, negative and zero correlation. The positive correlation
+about the correlations between the features. In the table below there is a list with a few pairs with a positive, negative and zero correlation. The positive correlation
 have 4 rows but we will discharge the number 2 because those features have similar
 properties.
+
+## Positive, Negative and Zero Correlation Table
 
 |    | Positive correlation                       | correlation | correlation outliers |
 |----|--------------------------------------------|-------------|----------------------|
@@ -526,6 +548,7 @@ have any strong tendency.
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 
+No.
 
 ### What was the strongest relationship you found?
 
@@ -541,6 +564,8 @@ without oultliers we can't see difference between them. We can disconsidering
 total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 
 # Multivariate Plots Section
+
+## Highest Correlated features plots
 
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'multivariate plots'}
 
@@ -628,7 +653,7 @@ write(str, file = 'accuracy_models.csv', append = TRUE)
 
 ![Random Forest](pictures/RF_1.PNG)
 
-# Tuning the parameters SVM
+## Tuning the parameters SVM
 
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'SVM parameters'}
 
@@ -639,7 +664,7 @@ plot(obj)
 
 ![SVM tuning](pictures/svm_tune_output_outliers.png)
 
-# Supported Vector Machines
+## Supported Vector Machines
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, SVM}
 
@@ -656,7 +681,7 @@ write(str, file = 'accuracy_models.csv', append = TRUE)
 
 ![SVM](pictures/SVM_1.PNG)
 
-# Rpart
+## Rpart
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, Rpart}
 # rpart
@@ -707,7 +732,7 @@ variables. For example we expect negative correlation with alcohol and residual.
 once the alcohol needs sugar to be produced. pH and citric.acid and fixed.acidity
 also need to have negative correlation once the lowest pH means very acid solution.
 
-# New PCA Datasets
+## New PCA Datasets
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'New PCA dataset'}
 
@@ -722,7 +747,7 @@ train.pca <- new_wdf.pca[samp, ]
 test.pca <- new_wdf.pca[-samp, ]
 ```
 
-# Random Forest Model after PCA
+## Random Forest Model after PCA
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Random Forest PCA'}
 
@@ -739,7 +764,7 @@ write(str, file = 'accuracy_models.csv', append = TRUE)
 
 ![Random Forest](pictures/RF_2.PNG)
 
-# Supported Vector Machines PCA
+## Supported Vector Machines PCA
 
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'SVM parameters PCA'}
 
@@ -765,7 +790,7 @@ write(str, file = 'accuracy_models.csv', append = TRUE)
 
 ![SVM](pictures/SVM_2.PNG)
 
-# Rpart
+## Rpart
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Rpart PCA'}
 # rpart
@@ -781,34 +806,41 @@ write(str, file = 'accuracy_models.csv', append = TRUE)
 
 ![Rpart](pictures/rpart_2.PNG)
 
+## The Accuracy average for each Model
+
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Accuracy mean'}
 
+# load the dataset
 acc.df <- read.csv(file = 'accuracy_models.csv')
 
+# Random Forest
 mean.acc.rf <- mean(subset(acc.df, acc.df$model == 'rf')$accuracy)
 mean.acc.rf <- format(mean.acc.rf, digits = 4)
 mean.acc.rf <- as.numeric(mean.acc.rf)*100
-
-mean.acc.svm <- mean(subset(acc.df, acc.df$model == 'svm')$accuracy)
-mean.acc.svm <- format(mean.acc.svm, digits = 4)
-mean.acc.svm <- as.numeric(mean.acc.svm)*100
-
-mean.acc.rpart <- mean(subset(acc.df, acc.df$model == 'rpart')$accuracy)
-mean.acc.rpart <- format(mean.acc.rpart, digits = 4)
-mean.acc.rpart <- as.numeric(mean.acc.rpart)*100
 
 mean.acc.rf.pca <- mean(subset(acc.df, acc.df$model == 'rf.pca')$accuracy)
 mean.acc.rf.pca <- format(mean.acc.rf.pca, digits = 4)
 mean.acc.rf.pca <- as.numeric(mean.acc.rf.pca)*100
 
+# SVM
+mean.acc.svm <- mean(subset(acc.df, acc.df$model == 'svm')$accuracy)
+mean.acc.svm <- format(mean.acc.svm, digits = 4)
+mean.acc.svm <- as.numeric(mean.acc.svm)*100
+
 mean.acc.svm.pca <- mean(subset(acc.df, acc.df$model == 'svm.pca')$accuracy)
 mean.acc.svm.pca <- format(mean.acc.svm.pca, digits = 4)
 mean.acc.svm.pca <- as.numeric(mean.acc.svm.pca)*100
+
+# Rpart
+mean.acc.rpart <- mean(subset(acc.df, acc.df$model == 'rpart')$accuracy)
+mean.acc.rpart <- format(mean.acc.rpart, digits = 4)
+mean.acc.rpart <- as.numeric(mean.acc.rpart)*100
 
 mean.acc.rpart.pca <- mean(subset(acc.df, acc.df$model == 'rpart.pca')$accuracy)
 mean.acc.rpart.pca <- format(mean.acc.rpart.pca, digits = 4)
 mean.acc.rpart.pca <- as.numeric(mean.acc.rpart.pca)*100
 
+# Print the results
 paste('Random Forest Mean Accuracy: ', mean.acc.rf, '%', sep = '')
 paste('SVM Mean Accuracy: ', mean.acc.svm, '%', sep = '')
 paste('Rpart Mean Accuracy: ', mean.acc.rpart, '%', sep = '')
@@ -817,14 +849,6 @@ paste('SVM Mean Accuracy: ', mean.acc.svm.pca, '%', sep = '')
 paste('Rpart Mean Accuracy: ', mean.acc.rpart.pca, '%', sep = '')
 
 ```
-
-## Results from the Models
-
-| Model               | Accuracy | Accuracy with PCA |
-|---------------------|----------|-------------------|
-| Random Forest       |  0.6232  |      0.6680       |
-| SVM                 |  0.5900  |      0.6439       |
-| rpart               |  0.5157  |      0.4705       |
 
 
 # Final Plots and Summary
