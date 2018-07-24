@@ -46,10 +46,15 @@ TITLE by Rodrigo P Maruyama
 
 9. Resources
 
+# Initial Setup
+
+## Working directory
+
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'set working directory'}
 setwd("C:/Users/maru/Documents/finding_donors/dataAnalysisR/project/")
 ```
 
+## Package Instalation
 
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'install packages'}
 
@@ -66,6 +71,8 @@ setwd("C:/Users/maru/Documents/finding_donors/dataAnalysisR/project/")
  install.packages('randomForest', dependencies = TRUE)
  install.packages('ggfortify', dependencies = TRUE)
 ```
+
+## Libraries 
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'lilbrary'}
 library(ggfortify)
@@ -139,29 +146,29 @@ write.csv(swdf, file = 'summary.csv')
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, histogram}
 
 p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p2 <- ggplot(aes(x=volatile.acidity), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p3 <- ggplot(aes(x=citric.acid), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p4 <- ggplot(aes(x=residual.sugar), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p5 <- ggplot(aes(x=chlorides), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p8 <- ggplot(aes(x=density), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p9 <- ggplot(aes(x=pH), data = wdf) +
-  geom_histogram(fill='#99CCFF', binwidth = 0.1)
+  geom_bar(fill='#99CCFF')
 p10 <- ggplot(aes(x=sulphates), data = wdf) +
-  geom_histogram(fill='#99CCFF')
+  geom_bar(fill='#99CCFF')
 p11 <- ggplot(aes(x=alcohol), data = wdf) +
-  geom_histogram(fill='#99CCFF', binwidth = 0.5)
+  geom_bar(fill='#99CCFF')
 p12 <- ggplot(aes(x=quality), data = wdf) +
-  geom_histogram(fill='#99CCFF', binwidth = 1)
+  geom_bar(fill='#99CCFF')
 
 u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
 
@@ -187,7 +194,7 @@ wdf <- subset(wdf, wdf$density < 1.005)
 
 ```
 
-![Histogram without outliers](pictures/histogram_univariate_outliers.png)
+![Histogram without outliers](pictures/1_univariate_outliers.png)
 
 Histograms re-ploted without outliers.
 
@@ -604,15 +611,19 @@ train <- wdf[samp, ]
 test <- wdf[-samp, ]
 ```
 
+
 ## Random Forest Model
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Random Forest'}
 
 # Random Forest
 model <- randomForest(quality ~ . - quality, data = train)
-pred <- predict(model, newdata = test)
+rf.pred <- predict(model, newdata = test)
 table(pred, test$quality)
-classAgreement(table(pred, test$quality))
+acc.rf <- classAgreement(table(rf.pred, test$quality))[1]
+time <- Sys.time() 
+str <- paste('rf', time, as.numeric(acc.rf), sep = ',')
+write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
 ![Random Forest](pictures/RF_1.PNG)
@@ -637,6 +648,10 @@ svm.model  <- svm(quality ~ ., data = train, cost = 16, gamma = 1)
 svm.pred <- predict(svm.model,test[,-12])
 table(svm.pred,test[,12])
 classAgreement(table(pred = svm.pred,true = test[,12]))
+acc.svm <- classAgreement(table(svm.pred, test$quality))[1]
+time <- Sys.time() 
+str <- paste('svm', time, as.numeric(acc.svm), sep = ',')
+write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
 ![SVM](pictures/SVM_1.PNG)
@@ -649,6 +664,10 @@ rpart.model <- rpart(quality ~ ., data = train)
 rpart.pred <- predict(rpart.model, test[,-12], type = 'class')
 table(rpart.pred,test[,12])
 classAgreement(table(pred = rpart.pred,true = test[,12]))
+acc.rpart <- classAgreement(table(rpart.pred, test$quality))[1]
+time <- Sys.time() 
+str <- paste('rpart', time, as.numeric(acc.rpart), sep = ',')
+write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
 ![Rpart](pictures/rpart_1.PNG)
@@ -661,18 +680,17 @@ I did the plot for the PCA Components and a graphic with Variance x Number of
 Component to decide how many Components I will use in the following models.
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, PCA}
-
 # PCA
 wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
+```
 
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, PCA}
 # Variance plot
 plot(wdf.pca, type = "l")
 abline(h=0.55, v=8, col="blue")
 
 # PCA components plots
 g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
-
-
 ggsave(file = 'pictures/pca_outliers.png', g)
 
 ```
@@ -710,10 +728,13 @@ test.pca <- new_wdf.pca[-samp, ]
 
 # Random Forest
 model <- randomForest(quality ~ . - quality, data = train.pca)
-pred <- predict(model, newdata = test.pca)
-table(pred, test.pca$quality)
-classAgreement(table(pred, test.pca$quality))
-
+rf.pred <- predict(model, newdata = test.pca)
+table(rf.pred, test.pca$quality)
+classAgreement(table(rf.pred, test.pca$quality))
+acc.rf.pca <- classAgreement(table(rf.pred, test.pca$quality))[1]
+time <- Sys.time() 
+str <- paste('rf.pca', time, as.numeric(acc.rf.pca), sep = ',')
+write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
 ![Random Forest](pictures/RF_2.PNG)
@@ -736,6 +757,10 @@ svm.model  <- svm(quality ~ ., data = train.pca, cost = 8, gamma = 2)
 svm.pred <- predict(svm.model,test.pca[,-12])
 table(svm.pred,test.pca[,"quality"])
 classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
+acc.svm.pca <- classAgreement(table(svm.pred, test.pca$quality))[1]
+time <- Sys.time() 
+str <- paste('svm.pca', Sys.time(), as.numeric(acc.svm.pca), sep = ',')
+write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
 ![SVM](pictures/SVM_2.PNG)
@@ -748,9 +773,50 @@ rpart.model <- rpart(quality ~ ., data = train.pca)
 rpart.pred <- predict(rpart.model, test.pca[,-12], type = 'class')
 table(rpart.pred,test.pca[,"quality"])
 classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
+acc.rpart.pca <- classAgreement(table(rpart.pred, test.pca$quality))[1]
+time <- Sys.time() 
+str <- paste('rpart.pca', Sys.time(), as.numeric(acc.rpart.pca), sep = ',')
+write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
 ![Rpart](pictures/rpart_2.PNG)
+
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Accuracy mean'}
+
+acc.df <- read.csv(file = 'accuracy_models.csv')
+
+mean.acc.rf <- mean(subset(acc.df, acc.df$model == 'rf')$accuracy)
+mean.acc.rf <- format(mean.acc.rf, digits = 4)
+mean.acc.rf <- as.numeric(mean.acc.rf)*100
+
+mean.acc.svm <- mean(subset(acc.df, acc.df$model == 'svm')$accuracy)
+mean.acc.svm <- format(mean.acc.svm, digits = 4)
+mean.acc.svm <- as.numeric(mean.acc.svm)*100
+
+mean.acc.rpart <- mean(subset(acc.df, acc.df$model == 'rpart')$accuracy)
+mean.acc.rpart <- format(mean.acc.rpart, digits = 4)
+mean.acc.rpart <- as.numeric(mean.acc.rpart)*100
+
+mean.acc.rf.pca <- mean(subset(acc.df, acc.df$model == 'rf.pca')$accuracy)
+mean.acc.rf.pca <- format(mean.acc.rf.pca, digits = 4)
+mean.acc.rf.pca <- as.numeric(mean.acc.rf.pca)*100
+
+mean.acc.svm.pca <- mean(subset(acc.df, acc.df$model == 'svm.pca')$accuracy)
+mean.acc.svm.pca <- format(mean.acc.svm.pca, digits = 4)
+mean.acc.svm.pca <- as.numeric(mean.acc.svm.pca)*100
+
+mean.acc.rpart.pca <- mean(subset(acc.df, acc.df$model == 'rpart.pca')$accuracy)
+mean.acc.rpart.pca <- format(mean.acc.rpart.pca, digits = 4)
+mean.acc.rpart.pca <- as.numeric(mean.acc.rpart.pca)*100
+
+paste('Random Forest Mean Accuracy: ', mean.acc.rf, '%', sep = '')
+paste('SVM Mean Accuracy: ', mean.acc.svm, '%', sep = '')
+paste('Rpart Mean Accuracy: ', mean.acc.rpart, '%', sep = '')
+paste('Random Forest Mean Accuracy: ', mean.acc.rf.pca, '%', sep = '')
+paste('SVM Mean Accuracy: ', mean.acc.svm.pca, '%', sep = '')
+paste('Rpart Mean Accuracy: ', mean.acc.rpart.pca, '%', sep = '')
+
+```
 
 ## Results from the Models
 
@@ -803,8 +869,13 @@ a better result with and without PCA of around 3%.
 - Support Vector Machines, The Interface to libsvm in package e1071 by David Meyer <br>
 - A Practical Guide to Support Vector Classification by Chih-Wei Hsu, Chih-Chung Chang, and Chih-Jen Lin (2016)
 
-## Handle data
+## R
 Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946 <br>
+Write function: https://stat.ethz.ch/R-manual/R-devel/library/base/html/write.html <br>
+Get current Date and Time: https://stat.ethz.ch/R-manual/R-devel/library/base/html/Sys.time.html <br>
+Concatenate Strings: https://stat.ethz.ch/R-manual/R-devel/library/base/html/paste.html <br>
+Format function: https://www.rdocumentation.org/packages/base/versions/3.5.1/topics/format <br>
+
 
 
 ## Style and Markdown tools and cheatsheet
