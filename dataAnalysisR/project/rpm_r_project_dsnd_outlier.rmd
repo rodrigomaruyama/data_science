@@ -2,33 +2,23 @@
 output:
   html_document: default
   pdf_document: default
-editor_options: 
-  chunk_output_type: console
 ---
 TITLE by Rodrigo P Maruyama
 ========================================================
 # Table of contents
 
-1. Initial Setup
-  + Working Directory 
-  + Package Installation
-  + Libraries
-  
-2. Introduction
-  
-3. Data Structure:
+1. Data Structure:
   + Size
   + Summary
 
-4. Univariate Plots Section
-  + Bar plot for each variable
-  + Outliers
-  + Replot - Bar plot for each variable 
+2. Univariate Plots Section
+  + Histogram plot for each variable
   + Density plot for each variable
+  + Quality histogram in detail
   + Quality.2 feature creation
   + Univariate analysis
 
-5. Bivariate Plots Section
+3. Bivariate Plots Section
   + ggpairs plot
   + corrplot
   + Positive, Negative and Zero Correlation Table
@@ -36,63 +26,42 @@ TITLE by Rodrigo P Maruyama
   + Bivariate Scatter plots with linear regression
   + Bivariate analysis
 
-6. Multivariate Plots Section
+4. Multivariate Plots Section
   + Highest Correlated features plots
+  + Special Scatter plot with linear regression line
   + Multivariate analysis
 
+5. Pricipal component analysis - PCA
 
-7. Machine Learning
+6. Models
   + Random Forest model
-  + Tuning SVM parameters
+  + Random Forest model with PCA
   + SVM
-  + Rpart
-  + Pricipal component analysis - PCA
-  + Load new Dataset
-  + Random Forest
-  + Tuning SVM parameters
-  + SVM
-  + Rpart
-  + Accuracy Average
 
-8. Final Plots and Summary
-  + Plot One
-  + Plot two
-  + Plot Three
+7. Final Plots and Summary
 
-9. Reflection
+8. Reflection
 
-10. Resources
-
-# Initial Setup
-
-## Working directory
+9. Resources
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'set working directory'}
-setwd("C:/Users/maru/Documents/finding_donors/dataAnalysisR/project/")
+# setwd("C:/Users/maru/Documents/dsNanodegree/machine-learning-master/projects/finding_donors/dataAnalysisR/project/")
 ```
 
-## Package Instalation
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'install packages'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'install packages'}
 
- install.packages("ggplot2", dependencies = TRUE)
- install.packages("knitr", dependencies = TRUE)
- install.packages("dplyr", dependencies = TRUE)
- install.packages('GGally', dependencies = TRUE)
- install.packages('tidyverse', dependencies = TRUE)
- install.packages('ggthemes', dependencies = TRUE)
- install.packages('corrplot', dependencies = TRUE)
- install.packages('ggbiplot2', dependencies = TRUE)
- install.packages('e1071', dependencies = TRUE)
- install.packages('rpart', dependencies = TRUE)
- install.packages('randomForest', dependencies = TRUE)
- install.packages('ggfortify', dependencies = TRUE)
-```
-
-## Libraries 
-
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'lilbrary'}
-library(ggfortify)
+# install.packages("ggplot2", dependencies = TRUE)
+# install.packages("knitr", dependencies = TRUE)
+# install.packages("dplyr", dependencies = TRUE)
+# install.packages('GGally', dependencies = TRUE)
+# install.packages('tidyverse', dependencies = TRUE)
+# install.packages('ggthemes', dependencies = TRUE)
+# install.packages('corrplot', dependencies = TRUE)
+# install.packages('ggbiplot2', dependencies = TRUE)
+# install.packages('e1071', dependencies = TRUE)
+# install.packages('rpart', dependencies = TRUE)
+# install.packages('randomForest', dependencies = TRUE)
 library(ggplot2)
 library(knitr)
 library(dplyr)
@@ -103,11 +72,10 @@ library(gridExtra)
 library(corrplot)
 library(grid)
 library(lattice)
+library(ggbiplot)
 library(e1071)
 library(rpart)
 library(randomForest)
-require(knitr) 
-require(markdown)
 ```
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'load dataset'}
@@ -143,7 +111,7 @@ write.csv(swdf, file = 'summary.csv')
 ```
 
 
-| Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 3rd Qu. | Max    |
+| Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 2nd Qu. | Max    |
 |----------------------|------------------------------|------|---------|--------|--------|---------|--------|
 | fixed.acidity        | [g(tartaric acid)/dm^3]      | 3.80 | 6.30    | 6.80   | 6.86   | 7.30    | 14.20  |
 | volatile.acidity     | [g(acetic acid)/dm^3]        | 0.08 | 0.21    | 0.26   | 0.28   | 0.32    | 1.10   |
@@ -162,40 +130,39 @@ write.csv(swdf, file = 'summary.csv')
 
 ## Histogram for each feature
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, histogram}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, histogram}
 
 p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p2 <- ggplot(aes(x=volatile.acidity), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p3 <- ggplot(aes(x=citric.acid), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p4 <- ggplot(aes(x=residual.sugar), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p5 <- ggplot(aes(x=chlorides), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p8 <- ggplot(aes(x=density), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p9 <- ggplot(aes(x=pH), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF', binwidth = 0.1)
 p10 <- ggplot(aes(x=sulphates), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF')
 p11 <- ggplot(aes(x=alcohol), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF', binwidth = 0.5)
 p12 <- ggplot(aes(x=quality), data = wdf) +
-  geom_bar(fill='#99CCFF')
+  geom_histogram(fill='#99CCFF', binwidth = 1)
 
-u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
+# u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
 
-ggsave(file = 'pictures/1_univariate.png', u1)
+# ggsave(file = 'pictures/1_univariate.png', u1)
 
 ```
 
-![Histogram](pictures/1_univariate.png)
 
 Histogram for all features in the dataset. We can observe that most of the
 graphic have a normal distribution with a tendency for a positive skeew. The next section we will remove the outliers based on our observation on the plots below and re-plot the Histograms again.
@@ -213,16 +180,13 @@ wdf <- subset(wdf, wdf$density < 1.005)
 
 ```
 
-
-## Histogram without outliers
-
-![Histogram without outliers](pictures/1_univariate_outliers.png)
+![univariate histogram without outliers](pictures/histogram_univariate_outliers.png)
 
 Histograms re-ploted without outliers.
 
 ## Density plot for each feature with stat lines
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'loop for density plots'}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'loop for density plots'}
 
 # Using a for loop for better programming practice and to save lines of code :)
 
@@ -250,8 +214,6 @@ ggsave(file = 'pictures/density_univariate_outliers.png', do.call(grid.arrange, 
 
 ```
 
-Density plots for each feature with stats lines
-
 ![univariate density plots without outliers](pictures/density_univariate_outliers.png)
 
 In this plot and from the histograms above we can see the mean, median, 1st quantile and 3rd quantile over each density distribution and a very normal distribution for all features except for residual.sugar that have a very slightly positve skeew.
@@ -262,7 +224,7 @@ In this plot and from the histograms above we can see the mean, median, 1st quan
 
 # | classification | Criterion       |
 # |----------------|-----------------|
-# | Bad            | quality < 6     |
+# | Bad            | 3 > quality < 6 |
 # | Normal         | quality = 6     |
 # | Good           | quality > 6     |
 
@@ -281,11 +243,11 @@ wdf$quality.2 <- NULL
  normal    |     2198     |           2139
 
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'pie chart'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'pie chart'}
 
 # Pie plot creation with percent legend
 
-rating = as.numeric(c(1565, 2139, 1055))
+rating = as.numeric(c(1565, 1055, 2139))
 percent <- round(100*rating/sum(rating), 1)
 colors = c("red", "orange", "blue")
 lable <- c('Bad', 'Normal', 'Good')
@@ -293,9 +255,8 @@ pie(rating, labels = lable, main = 'Wine quality Pie chart distribution', col = 
 
 ```
 
-![Pie chart](pictures/pie_outlier.png)
 
-## Univariate Analysis
+# Univariate Analysis
 
 ### What is the structure of your dataset?
 
@@ -307,7 +268,8 @@ The quality is the main feature of interest.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
-From [Wine specialists](https://winefolly.com/review/wine-characteristics/) the basics characteristics are:
+From the specialist [](https://winefolly.com/review/wine-characteristics/
+) the Wine basics characiteristics are:
 
 1. Sweetness
 2. Acidity
@@ -315,7 +277,7 @@ From [Wine specialists](https://winefolly.com/review/wine-characteristics/) the 
 4. Alcohol
 5. Body
 
-Tannin is correlated with phenolic compounds however we don't have this variable in our dataset, and Body is a mix from all characteristics mentioned above. Then, I will focusing on the following variables:
+Tannin is correlated with phenolic compounds and we don't have this variable in our dataset and Body is a mix from  all characteristics mentioned will focusing on the following variables:
 
 1. quality
 2. pH
@@ -328,7 +290,7 @@ Yes, I created a new variable called quality.2 from quality as in the table belo
 
  classification |    Criterion
 ----------------|-----------------
- Bad            |   quality < 6
+ Bad            | 3 > quality < 6
  Normal         |   quality = 6
  Good           |   quality > 6
 
@@ -340,31 +302,27 @@ No. I didn't change the original data.
 
 ## GGPAIRS plot
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, ggpairs}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, ggpairs}
 
-ggpairs(wdf, title = 'GGPAIRS') + 
-  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(), axis.line=element_blank(), axis.text=element_blank())
+ggpairs(wdf) + theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank())
+
 ```
 
-![Ggpairs](pictures/ggpairs_plot_outliers.png)
 
 ## CORRPLOT
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, corrplot}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, corrplot}
 
-cor.wdf <- cor(wdf)
-c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
+c <- corrplot.mixed(cor(wdf), tl.pos = "lt")
 
 ```
 
-![Corrplot](pictures/corrplot_outliers.png)
+
 
 Looking at the "ggpairs" and "corrplot" plots result it is easy to have a good idea
-about the correlations between the features. In the table below there is a list with a few pairs with a positive, negative and zero correlation. The positive correlation
+about the correlations between the features. In the table below there is a list with a few pairs with the positive, negative and zero correlation. The positive correlation
 have 4 rows but we will discharge the number 2 because those features have similar
 properties.
-
-## Positive, Negative and Zero Correlation Table
 
 |    | Positive correlation                       | correlation | correlation outliers |
 |----|--------------------------------------------|-------------|----------------------|
@@ -387,7 +345,7 @@ properties.
 
 ## Bivariate Boxplots
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'bivariate boxplots'}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'bivariate boxplots'}
 # Removing outliers for density and residual.sugar for better visualization
 
 # Positive correlation plots
@@ -439,22 +397,16 @@ grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Boxplots w
 
 grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Boxplots with Zero Correlation",gp=gpar(fontsize=15,font=3)))
 
-ggsave(file = 'pictures/1_boxplot_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/2_boxplot_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
+ggsave(file = 'pictures/2_11_bivariate_outliers.png', grid1)
+ggsave(file = 'pictures/2_12_bivariate_outliers.png', grid2)
+ggsave(file = 'pictures/2_13_bivariate_outliers.png', grid3)
 
 ```
-
-![Bivariate Boxplots](pictures/1_boxplot_bivariate_outliers.png)
-
-![Bivariate Boxplots](pictures/2_boxplot_bivariate_outliers.png)
-
-![Bivariate Boxplots](pictures/3_boxplot_bivariate_outliers.png)
 
 
 ## Bivariate Scatter plots with linear regression line
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'bivariate scatter plots'}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'bivariate scatter plots'}
 # Removing outliers for better visualization
 
 # Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
@@ -511,19 +463,17 @@ grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter pl
 
 grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Scatter plot with Zero Correlation",gp=gpar(fontsize=15,font=3)))
 
-ggsave(file = 'pictures/1_scatterplot_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/2_scatterplot_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/3_scatterplot_bivariate_outliers.png', grid3)
+ggsave(file = 'pictures/4_11_bivariate_outliers.png', grid1)
+ggsave(file = 'pictures/4_12_bivariate_outliers.png', grid2)
+ggsave(file = 'pictures/4_13_bivariate_outliers.png', grid3)
 
 ```
 
-![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate_outliers.png)
+![Postive Correlation bivariate](pictures/4_11_bivariate_outliers.png)
 
-![Negative Correlation Bivariate Scatterplot](pictures/2_scatterplot_bivariate_outliers.png)
+![Negative Correlation bivariate](pictures/4_12_bivariate_outliers.png)
 
-![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate_outliers.png)
-
-
+![Zero Correlation bivariate](pictures/4_13_bivariate_outliers.png)
 
 ## Bivariate Analysis
 
@@ -550,7 +500,6 @@ have any strong tendency.
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 
-No.
 
 ### What was the strongest relationship you found?
 
@@ -567,9 +516,7 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 
 # Multivariate Plots Section
 
-## Highest Correlated features plots
-
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'multivariate plots'}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'multivariate plots'}
 
 # Multivariate plots with Linear Regression
 
@@ -610,7 +557,7 @@ ggsave(file = 'pictures/2_multivariate_outliers.png', grid_multivariate)
 
 ```
 
-![Multivariate scatter plot](pictures/2_multivariate_outliers.png)
+![1_multivariate](pictures/2_multivariate_outliers.png)
 
 ## Multivariate Analysis
 
@@ -632,41 +579,37 @@ wdf <- read.csv('data/wineQualityWhites.csv')
 wdf$X <- NULL
 wdf$quality <- as.factor(wdf$quality)
 
-set.seed(13)
+set.seed(123)
 samp <- sample(nrow(wdf), 0.4 * nrow(wdf))
 train <- wdf[samp, ]
 test <- wdf[-samp, ]
 ```
 
-
 ## Random Forest Model
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Random Forest'}
 
-# Random Forest
+# Fitting the model
 model <- randomForest(quality ~ . - quality, data = train)
-rf.pred <- predict(model, newdata = test)
+pred <- predict(model, newdata = test)
 table(pred, test$quality)
-acc.rf <- classAgreement(table(rf.pred, test$quality))[1]
-time <- Sys.time() 
-str <- paste('rf', time, as.numeric(acc.rf), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+classAgreement(table(pred, test$quality))
 ```
 
-![Random Forest](pictures/RF_1.PNG)
 
-## Tuning the parameters SVM
+# Tuning the parameters SVM
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'SVM parameters'}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM parameters'}
 
 obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
 summary(obj)
 plot(obj)
 ```
 
-![SVM tuning](pictures/svm_tune_output_outliers.png)
+![svm_param_tune](pictures/svm_tune_output_outliers.png)
 
-## Supported Vector Machines
+
+# Supported Vector Machines
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, SVM}
 
@@ -675,15 +618,10 @@ svm.model  <- svm(quality ~ ., data = train, cost = 16, gamma = 1)
 svm.pred <- predict(svm.model,test[,-12])
 table(svm.pred,test[,12])
 classAgreement(table(pred = svm.pred,true = test[,12]))
-acc.svm <- classAgreement(table(svm.pred, test$quality))[1]
-time <- Sys.time() 
-str <- paste('svm', time, as.numeric(acc.svm), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
-![SVM](pictures/SVM_1.PNG)
 
-## Rpart
+# Rpart
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, Rpart}
 # rpart
@@ -691,13 +629,9 @@ rpart.model <- rpart(quality ~ ., data = train)
 rpart.pred <- predict(rpart.model, test[,-12], type = 'class')
 table(rpart.pred,test[,12])
 classAgreement(table(pred = rpart.pred,true = test[,12]))
-acc.rpart <- classAgreement(table(rpart.pred, test$quality))[1]
-time <- Sys.time() 
-str <- paste('rpart', time, as.numeric(acc.rpart), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
-![Rpart](pictures/rpart_1.PNG)
+
 
 
 ## Pricipal component analysis - PCA
@@ -706,35 +640,36 @@ To better understand how the features are correlated I ran a PCA algorithm and
 I did the plot for the PCA Components and a graphic with Variance x Number of
 Component to decide how many Components I will use in the following models.
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, PCA}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, PCA}
+
 # PCA
 wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
-```
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, Plot PCA}
 # Variance plot
 plot(wdf.pca, type = "l")
 abline(h=0.55, v=8, col="blue")
 
 # PCA components plots
-g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
+g <- ggbiplot(wdf.pca, obs.scale = 1, var.scale = 1, ellipse = TRUE, circle = TRUE, alpha = 0.1) + scale_color_discrete(name = '') + theme(legend.direction = 'vertical', legend.position = 'right') + ggtitle('Principal component analysis - PCA')
+
 ggsave(file = 'pictures/pca_outliers.png', g)
 
 ```
 
-![PCA Variance](pictures/variance_pca_outliers.png)
+
+![PCA](pictures/variance_pca_outliers.png)
 
 Looking at this graphic it is easy to indentify that we can run the models with
 8 components without loosing accuracy in our model.
 
-![PCA components](pictures/pca_outliers.png)
+![PCA](pictures/pca_outliers.png)
 
 In this graphic we can confirm some teories about the correlation between the
 variables. For example we expect negative correlation with alcohol and residual.sugar
 once the alcohol needs sugar to be produced. pH and citric.acid and fixed.acidity
 also need to have negative correlation once the lowest pH means very acid solution.
 
-## New PCA Datasets
+# New PCA Datasets
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'New PCA dataset'}
 
@@ -749,26 +684,22 @@ train.pca <- new_wdf.pca[samp, ]
 test.pca <- new_wdf.pca[-samp, ]
 ```
 
-## Random Forest Model after PCA
+# Random Forest Model after PCA
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Random Forest PCA'}
 
-# Random Forest
+# Fitting the model, Predict and Accuracy
 model <- randomForest(quality ~ . - quality, data = train.pca)
-rf.pred <- predict(model, newdata = test.pca)
-table(rf.pred, test.pca$quality)
-classAgreement(table(rf.pred, test.pca$quality))
-acc.rf.pca <- classAgreement(table(rf.pred, test.pca$quality))[1]
-time <- Sys.time() 
-str <- paste('rf.pca', time, as.numeric(acc.rf.pca), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
+pred <- predict(model, newdata = test.pca)
+table(pred, test.pca$quality)
+classAgreement(table(pred, test.pca$quality))
+
 ```
 
-![Random Forest](pictures/RF_2.PNG)
 
-## Supported Vector Machines PCA
+# Supported Vector Machines PCA
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'SVM parameters PCA'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM parameters PCA'}
 
 # Tune parameters for new dataset
 obj <- tune.svm(quality~., data = train.pca, gamma = 2^(-1:1),cost = 2^(2:4))
@@ -776,7 +707,9 @@ summary(obj)
 plot(obj)
 ```
 
-![SVM tuning with PCA](pictures/svm_tune_output_outliers_pca.png)
+
+![svm_tune_output_outliers_pca](pictures/svm_tune_output_outliers_pca.png)
+
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'SVM PCA'}
 # SVM
@@ -784,15 +717,12 @@ svm.model  <- svm(quality ~ ., data = train.pca, cost = 8, gamma = 2)
 svm.pred <- predict(svm.model,test.pca[,-12])
 table(svm.pred,test.pca[,"quality"])
 classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
-acc.svm.pca <- classAgreement(table(svm.pred, test.pca$quality))[1]
-time <- Sys.time() 
-str <- paste('svm.pca', Sys.time(), as.numeric(acc.svm.pca), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
-![SVM](pictures/SVM_2.PNG)
 
-## Rpart
+
+
+# Rpart
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Rpart PCA'}
 # rpart
@@ -800,57 +730,16 @@ rpart.model <- rpart(quality ~ ., data = train.pca)
 rpart.pred <- predict(rpart.model, test.pca[,-12], type = 'class')
 table(rpart.pred,test.pca[,"quality"])
 classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
-acc.rpart.pca <- classAgreement(table(rpart.pred, test.pca$quality))[1]
-time <- Sys.time() 
-str <- paste('rpart.pca', Sys.time(), as.numeric(acc.rpart.pca), sep = ',')
-write(str, file = 'accuracy_models.csv', append = TRUE)
 ```
 
-![Rpart](pictures/rpart_2.PNG)
 
-## The Accuracy average for each Model
+## Results from the Models
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Accuracy mean'}
-
-# load the dataset
-acc.df <- read.csv(file = 'accuracy_models.csv')
-
-# Random Forest
-mean.acc.rf <- mean(subset(acc.df, acc.df$model == 'rf')$accuracy)
-mean.acc.rf <- format(mean.acc.rf, digits = 4)
-mean.acc.rf <- as.numeric(mean.acc.rf)*100
-
-mean.acc.rf.pca <- mean(subset(acc.df, acc.df$model == 'rf.pca')$accuracy)
-mean.acc.rf.pca <- format(mean.acc.rf.pca, digits = 4)
-mean.acc.rf.pca <- as.numeric(mean.acc.rf.pca)*100
-
-# SVM
-mean.acc.svm <- mean(subset(acc.df, acc.df$model == 'svm')$accuracy)
-mean.acc.svm <- format(mean.acc.svm, digits = 4)
-mean.acc.svm <- as.numeric(mean.acc.svm)*100
-
-mean.acc.svm.pca <- mean(subset(acc.df, acc.df$model == 'svm.pca')$accuracy)
-mean.acc.svm.pca <- format(mean.acc.svm.pca, digits = 4)
-mean.acc.svm.pca <- as.numeric(mean.acc.svm.pca)*100
-
-# Rpart
-mean.acc.rpart <- mean(subset(acc.df, acc.df$model == 'rpart')$accuracy)
-mean.acc.rpart <- format(mean.acc.rpart, digits = 4)
-mean.acc.rpart <- as.numeric(mean.acc.rpart)*100
-
-mean.acc.rpart.pca <- mean(subset(acc.df, acc.df$model == 'rpart.pca')$accuracy)
-mean.acc.rpart.pca <- format(mean.acc.rpart.pca, digits = 4)
-mean.acc.rpart.pca <- as.numeric(mean.acc.rpart.pca)*100
-
-# Print the results
-paste('Random Forest Mean Accuracy: ', mean.acc.rf, '%', sep = '')
-paste('SVM Mean Accuracy: ', mean.acc.svm, '%', sep = '')
-paste('Rpart Mean Accuracy: ', mean.acc.rpart, '%', sep = '')
-paste('Random Forest Mean Accuracy: ', mean.acc.rf.pca, '%', sep = '')
-paste('SVM Mean Accuracy: ', mean.acc.svm.pca, '%', sep = '')
-paste('Rpart Mean Accuracy: ', mean.acc.rpart.pca, '%', sep = '')
-
-```
+| Model               | Accuracy | Accuracy with PCA |
+|---------------------|----------|-------------------|
+| Random Forest       |  0.6232  |      0.6680       |
+| SVM                 |  0.5900  |      0.6439       |
+| rpart               |  0.5157  |      0.4705       |
 
 
 # Final Plots and Summary
@@ -895,13 +784,8 @@ a better result with and without PCA of around 3%.
 - Support Vector Machines, The Interface to libsvm in package e1071 by David Meyer <br>
 - A Practical Guide to Support Vector Classification by Chih-Wei Hsu, Chih-Chung Chang, and Chih-Jen Lin (2016)
 
-## R
+## Handle data
 Remove the column X from Dataframe:  https://stackoverflow.com/questions/6286313/remove-an-entire-column-from-a-data-frame-in-r/30620946 <br>
-Write function: https://stat.ethz.ch/R-manual/R-devel/library/base/html/write.html <br>
-Get current Date and Time: https://stat.ethz.ch/R-manual/R-devel/library/base/html/Sys.time.html <br>
-Concatenate Strings: https://stat.ethz.ch/R-manual/R-devel/library/base/html/paste.html <br>
-Format function: https://www.rdocumentation.org/packages/base/versions/3.5.1/topics/format <br>
-
 
 
 ## Style and Markdown tools and cheatsheet
