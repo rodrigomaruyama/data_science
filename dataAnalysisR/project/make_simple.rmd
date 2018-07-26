@@ -727,7 +727,7 @@ while (a < 10){
   acc.svm <- classAgreement(table(svm.pred, test.raw$quality))[1]
   time <- Sys.time() 
   str <- paste('svm', time, as.numeric(acc.svm), sep = ',')
-  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models_svm.csv', append = TRUE)
 }
 
 # SVM outliers
@@ -735,12 +735,12 @@ df.list <- list(data.frame(train.outliers), data.frame(test.outliers))
 a <- 0
 while (a < 10){
   a <- a + 1
-  svm.model  <- svm(quality ~ ., data = train.outliers, cost = 4, gamma = 0.5)
+  svm.model  <- svm(quality ~ ., data = train.outliers, cost = 16, gamma = 0.5)
   svm.pred <- predict(svm.model,test.outliers[,-12])
   acc.svm <- classAgreement(table(svm.pred, test.outliers$quality))[1]
   time <- Sys.time() 
   str <- paste('svm.out', time, as.numeric(acc.svm), sep = ',')
-  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models_svm.csv', append = TRUE)
 }
 
 ```
@@ -750,7 +750,6 @@ while (a < 10){
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, Rpart}
 
 # rpart raw
-df.list <- list(data.frame(train.raw), data.frame(test.raw))
 a <- 0
 while (a < 10){
   a <- a + 1
@@ -761,11 +760,10 @@ while (a < 10){
   acc.rpart <- classAgreement(table(rpart.pred, test.raw$quality))[1]
   time <- Sys.time() 
   str <- paste('rpart', time, as.numeric(acc.rpart), sep = ',')
-  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models_rpart.csv', append = TRUE)
 }
 
 # rpart outliers
-df.list <- list(data.frame(train.outliers), data.frame(test.outliers))
 a <- 0
 while (a < 10){
   a <- a + 1
@@ -776,7 +774,7 @@ while (a < 10){
   acc.rpart <- classAgreement(table(rpart.pred, test.outliers$quality))[1]
   time <- Sys.time() 
   str <- paste('rpart.out', time, as.numeric(acc.rpart), sep = ',')
-  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models_rpart.csv', append = TRUE)
 }
 
 ```
