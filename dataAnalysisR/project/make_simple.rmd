@@ -934,11 +934,9 @@ We could increase the accuracy in more than 3.5% with Random Forest and PCA.
 ```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot one'}
 
 # Winner Random Forest Predictor
-model <- randomForest(quality ~ . - quality, data = train.pca)
-rf.pred <- predict(model, newdata = test.pca[, -9])
-rocr.df$predictions <- list(rf.pred)
-rocr.df$labels <- test.pca[, 9]
-pred <- prediction(rf.pred, test.pca$quality)
+model <- randomForest(quality ~ . - quality, data = new.train.pca)
+rf.pred <- predict(model, newdata = new.test.pca)
+pred <- prediction(as.numeric(rf.pred), as.numeric(new.test.pca$quality))
 perf <- performance(pred,"tpr","fpr")
 plot(perf)
 
