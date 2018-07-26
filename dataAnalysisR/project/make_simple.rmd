@@ -167,7 +167,7 @@ write.csv(swdf, file = 'summary.csv')
 
 ## Histogram for each feature
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, histogram}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, histogram}
 
 p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
   geom_bar(fill='#99CCFF')
@@ -626,7 +626,7 @@ We can confirm the correlation between density and residual.sugar in the ggpairs
  multivariate graphics we can observe a concentration for good wines instead
  normal and bad ones.
 
-# Machine Learning Models[#ml]
+# Machine Learning Models
 
 ## Creating Training and Test Datasets for Raw Data
 
@@ -680,7 +680,7 @@ while (a < 10){
   acc.rf <- classAgreement(table(rf.pred, test.raw$quality))[1]
   time <- Sys.time() 
   str <- paste('rf', time, as.numeric(acc.rf), sep = ',')
-  write(str, file = 'data/accuracy_rf.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
 }
 
 # Random Forest Raw
@@ -692,7 +692,7 @@ while (a < 10){
   acc.rf <- classAgreement(table(rf.pred, test.outliers$quality))[1]
   time <- Sys.time() 
   str <- paste('rf.out', time, as.numeric(acc.rf), sep = ',')
-  write(str, file = 'data/accuracy_rf.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
 }
 
 ```
@@ -704,14 +704,16 @@ while (a < 10){
 # Tune with raw dataset
 obj.raw <- tune.svm(quality~., data = train.raw, gamma = 2^(-1:1),cost = 2^(2:4))
 summary(obj.raw)
+p.tune.svm.raw <- (plot(obj.raw))
 # tune with outliers dataset
 obj.outliers <- tune.svm(quality~., data = train.outliers, gamma = 2^(-1:1),cost = 2^(2:4))
 summary(obj.outliers)
+p.tune.svm.outliers <- (plot(obj.outliers))
 ```
 
-![SVM tune raw](pictures/tune_svm_raw.png) 
+![SVM tune raw](pictures/svm_tune_raw.png) 
 
-![SVM tune outliers](pictures/tune_svm_outliers.png)
+![SVM tune outliers](pictures/svm_tune_outliers.png)
 
 ## Supported Vector Machines
 
@@ -727,7 +729,7 @@ while (a < 10){
   acc.svm <- classAgreement(table(svm.pred, test.raw$quality))[1]
   time <- Sys.time() 
   str <- paste('svm', time, as.numeric(acc.svm), sep = ',')
-  write(str, file = 'data/accuracy_models_svm.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
 }
 
 # SVM outliers
@@ -740,7 +742,7 @@ while (a < 10){
   acc.svm <- classAgreement(table(svm.pred, test.outliers$quality))[1]
   time <- Sys.time() 
   str <- paste('svm.out', time, as.numeric(acc.svm), sep = ',')
-  write(str, file = 'data/accuracy_models_svm.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
 }
 
 ```
@@ -760,7 +762,7 @@ while (a < 10){
   acc.rpart <- classAgreement(table(rpart.pred, test.raw$quality))[1]
   time <- Sys.time() 
   str <- paste('rpart', time, as.numeric(acc.rpart), sep = ',')
-  write(str, file = 'data/accuracy_models_rpart.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
 }
 
 # rpart outliers
@@ -774,7 +776,7 @@ while (a < 10){
   acc.rpart <- classAgreement(table(rpart.pred, test.outliers$quality))[1]
   time <- Sys.time() 
   str <- paste('rpart.out', time, as.numeric(acc.rpart), sep = ',')
-  write(str, file = 'data/accuracy_models_rpart.csv', append = TRUE)
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
 }
 
 ```
@@ -945,17 +947,18 @@ plot(perf)
 ### Description One
 
 
-### Plot Two
+## Plot Two
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot Two'}
 
-wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
-g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
+wdf.pca <- prcomp(wdf.outliers[,1:11], center = TRUE, scale. = TRUE)
+g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', 
+  loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
 ```
 
 ### Description Two
 
 
-### Plot Three
+## Plot Three
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot Three'}
 
 wdf.raw$quality <- as.numeric(wdf.raw$quality)
@@ -1013,10 +1016,9 @@ ggsave('pictures/raw_outliers.png', pm.grid)
 
 # Reflection
 
-The models I made didn't perform as well as I expected. The accuracy with PCA
+The models I made didn't perform well as I expected. The accuracy with PCA
 was a good choice to try to eliminate useless information in the dataset and we
-could see in the results some accuracy improvement. Removing the outliers we got
-a better result with and without PCA of around 3%.
+could see in the results some accuracy improvement, around 4%.
 
 # General resources
 
