@@ -847,7 +847,7 @@ Component to decide how many Components I will use in the following models.
 wdf.pca <- prcomp(wdf.outliers[,1:11], center = TRUE, scale. = TRUE)
 ```
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot PCA'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot PCA'}
 # Variance plot
 plot(wdf.pca, type = "l")
 abline(h=0.55, v=8, col="blue")
@@ -927,8 +927,8 @@ We could increase the accuracy in more than 3.5% with Random Forest and PCA.
 
 # Final Plots and Summary
 
-### Plot One
-<<<<<<< HEAD
+## Plot One
+
 ```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot one'}
 
 # Winner Random Forest Predictor
@@ -939,11 +939,6 @@ rocr.df$labels <- test.pca[, 9]
 pred <- prediction(rf.pred, test.pca$quality)
 perf <- performance(pred,"tpr","fpr")
 plot(perf)
-=======
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot one'}
-cor.wdf <- cor(wdf)
-corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
->>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 
 ```
 
@@ -951,7 +946,7 @@ corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic
 
 
 ### Plot Two
-```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot Two'}
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot Two'}
 
 wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
 g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
@@ -963,7 +958,10 @@ g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label
 ### Plot Three
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot Three'}
 
-df.list <- list(data.frame(wdf), data.frame(wdf.outliers))
+wdf.raw$quality <- as.numeric(wdf.raw$quality)
+wdf.outliers$quality <- as.numeric(wdf.outliers$quality)
+
+df.list <- list(data.frame(wdf.raw), data.frame(wdf.outliers))
 a <- 0
 for (df in df.list){
 
@@ -972,29 +970,23 @@ for (df in df.list){
   p1 <- ggplot(data = df, aes(x = density, y = residual.sugar, colour = quality)) +
     geom_point(alpha = 0.3) +
     geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('density X residual.sugar X quality')
-
+    scale_colour_gradientn(colours=rainbow(10))
 
   p2 <- ggplot(data = df, aes(x = density, y = alcohol, colour = quality)) +
     geom_point(alpha = 0.3) +
     geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('density X alcohol X quality')
+    scale_colour_gradientn(colours=rainbow(10))
 
 
   p3 <- ggplot(data = df, aes(y = sulphates, x = chlorides, colour = quality)) +
     geom_point(alpha = 0.3) +
     geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('sulphates X chlorides X quality')
-
+    scale_colour_gradientn(colours=rainbow(10))
 
   p4 <- ggplot(data = df, aes(x = density, y = volatile.acidity, colour = quality)) +
     geom_point(alpha = 0.3) +
     geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('density X volatile.acidity X quality')
+    scale_colour_gradientn(colours=rainbow(10))
 
   if(a == 1){
      pm1 <- grid.arrange(p1, p2, p3, p4, ncol = 2, 
