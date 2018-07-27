@@ -91,12 +91,14 @@ install.packages('e1071', dependencies = TRUE)
 install.packages('rpart', dependencies = TRUE)
 install.packages('randomForest', dependencies = TRUE)
 install.packages('ggfortify', dependencies = TRUE)
+install.packages('ROCR', dependencies = TRUE)
 ```
 
 ## Libraries 
 
 
 ```r
+library(ROCR)
 library(ggfortify)
 library(ggplot2)
 library(knitr)
@@ -213,6 +215,8 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 Histogram for all features in the dataset. We can observe that most of the
 graphic have a normal distribution with a tendency for a positive skeew. The next section we will remove the outliers based on our observation on the plots below and re-plot the Histograms again.
+
+## Removing Outliers
 
 
 ```r
@@ -638,19 +642,42 @@ We can confirm the correlation between density and residual.sugar in the ggpairs
 
 # Machine Learning Models[#ml]
 
-## Creating Training and Test Datasets
+## Creating Training and Test Datasets for Raw Data
 
 
 ```r
-# Creating train and test datasets
-wdf <- read.csv('data/wineQualityWhites.csv')
-wdf$X <- NULL
-wdf$quality <- as.factor(wdf$quality)
+# Loading wdf.raw dataset
+wdf.raw <- read.csv('data/wineQualityWhites.csv')
+wdf.raw$X <- NULL
+wdf.raw$quality <- as.factor(wdf$quality)
 
+# Creating train.raw and test.raw datasets
 set.seed(13)
-samp <- sample(nrow(wdf), 0.4 * nrow(wdf))
-train <- wdf[samp, ]
-test <- wdf[-samp, ]
+samp <- sample(nrow(wdf.raw), 0.4 * nrow(wdf.raw))
+train.raw <- wdf.raw[samp, ]
+test.raw <- wdf.raw[-samp, ]
+```
+
+## Creating Training and Test Datasets for Outliers
+
+
+```r
+# Loading wdf.outliers dataset
+wdf.outliers <- data.frame(wdf.raw)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$fixed.acidity < 11)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$volatile.acidity < 0.75)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$citric.acid < 1)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$residual.sugar < 30)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$chlorides < 0.10)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$free.sulfur.dioxide < 125)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$total.sulfur.dioxide < 350)
+wdf.outliers <- subset(wdf.outliers, wdf.outliers$density < 1.005)
+
+# Creating Train.outliers and Test.outliers datasets
+set.seed(13)
+samp <- sample(nrow(wdf.outliers), 0.4 * nrow(wdf.outliers))
+train.outliers <- wdf.outliers[samp, ]
+test.outliers <- wdf.outliers[-samp, ]
 ```
 
 
@@ -658,47 +685,31 @@ test <- wdf[-samp, ]
 
 
 ```r
-# Random Forest
-model <- randomForest(quality ~ . - quality, data = train)
-rf.pred <- predict(model, newdata = test)
-table(rf.pred, test$quality)
-```
+# Random Forest Raw
+df.list <- list(data.frame(train.raw), data.frame(test.raw))
+a <- 0
+while (a < 10){
+  a <- a + 1
+  model <- randomForest(quality ~ . - quality, data = train.raw)
+  rf.pred <- predict(model, newdata = test.raw)
+  acc.rf <- classAgreement(table(rf.pred, test.raw$quality))[1]
+  time <- Sys.time() 
+  str <- paste('rf', time, as.numeric(acc.rf), sep = ',')
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+}
 
-```
-##        
-## rf.pred    3    4    5    6    7    8    9
-##       3    0    0    0    0    0    0    0
-##       4    0   10    1    0    0    0    0
-##       5   10   58  552  216   13    1    0
-##       6    6   34  317 1008  284   42    1
-##       7    0    2    7  107  222   18    2
-##       8    0    0    0    1    1   26    0
-##       9    0    0    0    0    0    0    0
-```
-
-```r
-classAgreement(table(rf.pred, test$quality))
-```
-
-```
-## $diag
-## [1] 0.6185777
-## 
-## $kappa
-## [1] 0.3953482
-## 
-## $rand
-## [1] 0.6163505
-## 
-## $crand
-## [1] 0.1937039
-```
-
-```r
-acc.rf <- classAgreement(table(rf.pred, test$quality))[1]
-time <- Sys.time() 
-str <- paste('rf', time, as.numeric(acc.rf), sep = ',')
-write(str, file = 'data/accuracy_models.csv', append = TRUE)
+# Random Forest Raw
+df.list <- list(data.frame(train.outliers), data.frame(test.outliers))
+a <- 0
+while (a < 10){
+  a <- a + 1
+  model <- randomForest(quality ~ . - quality, data = train.outliers)
+  rf.pred <- predict(model, newdata = test.outliers)
+  acc.rf <- classAgreement(table(rf.pred, test.outliers$quality))[1]
+  time <- Sys.time() 
+  str <- paste('rf.out', time, as.numeric(acc.rf), sep = ',')
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+}
 ```
 
 
@@ -706,106 +717,134 @@ write(str, file = 'data/accuracy_models.csv', append = TRUE)
 
 
 ```r
-obj <- tune.svm(quality~., data = train, gamma = 2^(-1:1),cost = 2^(2:4))
-summary(obj)
-plot(obj)
+# Tune with raw dataset
+obj.raw <- tune.svm(quality~., data = train.raw, gamma = 2^(-1:1),cost = 2^(2:4))
+summary(obj.raw)
+# tune with outliers dataset
+obj.outliers <- tune.svm(quality~., data = train.outliers, gamma = 2^(-1:1),cost = 2^(2:4))
+summary(obj.outliers)
 ```
 
-![SVM tuning](pictures/svm_tune_output_outliers.png)
+![SVM tune raw](pictures/tune_svm_raw.png) 
+
+![SVM tune outliers](pictures/tune_svm_outliers.png)
 
 ## Supported Vector Machines
 
 
 ```r
-# SVM
-svm.model  <- svm(quality ~ ., data = train, cost = 16, gamma = 1)
-svm.pred <- predict(svm.model,test[,-12])
-table(svm.pred,test[,12])
-```
+# SVM raw
+df.list <- list(data.frame(train.raw), data.frame(test.raw))
+a <- 0
+while (a < 10){
+  a <- a + 1
+  svm.model  <- svm(quality ~ ., data = train.raw, cost = 4, gamma = 0.5)
+  svm.pred <- predict(svm.model,test.raw[,-12])
+  acc.svm <- classAgreement(table(svm.pred, test.raw$quality))[1]
+  time <- Sys.time() 
+  str <- paste('svm', time, as.numeric(acc.svm), sep = ',')
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+}
 
-```
-##         
-## svm.pred    3    4    5    6    7    8    9
-##        3    0    0    0    0    0    0    0
-##        4    0    7    4    3    0    0    0
-##        5    1   29  429  168   17    3    0
-##        6   15   68  429 1069  275   46    2
-##        7    0    0   15   89  216    8    1
-##        8    0    0    0    3   12   30    0
-##        9    0    0    0    0    0    0    0
-```
-
-```r
-classAgreement(table(pred = svm.pred,true = test[,12]))
-```
-
-```
-## $diag
-## [1] 0.5957809
-## 
-## $kappa
-## [1] 0.3483179
-## 
-## $rand
-## [1] 0.5797115
-## 
-## $crand
-## [1] 0.1481319
-```
-
-```r
-acc.svm <- classAgreement(table(svm.pred, test$quality))[1]
-time <- Sys.time() 
-str <- paste('svm', time, as.numeric(acc.svm), sep = ',')
-write(str, file = 'data/accuracy_models.csv', append = TRUE)
+# SVM outliers
+df.list <- list(data.frame(train.outliers), data.frame(test.outliers))
+a <- 0
+while (a < 10){
+  a <- a + 1
+  svm.model  <- svm(quality ~ ., data = train.outliers, cost = 4, gamma = 0.5)
+  svm.pred <- predict(svm.model,test.outliers[,-12])
+  acc.svm <- classAgreement(table(svm.pred, test.outliers$quality))[1]
+  time <- Sys.time() 
+  str <- paste('svm.out', time, as.numeric(acc.svm), sep = ',')
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+}
 ```
 
 ## Rpart
 
 
 ```r
-# rpart
-rpart.model <- rpart(quality ~ ., data = train)
-rpart.pred <- predict(rpart.model, test[,-12], type = 'class')
-table(rpart.pred,test[,12])
+# rpart raw
+df.list <- list(data.frame(train.raw), data.frame(test.raw))
+a <- 0
+while (a < 10){
+  a <- a + 1
+  rpart.model <- rpart(quality ~ ., data = train.raw)
+  rpart.pred <- predict(rpart.model, test.raw[,-12], type = 'class')
+  table(rpart.pred,test.raw[,12])
+  classAgreement(table(pred = rpart.pred,true = test.raw[,12]))
+  acc.rpart <- classAgreement(table(rpart.pred, test.raw$quality))[1]
+  time <- Sys.time() 
+  str <- paste('rpart', time, as.numeric(acc.rpart), sep = ',')
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+}
+
+# rpart outliers
+df.list <- list(data.frame(train.outliers), data.frame(test.outliers))
+a <- 0
+while (a < 10){
+  a <- a + 1
+  rpart.model <- rpart(quality ~ ., data = train.outliers)
+  rpart.pred <- predict(rpart.model, test.outliers[,-12], type = 'class')
+  table(rpart.pred,test.outliers[,12])
+  classAgreement(table(pred = rpart.pred,true = test.outliers[,12]))
+  acc.rpart <- classAgreement(table(rpart.pred, test.outliers$quality))[1]
+  time <- Sys.time() 
+  str <- paste('rpart.out', time, as.numeric(acc.rpart), sep = ',')
+  write(str, file = 'data/accuracy_models.csv', append = TRUE)
+}
 ```
 
-```
-##           
-## rpart.pred   3   4   5   6   7   8   9
-##          3   0   0   0   0   0   0   0
-##          4   0   0   0   0   0   0   0
-##          5   4  51 492 316  29   0   0
-##          6  12  53 382 972 421  73   2
-##          7   0   0   3  44  70  14   1
-##          8   0   0   0   0   0   0   0
-##          9   0   0   0   0   0   0   0
-```
+## The Accuracy average for each Model
 
-```r
-classAgreement(table(pred = rpart.pred,true = test[,12]))
-```
-
-```
-## $diag
-## [1] 0.5219462
-## 
-## $kappa
-## [1] 0.2113672
-## 
-## $rand
-## [1] 0.5303407
-## 
-## $crand
-## [1] 0.07252576
-```
 
 ```r
-acc.rpart <- classAgreement(table(rpart.pred, test$quality))[1]
-time <- Sys.time() 
-str <- paste('rpart', time, as.numeric(acc.rpart), sep = ',')
-write(str, file = 'data/accuracy_models.csv', append = TRUE)
+# load the dataset
+acc.df <- read.csv(file = 'data/accuracy_models.csv')
+
+# Random Forest
+mean.acc.rf <- mean(subset(acc.df, acc.df$model == 'rf')$accuracy)
+mean.acc.rf <- format(mean.acc.rf, digits = 4)
+mean.acc.rf <- as.numeric(mean.acc.rf)*100
+
+mean.acc.rf.out <- mean(subset(acc.df, acc.df$model == 'rf.out')$accuracy)
+mean.acc.rf.out <- format(mean.acc.rf.out, digits = 4)
+mean.acc.rf.out <- as.numeric(mean.acc.rf.out)*100
+
+# SVM
+mean.acc.svm <- mean(subset(acc.df, acc.df$model == 'svm')$accuracy)
+mean.acc.svm <- format(mean.acc.svm, digits = 4)
+mean.acc.svm <- as.numeric(mean.acc.svm)*100
+
+mean.acc.svm.out <- mean(subset(acc.df, acc.df$model == 'svm.out')$accuracy)
+mean.acc.svm.out <- format(mean.acc.svm.out, digits = 4)
+mean.acc.svm.out <- as.numeric(mean.acc.svm.out)*100
+
+# Rpart
+mean.acc.rpart <- mean(subset(acc.df, acc.df$model == 'rpart')$accuracy)
+mean.acc.rpart <- format(mean.acc.rpart, digits = 4)
+mean.acc.rpart <- as.numeric(mean.acc.rpart)*100
+
+mean.acc.rpart.out <- mean(subset(acc.df, acc.df$model == 'rpart.out')$accuracy)
+mean.acc.rpart.out <- format(mean.acc.rpart.out, digits = 4)
+mean.acc.rpart.out <- as.numeric(mean.acc.rpart.out)*100
 ```
+
+
+
+
+```r
+htmlTable(acc.matrix,
+          css.cell = ("padding-left: 1em; padding-right: 1em;"), 
+          header =  c('Random Forest', 'SVM', 'Rpart'),
+          rnames = c('RAW Data', 'Outliers Data'),
+          caption="Accuracy Mean (%)")
+```
+
+```
+## Error in htmlTable(acc.matrix, css.cell = ("padding-left: 1em; padding-right: 1em;"), : object 'acc.matrix' not found
+```
+
 
 ## Pricipal component analysis - PCA
 
@@ -816,7 +855,7 @@ Component to decide how many Components I will use in the following models.
 
 ```r
 # PCA
-wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
+wdf.pca <- prcomp(wdf.outliers[,1:11], center = TRUE, scale. = TRUE)
 ```
 
 
@@ -848,238 +887,73 @@ also need to have negative correlation once the lowest pH means very acid soluti
 ```r
 # New dataframe
 new.wdf.pca <- data.frame(wdf.pca$x)
-new.wdf.pca <- data.frame(new_wdf.pca[,1:8], quality = wdf$quality)
+new.wdf.pca <- data.frame(new.wdf.pca[,1:8], quality = wdf.outliers$quality)
 
 # Creating train and test datasets
 set.seed(123)
-samp <- sample(nrow(new_wdf.pca), 0.8 * nrow(new_wdf.pca))
-train.pca <- new_wdf.pca[samp, ]
-test.pca <- new_wdf.pca[-samp, ]
+samp <- sample(nrow(new.wdf.pca), 0.8 * nrow(new.wdf.pca))
+new.train.pca <- new.wdf.pca[samp, ]
+new.test.pca <- new.wdf.pca[-samp, ]
 ```
 
 ## Random Forest Model after PCA
 
 
 ```r
-# Random Forest
-model <- randomForest(quality ~ . - quality, data = train.pca)
-rf.pred <- predict(model, newdata = test.pca)
-table(rf.pred, test.pca$quality)
+# Random Forest Raw
+df.list <- list(data.frame(new.train.pca), data.frame(new.test.pca))
+a <- 0
+while (a < 10){
+  a <- a + 1
+  model <- randomForest(quality ~ . - quality, data = new.train.pca, ntree = 150)
+  rf.pred <- predict(model, newdata = new.test.pca)
+  acc.rf <- classAgreement(table(rf.pred, new.test.pca$quality))[1]
+  time <- Sys.time() 
+  str <- paste('rf', time, as.numeric(acc.rf), sep = ',')
+  write(str, file = 'data/accuracy_models_pca.csv', append = TRUE)
+}
 ```
 
-```
-##        
-## rf.pred   3   4   5   6   7   8   9
-##       3   0   0   0   0   0   0   0
-##       4   0   5   3   0   0   0   0
-##       5   1  16 190  45   5   0   0
-##       6   2  20 104 361  82  18   0
-##       7   0   0   4  21  84   5   0
-##       8   0   0   0   0   0  14   0
-##       9   0   0   0   0   0   0   0
-```
-
-```r
-classAgreement(table(rf.pred, test.pca$quality))
-```
-
-```
-## $diag
-## [1] 0.6673469
-## 
-## $kappa
-## [1] 0.4780199
-## 
-## $rand
-## [1] 0.6460612
-## 
-## $crand
-## [1] 0.2600683
-```
-
-```r
-acc.rf.pca <- classAgreement(table(rf.pred, test.pca$quality))[1]
-time <- Sys.time() 
-str <- paste('rf.pca', time, as.numeric(acc.rf.pca), sep = ',')
-write(str, file = 'data/accuracy_models.csv', append = TRUE)
-```
-
-## Supported Vector Machines PCA
-
-
-```r
-# Tune parameters for new dataset
-obj <- tune.svm(quality~., data = train.pca, gamma = 2^(-1:1),cost = 2^(2:4))
-summary(obj)
-plot(obj)
-```
-
-![SVM tuning with PCA](pictures/svm_tune_output_outliers_pca.png)
-
-
-```r
-# SVM
-svm.model  <- svm(quality ~ ., data = train.pca, cost = 8, gamma = 2)
-svm.pred <- predict(svm.model,test.pca[,-12])
-table(svm.pred,test.pca[,"quality"])
-```
-
-```
-##         
-## svm.pred   3   4   5   6   7   8   9
-##        3   0   0   0   0   0   0   0
-##        4   0   3   0   2   0   0   0
-##        5   0   7 160  45  10   1   0
-##        6   3  31 131 359  82  19   0
-##        7   0   0  10  20  78   4   0
-##        8   0   0   0   1   1  13   0
-##        9   0   0   0   0   0   0   0
-```
-
-```r
-classAgreement(table(pred = svm.pred,true = test.pca[,"quality"]))
-```
-
-```
-## $diag
-## [1] 0.6255102
-## 
-## $kappa
-## [1] 0.4069812
-## 
-## $rand
-## [1] 0.6028163
-## 
-## $crand
-## [1] 0.1885932
-```
-
-```r
-acc.svm.pca <- classAgreement(table(svm.pred, test.pca$quality))[1]
-time <- Sys.time() 
-str <- paste('svm.pca', Sys.time(), as.numeric(acc.svm.pca), sep = ',')
-write(str, file = 'data/accuracy_models.csv', append = TRUE)
-```
-
-## Rpart
-
-
-```r
-# rpart
-rpart.model <- rpart(quality ~ ., data = train.pca)
-rpart.pred <- predict(rpart.model, test.pca[,-12], type = 'class')
-table(rpart.pred,test.pca[,"quality"])
-```
-
-```
-##           
-## rpart.pred   3   4   5   6   7   8   9
-##          3   0   0   0   0   0   0   0
-##          4   0   0   0   0   0   0   0
-##          5   1  13 148  81  16   1   0
-##          6   2  28 153 346 155  36   0
-##          7   0   0   0   0   0   0   0
-##          8   0   0   0   0   0   0   0
-##          9   0   0   0   0   0   0   0
-```
-
-```r
-classAgreement(table(pred = rpart.pred,true = test.pca[,"quality"]))
-```
-
-```
-## $diag
-## [1] 0.5040816
-## 
-## $kappa
-## [1] 0.1712546
-## 
-## $rand
-## [1] 0.4840862
-## 
-## $crand
-## [1] 0.04486528
-```
-
-```r
-acc.rpart.pca <- classAgreement(table(rpart.pred, test.pca$quality))[1]
-time <- Sys.time() 
-str <- paste('rpart.pca', Sys.time(), as.numeric(acc.rpart.pca), sep = ',')
-write(str, file = 'data/accuracy_models.csv', append = TRUE)
-```
-
-## The Accuracy average for each Model
+## Mean Random Forest Accuracy
 
 
 ```r
 # load the dataset
-acc.df <- read.csv(file = 'data/accuracy_models.csv')
+acc.df <- read.csv(file = 'data/accuracy_models_pca.csv')
 
 # Random Forest
 mean.acc.rf <- mean(subset(acc.df, acc.df$model == 'rf')$accuracy)
 mean.acc.rf <- format(mean.acc.rf, digits = 4)
 mean.acc.rf <- as.numeric(mean.acc.rf)*100
-
-mean.acc.rf.pca <- mean(subset(acc.df, acc.df$model == 'rf.pca')$accuracy)
-mean.acc.rf.pca <- format(mean.acc.rf.pca, digits = 4)
-mean.acc.rf.pca <- as.numeric(mean.acc.rf.pca)*100
-
-# SVM
-mean.acc.svm <- mean(subset(acc.df, acc.df$model == 'svm')$accuracy)
-mean.acc.svm <- format(mean.acc.svm, digits = 4)
-mean.acc.svm <- as.numeric(mean.acc.svm)*100
-
-mean.acc.svm.pca <- mean(subset(acc.df, acc.df$model == 'svm.pca')$accuracy)
-mean.acc.svm.pca <- format(mean.acc.svm.pca, digits = 4)
-mean.acc.svm.pca <- as.numeric(mean.acc.svm.pca)*100
-
-# Rpart
-mean.acc.rpart <- mean(subset(acc.df, acc.df$model == 'rpart')$accuracy)
-mean.acc.rpart <- format(mean.acc.rpart, digits = 4)
-mean.acc.rpart <- as.numeric(mean.acc.rpart)*100
-
-mean.acc.rpart.pca <- mean(subset(acc.df, acc.df$model == 'rpart.pca')$accuracy)
-mean.acc.rpart.pca <- format(mean.acc.rpart.pca, digits = 4)
-mean.acc.rpart.pca <- as.numeric(mean.acc.rpart.pca)*100
 ```
 
 
-
-
 ```r
-htmlTable(acc.matrix,
+htmlTable(mean.acc.rf,
           css.cell = ("padding-left: 1em; padding-right: 1em;"), 
-          header =  c('Random Forest', 'SVM', 'Rpart'),
-          rnames = c('RAW Data', 'PCA Data'),
+          header =  c('Random Forest'),
+          rnames = c('Outliers Data'),
           caption="Accuracy Mean (%)")
 ```
 
 <table class='gmisc_table' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
 <thead>
-<tr><td colspan='4' style='text-align: left;'>
+<tr><td colspan='2' style='text-align: left;'>
 Accuracy Mean (%)</td></tr>
 <tr>
 <th style='border-bottom: 1px solid grey; border-top: 2px solid grey;'> </th>
 <th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Random Forest</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>SVM</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Rpart</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style='text-align: left;'>RAW Data</td>
-<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>62.55</td>
-<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>59.58</td>
-<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>52.19</td>
-</tr>
-<tr>
-<td style='border-bottom: 2px solid grey; text-align: left;'>PCA Data</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>66.59</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>62.55</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>50.41</td>
+<td style='border-bottom: 2px solid grey; text-align: left;'>Outliers Data</td>
+<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>44.19</td>
 </tr>
 </tbody>
 </table>
+
+We could increase the accuracy in more than 4% with Random Forest and PCA.
 
 # Final Plots and Summary
 
@@ -1105,11 +979,7 @@ for (df in df.list){
 
 g.grid <- grid.arrange(g1, g2, ncol = 2,
   top = textGrob("Raw x Outliers PCA plot",gp=gpar(fontsize=15,font=3)))
-```
 
-![plot of chunk Plot Two](figure/Plot Two-1.png)
-
-```r
 ggsave(file = 'pictures/plot_two.png', g.grid)
 ```
 
@@ -1201,6 +1071,7 @@ Get current Date and Time: https://stat.ethz.ch/R-manual/R-devel/library/base/ht
 Concatenate Strings: https://stat.ethz.ch/R-manual/R-devel/library/base/html/paste.html <br>
 Format function: https://www.rdocumentation.org/packages/base/versions/3.5.1/topics/format <br>
 htmlTable: https://cran.r-project.org/web/packages/htmlTable/vignettes/tables.html <br>
+ROCR: https://cran.r-project.org/web/packages/ROCR/ROCR.pdf <br>
 
 ## Style and Markdown tools and cheatsheet
 
