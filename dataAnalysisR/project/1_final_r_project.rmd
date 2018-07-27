@@ -144,7 +144,7 @@ dim(wdf)
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'summary dataset'}
 swdf <- summary(wdf)
 swdf <- t.data.frame(swdf)
-write.csv(swdf, file = 'summary.csv')
+write.csv(swdf, file = 'data/summary.csv')
 ```
 
 
