@@ -41,7 +41,7 @@ TITLE by Rodrigo P Maruyama
   + Multivariate analysis
 
 
-7. Machine Learning
+7. [Machine Learning](#ml)
   + Random Forest model
   + Tuning SVM parameters
   + SVM
@@ -117,8 +117,6 @@ library(knitr)
 library(markdown)
 library(htmlTable)
 ```
-
-## Loading Dataset
 
 
 ```r
@@ -220,16 +218,14 @@ graphic have a normal distribution with a tendency for a positive skeew. The nex
 
 
 ```r
-wdf.outliers <- data.frame(wdf)
-
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$fixed.acidity < 11)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$volatile.acidity < 0.75)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$citric.acid < 1)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$residual.sugar < 30)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$chlorides < 0.10)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$free.sulfur.dioxide < 125)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$total.sulfur.dioxide < 350)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$density < 1.005)
+wdf <- subset(wdf, wdf$fixed.acidity < 11)
+wdf <- subset(wdf, wdf$volatile.acidity < 0.75)
+wdf <- subset(wdf, wdf$citric.acid < 1)
+wdf <- subset(wdf, wdf$residual.sugar < 30)
+wdf <- subset(wdf, wdf$chlorides < 0.10)
+wdf <- subset(wdf, wdf$free.sulfur.dioxide < 125)
+wdf <- subset(wdf, wdf$total.sulfur.dioxide < 350)
+wdf <- subset(wdf, wdf$density < 1.005)
 ```
 
 
@@ -294,7 +290,7 @@ table(wdf$quality.2)
 ```
 ## 
 ##    bad   good normal 
-##   1640   1060   2198
+##   1565   1055   2139
 ```
 
 ```r
@@ -380,7 +376,7 @@ ggpairs(wdf, title = 'GGPAIRS') +
 
 ```r
 cor.wdf <- cor(wdf)
-corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'Corrplot graphic')
+c <- corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
 ```
 
 ![Corrplot](pictures/corrplot_outliers.png)
@@ -602,24 +598,30 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 p1 <- ggplot(data = wdf, aes(x = density, y = residual.sugar, colour = quality)) +
   geom_point(alpha = 0.3) +
   geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
+  scale_y_continuous(limits = c(0, 30)) +
   scale_colour_gradientn(colours=rainbow(10)) +
   ggtitle('density X residual.sugar X quality')
 
 p2 <- ggplot(data = wdf, aes(x = density, y = alcohol, colour = quality)) +
   geom_point(alpha = 0.3) +
   geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
   scale_colour_gradientn(colours=rainbow(10)) +
   ggtitle('density X alcohol X quality')
 
 p3 <- ggplot(data = wdf, aes(y = sulphates, x = chlorides, colour = quality)) +
   geom_point(alpha = 0.3) +
   geom_smooth(method='lm',formula=y~x) +
+  scale_x_continuous(limits = c(0, 0.2)) +
   scale_colour_gradientn(colours=rainbow(10)) +
   ggtitle('sulphates X chlorides X quality')
 
 p4 <- ggplot(data = wdf, aes(x = density, y = volatile.acidity, colour = quality)) +
   geom_point(alpha = 0.3) +
   geom_smooth(method='lm',formula=y~x) +
+  scale_y_continuous(limits = c(0, 0.9)) +
+  scale_x_continuous(limits = c(0.98, 1.01)) +
   scale_colour_gradientn(colours=rainbow(10)) +
   ggtitle('density X volatile.acidity X quality')
 
@@ -886,6 +888,7 @@ also need to have negative correlation once the lowest pH means very acid soluti
 
 ```r
 # New dataframe
+<<<<<<< HEAD
 new.wdf.pca <- data.frame(wdf.pca$x)
 new.wdf.pca <- data.frame(new.wdf.pca[,1:8], quality = wdf.outliers$quality)
 
@@ -894,6 +897,16 @@ set.seed(123)
 samp <- sample(nrow(new.wdf.pca), 0.8 * nrow(new.wdf.pca))
 new.train.pca <- new.wdf.pca[samp, ]
 new.test.pca <- new.wdf.pca[-samp, ]
+=======
+new_wdf.pca <- data.frame(wdf.pca$x)
+new_wdf.pca <- data.frame(new_wdf.pca[,1:8], quality = wdf$quality)
+
+# Creating train and test datasets
+set.seed(123)
+samp <- sample(nrow(wdf), 0.8 * nrow(wdf))
+train.pca <- new_wdf.pca[samp, ]
+test.pca <- new_wdf.pca[-samp, ]
+>>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 ```
 
 ## Random Forest Model after PCA
@@ -931,15 +944,26 @@ mean.acc.rf <- as.numeric(mean.acc.rf)*100
 ```r
 htmlTable(mean.acc.rf,
           css.cell = ("padding-left: 1em; padding-right: 1em;"), 
+<<<<<<< HEAD
           header =  c('Random Forest'),
           rnames = c('Outliers Data'),
           caption="Accuracy Mean (%)")
+=======
+          header =  c('Random Forest', 'SVM', 'Rpart'),
+          rnames = c('RAW Data', 'PCA Data'),
+          caption="Accuracy Mean")
+>>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 ```
 
 <table class='gmisc_table' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
 <thead>
+<<<<<<< HEAD
 <tr><td colspan='2' style='text-align: left;'>
 Accuracy Mean (%)</td></tr>
+=======
+<tr><td colspan='4' style='text-align: left;'>
+Accuracy Mean</td></tr>
+>>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 <tr>
 <th style='border-bottom: 1px solid grey; border-top: 2px solid grey;'> </th>
 <th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Random Forest</th>
@@ -965,6 +989,7 @@ We could increase the accuracy in more than 4% with Random Forest and PCA.
 
 ### Plot Two
 
+<<<<<<< HEAD
 ```r
 df.list <- list(data.frame(wdf), data.frame(wdf.outliers))
 a <- 0
@@ -984,66 +1009,14 @@ ggsave(file = 'pictures/plot_two.png', g.grid)
 ```
 
 ![Raw x Outliers PCA plot](pictures/plot_two.png)
+=======
+>>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 
 ### Description Two
 
 
 ### Plot Three
 
-```r
-df.list <- list(data.frame(wdf), data.frame(wdf.outliers))
-a <- 0
-for (df in df.list){
-
-  a <- a + 1
-  
-  p1 <- ggplot(data = df, aes(x = density, y = residual.sugar, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('density X residual.sugar X quality')
-
-
-  p2 <- ggplot(data = df, aes(x = density, y = alcohol, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('density X alcohol X quality')
-
-
-  p3 <- ggplot(data = df, aes(y = sulphates, x = chlorides, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('sulphates X chlorides X quality')
-
-
-  p4 <- ggplot(data = df, aes(x = density, y = volatile.acidity, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10)) +
-    ggtitle('density X volatile.acidity X quality')
-
-  if(a == 1){
-     pm1 <- grid.arrange(p1, p2, p3, p4, ncol = 2, 
-       top = textGrob("RAW",gp=gpar(fontsize=15,font=3)))
-  } else {
-     pm2 <- grid.arrange(p1, p2, p3, p4, ncol = 2, 
-       top = textGrob("Outliers",gp=gpar(fontsize=15,font=3)))
-  }
-  
-  file.name <- paste('pictures/', a, '_multivariate.png', sep = '')
-  ggsave(file.name, grid_multivariate)
-}
-
-pm.grid <- grid.arrange(pm1, pm2, ncol = 2,
-             top = textGrob("Multivariate Plots Raw data - Outliers data",
-                            gp=gpar(fontsize=15,font=3)))
-
-ggsave('pictures/plot_three.png', pm.grid)
-```
-
-![Raw and Outliers Multiplot](pictures/raw_outliers.png)
 
 ### Description Three
 
@@ -1070,8 +1043,11 @@ Write function: https://stat.ethz.ch/R-manual/R-devel/library/base/html/write.ht
 Get current Date and Time: https://stat.ethz.ch/R-manual/R-devel/library/base/html/Sys.time.html <br>
 Concatenate Strings: https://stat.ethz.ch/R-manual/R-devel/library/base/html/paste.html <br>
 Format function: https://www.rdocumentation.org/packages/base/versions/3.5.1/topics/format <br>
+<<<<<<< HEAD
 htmlTable: https://cran.r-project.org/web/packages/htmlTable/vignettes/tables.html <br>
 ROCR: https://cran.r-project.org/web/packages/ROCR/ROCR.pdf <br>
+=======
+>>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 
 ## Style and Markdown tools and cheatsheet
 

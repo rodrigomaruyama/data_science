@@ -196,7 +196,7 @@ p12 <- ggplot(aes(x=quality), data = wdf) +
 
 u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
 
-#ggsave(file = 'pictures/1_univariate.png', u1)
+ggsave(file = 'pictures/1_univariate.png', u1)
 
 ```
 
@@ -365,7 +365,7 @@ ggpairs(wdf, title = 'GGPAIRS') +
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, corrplot}
 
 cor.wdf <- cor(wdf)
-corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'Corrplot graphic')
+corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
 ```
 
 ![Corrplot](pictures/corrplot_outliers.png)
@@ -920,9 +920,15 @@ mean.acc.rf <- as.numeric(mean.acc.rf)*100
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Accuracy Mean Table RF'}
 htmlTable(mean.acc.rf,
           css.cell = ("padding-left: 1em; padding-right: 1em;"), 
+<<<<<<< HEAD
           header =  c('Random Forest'),
           rnames = c('Outliers Data'),
           caption="Accuracy Mean (%)")
+=======
+          header =  c('Random Forest', 'SVM', 'Rpart'),
+          rnames = c('RAW Data', 'PCA Data'),
+          caption="Accuracy Mean")
+>>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 ```
 
 We could increase the accuracy in more than 4% with Random Forest and PCA.
@@ -930,6 +936,7 @@ We could increase the accuracy in more than 4% with Random Forest and PCA.
 # Final Plots and Summary
 
 ### Plot One
+<<<<<<< HEAD
 ```{r echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot one'}
 
 # Winner Random Forest Predictor
@@ -940,6 +947,11 @@ rocr.df$labels <- test.pca[, 9]
 pred <- prediction(rf.pred, test.pca$quality)
 perf <- performance(pred,"tpr","fpr")
 plot(perf)
+=======
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot one'}
+cor.wdf <- cor(wdf)
+corrplot.mixed(cor.wdf, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
+>>>>>>> parent of 37c87eb... Plot two: Raw x Outliers PCA plot
 
 ```
 
@@ -947,33 +959,17 @@ plot(perf)
 
 
 ### Plot Two
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot Two'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot Two'}
 
-df.list <- list(data.frame(wdf), data.frame(wdf.outliers))
-a <- 0
-for (df in df.list){
-  a <- a + 1
-  d <- prcomp(df[,1:11], center = TRUE, scale. = TRUE)
-  if (a == 1){
-    g1 <- autoplot(d, loadings = TRUE, loadings.colour = 'blue', loadings.label =        TRUE, loadings.label.size = 5, alpha = 0.3, main = 'Raw')
-  } else {
-    g2 <- autoplot(d, loadings = TRUE, loadings.colour = 'blue', loadings.label =        TRUE, loadings.label.size = 5, alpha = 0.3, main = 'Outliers')  }
-}
-
-g.grid <- grid.arrange(g1, g2, ncol = 2,
-  top = textGrob("Raw x Outliers PCA plot",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/plot_two.png', g.grid)
-
+wdf.pca <- prcomp(wdf[,1:11], center = TRUE, scale. = TRUE)
+g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
 ```
-
-![Raw x Outliers PCA plot](pictures/plot_two.png)
 
 ### Description Two
 
 
 ### Plot Three
-```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, 'Plot Three'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 'Plot Three'}
 
 df.list <- list(data.frame(wdf), data.frame(wdf.outliers))
 a <- 0
@@ -1010,10 +1006,10 @@ for (df in df.list){
 
   if(a == 1){
      pm1 <- grid.arrange(p1, p2, p3, p4, ncol = 2, 
-       top = textGrob("RAW",gp=gpar(fontsize=15,font=3)))
+       top = textGrob("RAW Data",gp=gpar(fontsize=15,font=3)))
   } else {
      pm2 <- grid.arrange(p1, p2, p3, p4, ncol = 2, 
-       top = textGrob("Outliers",gp=gpar(fontsize=15,font=3)))
+       top = textGrob("Outliers Data",gp=gpar(fontsize=15,font=3)))
   }
   
   file.name <- paste('pictures/', a, '_multivariate.png', sep = '')
@@ -1024,10 +1020,8 @@ pm.grid <- grid.arrange(pm1, pm2, ncol = 2,
              top = textGrob("Multivariate Plots Raw data - Outliers data",
                             gp=gpar(fontsize=15,font=3)))
 
-ggsave('pictures/plot_three.png', pm.grid)
+ggsave('pictures/raw_outliers.png', pm.grid)
 ```
-
-![Raw and Outliers Multiplot](pictures/raw_outliers.png)
 
 ### Description Three
 
