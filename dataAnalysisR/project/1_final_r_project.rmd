@@ -72,14 +72,13 @@ Article link: [here](https://www.semanticscholar.org/paper/Modeling-wine-prefere
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'load dataset'}
 # Load the Data
 wdf <- read.csv('data/wineQualityWhites.csv')
-#wdf$X <- NULL
 ```
 
 
 ## Dataset size
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'dataset size'}
-dim(wdf)
+paste('Number of rows in the dataset:', dim(wdf)[1], sep = ' ')
 ```
 
 
@@ -109,7 +108,7 @@ write.csv(swdf, file = 'data/summary.csv')
 
 ## Type of Feature
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'dataset size'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, 'feature type'}
 str(wdf)
 ```
 
@@ -159,7 +158,7 @@ We can start our observation over the dataset with a histogram for each feature.
 
 ## Removing Outliers
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, 'outliers IQR'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'outliers IQR'}
 
 # Find the outliers based in the 1.5*IQR value
 outliers <- data.frame()
@@ -178,13 +177,17 @@ dim(outliers)
 # Removing the outliers from the dataset
 wdf.outliers <- anti_join(wdf, outliers)
 wdf.outliers$X <- NULL
-dim(wdf.outliers)
+```
+
+```{r echo = TRUE, eval = TRUE, warning = FALSE, 'print no. rows'}
+paste('Number of outliers removed:', dim(outliers)[1], sep = ' ')
+paste('Number of rows in the new dataset:', dim(wdf.outliers)[1], sep = ' ')
 ```
 
 
 ## Density plot for each feature with stat lines
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'loop for density plots'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'loop for density plots'}
 
 # Using a for loop for better programming practice and to save lines of code :)
 
@@ -193,7 +196,9 @@ p <- list()
 a <- 0
 for (var in feature.list) {
   a <- a + 1
-
+  if (var == 'quality') {
+    wdf.outliers$quality <- as.numeric(wdf.outliers$quality)
+  }
   p[[a]] <- ggplot(data = wdf.outliers, aes_string(x=var)) +
     geom_density(fill='#99CCFF') +
     geom_vline(aes_string(xintercept=mean(wdf.outliers[, var])),
@@ -221,7 +226,13 @@ With this plot I wanted to see how the Mean and the Median are positioned over t
 For a easy understanding about the Wines quality we created a new feature based 
 on the quality as you can check in the table below.
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, quality.2}
+| classification | Criterion       |
+|----------------|-----------------|
+| Bad            | quality < 6     |
+| Normal         | quality = 6     |
+| Good           | quality > 6     |
+
+```{r echo = FALSE, eval = FALSE, warning = FALSE, quality.2}
 
 # | classification | Criterion       |
 # |----------------|-----------------|
@@ -237,16 +248,17 @@ table(wdf.outliers$quality.2)
 wdf.outliers$quality.2 <- NULL
 ```
 
-And the result, including the number of removed outliers for each classification is in the table below.
+And the result, including the number of removed outliers for each classification 
+is in the table below.
 
 | Quality.2 | raw  dataset | outliers removed dataset | removed |
 |-----------|--------------|--------------------------|---------|
-| bad       |     1640     |           1197           |   443   |
-| normal    |     2198     |           1860           |   338   |
-| good      |     1060     |           941            |   119   |
+| bad       |     1640     |           1538           |   102   |
+| normal    |     2198     |           2143           |    55   |
+| good      |     1060     |           1017           |    43   |
 
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'pie chart'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'pie chart'}
 
 # Pie plot creation with percent legend
 
@@ -338,16 +350,16 @@ properties.
 
 |    | Positive correlation                       | correlation |
 |----|--------------------------------------------|-------------|
-| 1  | density x residual.sugar                   |    0.85     |
-| 2  | total.sulfur.dioxide x free.sulfur.dioxide |    0.62     |
-| 3  | density x total.sulfur.dioxide             |    0.56     |
+| 1  | density x residual.sugar                   |    0.84     |
+| 2  | total.sulfur.dioxide x free.sulfur.dioxide |    0.61     |
+| 3  | density x total.sulfur.dioxide             |    0.55     |
 | 4  | quality x alcohol                          |    0.42     |
 
 |    | Negative correlation                       | correlation |
 |----|--------------------------------------------|-------------|
-| 1  | density x alcohol                          |   -0.82     |
-| 2  | total.sulfur.dioxide x alcohol             |   -0.56     |
-| 3  | alcohol x residual.sugar                   |   -0.48     |
+| 1  | density x alcohol                          |   -0.81     |
+| 2  | alcohol x residual.sugar                   |   -0.48     |
+| 3  | total.sulfur.dioxide x alcohol             |   -0.46     |
 
 |    | Zero correlation                           | correlation |
 |----|--------------------------------------------|-------------|
@@ -526,9 +538,9 @@ No.
 
 |    | Positive correlation                       | correlation |
 |----|--------------------------------------------|-------------|
-| 1  | density x residual.sugar                   |    0.85     |
-| 2  | total.sulfur.dioxide x free.sulfur.dioxide |    0.62     |
-| 3  | density x total.sulfur.dioxide             |    0.56     |
+| 1  | density x residual.sugar                   |    0.84     |
+| 2  | total.sulfur.dioxide x free.sulfur.dioxide |    0.61     |
+| 3  | density x total.sulfur.dioxide             |    0.55     |
 | 4  | quality x alcohol                          |    0.42     |
 
 In this table we can see the correlation using a raw dataset and the dataset
@@ -539,7 +551,7 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 
 ## Highest Correlated features plots
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'multivariate plots'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'multivariate plots'}
 
 # Multivariate plots with Linear Regression
 
@@ -593,7 +605,7 @@ We can confirm the correlation between density and residual.sugar in the ggpairs
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'reloading dataset for ML'}
 
 # Loading wdf.raw dataset
-wdf.raw <- read.csv('data/wineQualityWhites.csv')
+wdf.raw <- wdf
 wdf.raw$X <- NULL
 wdf.raw$quality <- as.factor(wdf$quality)
 
@@ -608,16 +620,7 @@ test.raw <- wdf.raw[-samp, ]
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'removing outliers'}
 
-# Loading wdf.outliers dataset
-wdf.outliers <- data.frame(wdf.raw)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$fixed.acidity < 11)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$volatile.acidity < 0.75)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$citric.acid < 1)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$residual.sugar < 30)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$chlorides < 0.10)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$free.sulfur.dioxide < 125)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$total.sulfur.dioxide < 350)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$density < 1.005)
+wdf.outliers$quality <- as.factor(wdf.outliers$quality)
 
 # Creating Train.outliers and Test.outliers datasets
 set.seed(13)
@@ -666,6 +669,7 @@ obj.raw <- tune.svm(quality~., data = train.raw, gamma = 2^(-1:1),
   cost = 2^(2:4))
 summary(obj.raw)
 p.tune.svm.raw <- (plot(obj.raw))
+
 # tune with outliers dataset
 obj.outliers <- tune.svm(quality~., data = train.outliers, gamma = 2^(-1:1),
   cost = 2^(2:4))
@@ -686,7 +690,7 @@ df.list <- list(data.frame(train.raw), data.frame(test.raw))
 a <- 0
 while (a < 10){
   a <- a + 1
-  svm.model  <- svm(quality ~ ., data = train.raw, cost = 4, gamma = 0.5)
+  svm.model  <- svm(quality ~ ., data = train.raw, cost = 4, gamma = 1)
   svm.pred <- predict(svm.model,test.raw[,-12])
   acc.svm <- classAgreement(table(svm.pred, test.raw$quality))[1]
   time <- Sys.time() 
@@ -699,7 +703,7 @@ df.list <- list(data.frame(train.outliers), data.frame(test.outliers))
 a <- 0
 while (a < 10){
   a <- a + 1
-  svm.model  <- svm(quality ~ ., data = train.outliers, cost = 16, gamma = 0.5)
+  svm.model  <- svm(quality ~ ., data = train.outliers, cost = 4, gamma = 1)
   svm.pred <- predict(svm.model,test.outliers[,-12])
   acc.svm <- classAgreement(table(svm.pred, test.outliers$quality))[1]
   time <- Sys.time() 
@@ -745,7 +749,7 @@ while (a < 10){
 
 ## The Accuracy average for each Model
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'Accuracy mean'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'Accuracy mean'}
 
 # load the dataset
 acc.df <- read.csv(file = 'data/accuracy_models.csv')
@@ -778,7 +782,7 @@ mean.acc.rpart.out <- format(mean.acc.rpart.out, digits = 4)
 mean.acc.rpart.out <- as.numeric(mean.acc.rpart.out)*100
 ```
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'Alternative print' }
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'Alternative print' }
 # Print the results
 paste('Random Forest Mean Accuracy: ', mean.acc.rf, '%', sep = '')
 paste('SVM Mean Accuracy: ', mean.acc.svm, '%', sep = '')
@@ -811,10 +815,10 @@ Component to decide how many Components I will use in the following models.
 wdf.pca <- prcomp(wdf.outliers[,1:11], center = TRUE, scale. = TRUE)
 ```
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'Plot PCA'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'Plot PCA'}
 # Variance plot
 plot(wdf.pca, type = "l")
-abline(h=0.55, v=8, col="blue")
+abline(h=0.6, v=8, col="blue")
 
 # PCA components plots
 g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', 
@@ -823,10 +827,14 @@ ggsave(file = 'pictures/pca_outliers.png', g)
 
 ```
 
+### Variance x Number of components
+
 ![PCA Variance](pictures/variance_pca_outliers.png)
 
 Looking at this graphic it is easy to indentify that we can run the models with
 8 components without loosing accuracy in our model.
+
+### Correlation between features
 
 ![PCA components](pictures/pca_outliers.png)
 
@@ -869,7 +877,7 @@ while (a < 10){
 
 ## Mean Random Forest Accuracy
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'Accuracy mean for RF model'}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, 'Accuracy mean for RF model'}
 
 # load the dataset
 acc.df <- read.csv(file = 'data/accuracy_models_pca.csv')
@@ -894,35 +902,37 @@ We could increase the accuracy in more than 4% with Random Forest and PCA.
 
 ## Plot One
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'PCA components plot'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'PCA components plot'}
 
 # PCA
-wdf.pca <- prcomp(wdf.outliers[,1:11], center = TRUE, scale. = TRUE)
+wdf.outliers$quality <- as.numeric(wdf.outliers$quality)
+wdf.pca <- prcomp(wdf.outliers[,1:12], center = TRUE, scale. = TRUE)
 # PCA components plots
 autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', 
   loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
 ```
 
-![PCA components](pictures/pca_outliers.png)
+![PCA components](pictures/pca_outliers_quality.png)
 
 ### Description One
 
 THe PCA component plot is a very ilustrative way to see the correlation between the features. As we expected quality is very negative correlated with residual.sugar as pH and Acidty as well.
 
 ## Plot Two
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'Plot Two'}
-
-good.wine <- median(subset(wdf.outliers, as.numeric(quality) > 6)$alcohol)
-normal.wine <- median(subset(wdf.outliers, as.numeric(quality) == 6)$alcohol)
-bad.wine <- median(subset(wdf.outliers, as.numeric(quality) < 6)$alcohol)
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'Plot Two'}
 
 ggplot(data = wdf.outliers, aes(x = quality, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
+  geom_jitter( alpha = .3)  +
+  geom_boxplot(alpha = .5,color = 'blue') +
   ggtitle('quality X alcohol') +
-  geom_hline(yintercept = good.wine, color = 'blue') +
-  geom_hline(yintercept = normal.wine, color = 'orange') +
-  geom_hline(yintercept = bad.wine, color = 'red')
+  stat_summary(fun.y = "mean", 
+               geom = "point", 
+               color = "red", 
+               shape = 8, 
+               size = 4)
 ```
+
+![Plot two](pictures/plot_two.png)
 
 ### Description Two
 
@@ -941,44 +951,49 @@ p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar,
     geom_smooth(method = "lm", se = FALSE, size = 1) +
     scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
-p2 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol, 
+p2 <- ggplot(data = wdf.outliers, aes(x = fixed.acidity, y = alcohol, 
     color = factor(quality))) +
     geom_point(alpha = 0.3, size = 1) +
     geom_smooth(method = "lm", se = FALSE, size = 1) +
     scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 
-p3 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides, 
+p3 <- ggplot(data = wdf.outliers, aes(x = pH, y = alcohol, 
     color = factor(quality))) +
     geom_point(alpha = 0.3, size = 1) +
     geom_smooth(method = "lm", se = FALSE, size = 1) +
     scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
-p4 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity, 
-    color = factor(quality))) +
-    geom_point(alpha = 0.3, size = 1) +
-    geom_smooth(method = "lm", se = FALSE, size = 1) +
-    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
-
-grid.arrange(p1, p2, p3, p4, ncol = 2, 
-  top = textGrob("Outliers Dataset",gp=gpar(fontsize=15,font=3)))
+grid.arrange(p1, p2, p3, ncol = 1, 
+  top = textGrob("Main features",gp=gpar(fontsize=15,font=3)))
 
 ```
 
-![Multivariate scatter plot](pictures/2_multivariate_outliers.png)
+![Multivariate scatter plot](pictures/plot_three.png)
 
 ### Description Three
 
-In this Multivariate Scatter plot it is easy to note that even the correlation is positive, negative or zero, the Good Wines have clear tendency in each case. For Positive and Negative correlation plots, the Good wines are above the Linear Regression Line and For Zero Correlation plots they are in left, which means low Density and low Chlorides.
+In this plot, I want to see the correlations I expected observe following the 
+wine specialists, acidity, sweetness and alcohol. However, we can see a very 
+strong correlation between sweetness and density. For the other 2 characteristics, 
+the points are very spread out.
 
 ------
 
 # Reflection
 
-The models I made didn't perform well as I expected. The accuracy with PCA
-was a good choice to try to eliminate useless information in the dataset and we
-could see in the results some accuracy improvement, around 4%.
-
+  First I tried to remove outliers just with a observation over the univariate 
+plots. After that, I used the statistical method from the difference between the 
+1st and 3rd quartile multiplied by 1.5 what shows up much more efficient looking 
+the accuracy we got in the Predictors.
+  I wanted to try to predict the quality using the tannin characteristic 
+however we don't have this feature in this data set.
+  The Predictors performed well and as we expected the dataset with PCA got an 
+accuracy score higher than the original dataset.
+  I didn't create any new feature from the original dataset what can be the next 
+approach for the future analysis.
+  
+  
 # General resources
 
 ## Articles
