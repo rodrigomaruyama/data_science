@@ -7,90 +7,13 @@ editor_options:
 ---
 TITLE by Rodrigo P Maruyama
 ========================================================
-# Table of contents
-
-1. Initial Setup
-  + Working Directory 
-  + Package Installation
-  + Libraries
-  
-2. Introduction
-  
-3. Data Structure:
-  + Size
-  + Summary
-
-4. Univariate Plots Section
-  + Bar plot for each variable
-  + Outliers
-  + Replot - Bar plot for each variable 
-  + Density plot for each variable
-  + Quality.2 feature creation
-  + Univariate analysis
-
-5. Bivariate Plots Section
-  + ggpairs plot
-  + corrplot
-  + Positive, Negative and Zero Correlation Table
-  + Bivariate Boxplots
-  + Bivariate Scatter plots with linear regression
-  + Bivariate analysis
-
-6. Multivariate Plots Section
-  + Highest Correlated features plots
-  + Multivariate analysis
-
-
-7. Machine Learning
-  + Random Forest model
-  + Tuning SVM parameters
-  + SVM
-  + Rpart
-  + Pricipal component analysis - PCA
-  + Load new Dataset
-  + Random Forest
-  + Tuning SVM parameters
-  + SVM
-  + Rpart
-  + Accuracy Average
-
-8. Final Plots and Summary
-  + Plot One
-  + Plot two
-  + Plot Three
-
-9. Reflection
-
-10. Resources
 
 # Initial Setup
 
-## Working directory
 
 
-```r
-setwd("D://Documents/ead/Udacity/dsNanodegree/dataAnalysisR/project/")
-```
-
-## Package Instalation
 
 
-```r
-install.packages("markdown", dependencies = TRUE)
-install.packages("knitr", dependencies = TRUE)
-install.packages("ggplot2", dependencies = TRUE)
-install.packages("knitr", dependencies = TRUE)
-install.packages("dplyr", dependencies = TRUE)
-install.packages('GGally', dependencies = TRUE)
-install.packages('tidyverse')
-install.packages('ggthemes', dependencies = TRUE)
-install.packages('corrplot', dependencies = TRUE)
-install.packages('e1071', dependencies = TRUE)
-install.packages('rpart', dependencies = TRUE)
-install.packages('randomForest', dependencies = TRUE)
-install.packages('ggfortify')
-install.packages('ROCR', dependencies = TRUE)
-```
 
 ## Libraries 
 
@@ -116,14 +39,6 @@ library(markdown)
 library(htmlTable)
 ```
 
-## Loading Dataset
-
-
-```r
-# Load the Data
-wdf <- read.csv('data/wineQualityWhites.csv')
-wdf$X <- NULL
-```
 
 # Introduction
 
@@ -135,6 +50,16 @@ Dataset link: [here](https://archive.ics.uci.edu/ml/datasets/wine+quality) <br>
 Article link: [here](https://www.semanticscholar.org/paper/Modeling-wine-preferences-by-data-mining-from-Cortez-Cerdeira/977eda794ec436d20b22296ed5f3b4e2f72cb086)
 
 # The Dataset Structure
+
+## Loading Dataset
+
+
+```r
+# Load the Data
+wdf <- read.csv('data/wineQualityWhites.csv')
+wdf$X <- NULL
+```
+
 
 ## Dataset size
 
@@ -151,11 +76,6 @@ dim(wdf)
 ## Summary of the Dataset:
 
 
-```r
-swdf <- summary(wdf)
-swdf <- t.data.frame(swdf)
-write.csv(swdf, file = 'summary.csv')
-```
 
 
 | Feature              | unit                         | Min  | 1st Qu. | Median | Mean   | 3rd Qu. | Max    |
@@ -178,66 +98,23 @@ write.csv(swdf, file = 'summary.csv')
 ## Histogram for each feature
 
 
-```r
-p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p2 <- ggplot(aes(x=volatile.acidity), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p3 <- ggplot(aes(x=citric.acid), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p4 <- ggplot(aes(x=residual.sugar), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p5 <- ggplot(aes(x=chlorides), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p6 <- ggplot(aes(x=free.sulfur.dioxide), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p7 <- ggplot(aes(x=total.sulfur.dioxide), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p8 <- ggplot(aes(x=density), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p9 <- ggplot(aes(x=pH), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p10 <- ggplot(aes(x=sulphates), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p11 <- ggplot(aes(x=alcohol), data = wdf) +
-  geom_bar(fill='#99CCFF')
-p12 <- ggplot(aes(x=quality), data = wdf) +
-  geom_bar(fill='#99CCFF')
-
-u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/1_univariate.png', u1)
-```
 
 ![Histogram](pictures/1_univariate.png)
 
-Histogram for all features in the dataset. We can observe that most of the
-graphic have a normal distribution with a tendency for a positive skeew. The next section we will remove the outliers based on our observation on the plots below and re-plot the Histograms again.
+We can start our observation over the dataset with a histogram for each feature. Looking this graphic we can see that almost all features have a normal distribution and a few of then a right skewed distribution. There some outliers
+ that we will discuss and treat then in the next section.
 
 ## Removing Outliers
 
 
-```r
-wdf.outliers <- data.frame(wdf)
-
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$fixed.acidity < 11)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$volatile.acidity < 0.75)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$citric.acid < 1)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$residual.sugar < 30)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$chlorides < 0.10)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$free.sulfur.dioxide < 125)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$total.sulfur.dioxide < 350)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$density < 1.005)
-
-# 139 removed
-```
 
 
 ## Histogram without outliers
 
 ![Histogram without outliers](pictures/1_univariate_outliers.png)
 
-Histograms re-ploted without outliers.
+Histograms re-ploted without outliers and we can observe a better visualization 
+in the plots.
 
 ## Density plot for each feature with stat lines
 
@@ -268,13 +145,18 @@ for (var in feature.list) {
 ggsave(file = 'pictures/density_univariate_outliers.png', do.call(grid.arrange, p))
 ```
 
-Density plots for each feature with stats lines
+```
+## Saving 7 x 7 in image
+```
 
 ![univariate density plots without outliers](pictures/density_univariate_outliers.png)
 
-In this plot and from the histograms above we can see the mean, median, 1st quantile and 3rd quantile over each density distribution and a very normal distribution for all features except for residual.sugar that have a very slightly positve skeew.
+With this plot I wanted to see how the Mean and the Median are positioned over the distribution and If Median are following the Mean in the positive (right) skewed distribution. As we can see we can confirm this statement for all features except for the "quality".
 
 ## Quality.2 feature creation
+
+For a easy understanding about the Wines quality we created a new feature based 
+on the quality as you can check in the table below.
 
 
 ```r
@@ -301,6 +183,8 @@ table(wdf.outliers$quality.2)
 wdf.outliers$quality.2 <- NULL
 ```
 
+And the result, including the number of removed outliers for each classification is in the table below.
+
 | Quality.2 | raw  dataset | outliers removed dataset | removed |
 |-----------|--------------|--------------------------|---------|
 | bad       |     1640     |           1565           |   75    |
@@ -316,10 +200,14 @@ rating = as.numeric(c(1565, 2139, 1055))
 percent <- round(100*rating/sum(rating), 1)
 colors = c("red", "orange", "blue")
 lable <- c('Bad', 'Normal', 'Good')
-pie(rating, labels = lable, main = 'Wine quality Pie chart distribution', col = colors)
+pie(rating, labels = lable, main = 'Wine quality Pie chart distribution', 
+    col = colors)
 ```
 
 ![Pie chart](pictures/pie_outlier.png)
+
+In this chart we have a simple but effective visualization about the quality 
+distribution fir each classification.
 
 ## Univariate Analysis
 
@@ -375,6 +263,9 @@ ggpairs(wdf.outliers, title = 'GGPAIRS') +
 
 ![Ggpairs](pictures/ggpairs_plot_outliers.png)
 
+With Ggpairs we can have a overview about the correlation for all dataset with
+scatter plot, density and correlation number.
+
 ## CORRPLOT
 
 
@@ -414,62 +305,6 @@ properties.
 ## Bivariate Boxplots
 
 
-```r
-# Removing outliers for density and residual.sugar for better visualization
-
-# Positive correlation plots
-p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 25)) +
-  ggtitle('density X residual.sugar')
-
-p2 <- ggplot(data = wdf.outliers, aes(x = density, y = total.sulfur.dioxide)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('density X total.sulfur.dioxide')
-
-p3 <- ggplot(data = wdf.outliers, aes(x = quality, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('quality X alcohol')
-
-# Negative correlation plots
-p4 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('density X alcohol')
-
-p5 <- ggplot(data = wdf.outliers, aes(y = total.sulfur.dioxide, x = alcohol)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('total.sulfur.dioxide X alcohol')
-
-p6 <- ggplot(data = wdf.outliers, aes(x = alcohol, y = residual.sugar)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 30)) +
-  ggtitle('alcohol X residual.sugar')
-
-# Zero correlation
-p7 <- ggplot(data = wdf.outliers, aes(x = quality, y = citric.acid)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 1)) +
-  ggtitle('quality X citric.acid')
-
-p8 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  ggtitle('sulphates X chlorides')
-
-p9 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity)) +
-  geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
-  scale_y_continuous(limits = c(0, 0.9)) +
-  ggtitle('density X volatile.acidity')
-
-grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Boxplots with Positive Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Boxplots with Negative Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Boxplots with Zero Correlation",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/1_boxplot_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/2_boxplot_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
-```
 
 ![Bivariate Boxplots](pictures/1_boxplot_bivariate_outliers.png)
 
@@ -481,75 +316,12 @@ ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
 ## Bivariate Scatter plots with linear regression line
 
 
-```r
-# Removing outliers for better visualization
-
-# Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
-# https://ggplot2.tidyverse.org/reference/geom_boxplot.html
-
-# Positive correlation plots
-p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01)) +
-  scale_y_continuous(limits = c(0, 30))
-
-p2 <- ggplot(data = wdf.outliers, aes(x = density, y = total.sulfur.dioxide)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01))
-
-p3 <- ggplot(data = wdf.outliers, aes(x = quality, y = alcohol)) +
-  geom_point()
-
-# Negative correlation plots
-p4 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0.98, 1.01))
-
-p5 <- ggplot(data = wdf.outliers, aes(y = total.sulfur.dioxide, x = alcohol)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x)
-
-p6 <- ggplot(data = wdf.outliers, aes(x = alcohol, y = residual.sugar)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0, 30))
-
-# Zero correlation
-p7 <- ggplot(data = wdf.outliers, aes(x = quality, y = citric.acid)) +
-  geom_point()
-
-p8 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_x_continuous(limits = c(0, 0.2))
-
-p9 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity)) +
-  geom_point() +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_y_continuous(limits = c(0, 0.9)) +
-  scale_x_continuous(limits = c(0.98, 1.01))
-
-grid1 <- grid.arrange(p1, p2, p3, ncol = 3, top = textGrob("Bivariate Scatter plot with Positive Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid2 <- grid.arrange(p4, p5, p6, ncol = 3, top = textGrob("Bivariate Scatter plot with Negative Correlation",gp=gpar(fontsize=15,font=3)))
-
-grid3 <- grid.arrange(p7, p8, p9, ncol = 3, top = textGrob("Bivariate Scatter plot with Zero Correlation",gp=gpar(fontsize=15,font=3)))
-
-ggsave(file = 'pictures/1_scatterplot_bivariate_outliers.png', grid1)
-ggsave(file = 'pictures/2_scatterplot_bivariate_outliers.png', grid2)
-ggsave(file = 'pictures/3_scatterplot_bivariate_outliers.png', grid3)
-```
 
 ![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate_outliers.png)
 
 ![Negative Correlation Bivariate Scatterplot](pictures/2_scatterplot_bivariate_outliers.png)
 
 ![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate_outliers.png)
-
-
 
 ## Bivariate Analysis
 
@@ -599,32 +371,33 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 ```r
 # Multivariate plots with Linear Regression
 
-p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X residual.sugar X quality')
+p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar, 
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
-p2 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X alcohol X quality')
-
-p3 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('sulphates X chlorides X quality')
-
-p4 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity, colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X volatile.acidity X quality')
+p2 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol, 
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 
-grid_multivariate <- grid.arrange(p1, p2, p3, p4, ncol = 2, top = textGrob("Multivariate Plots",gp=gpar(fontsize=15,font=3)))
+p3 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides, 
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
+
+p4 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity, 
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
+
+grid_multivariate <- grid.arrange(p1, p2, p3, p4, ncol = 2, 
+  top = textGrob("Outliers Dataset",gp=gpar(fontsize=15,font=3)))
 
 ggsave(file = 'pictures/2_multivariate_outliers.png', grid_multivariate)
 ```
@@ -716,11 +489,13 @@ while (a < 10){
 
 ```r
 # Tune with raw dataset
-obj.raw <- tune.svm(quality~., data = train.raw, gamma = 2^(-1:1),cost = 2^(2:4))
+obj.raw <- tune.svm(quality~., data = train.raw, gamma = 2^(-1:1),
+  cost = 2^(2:4))
 summary(obj.raw)
 p.tune.svm.raw <- (plot(obj.raw))
 # tune with outliers dataset
-obj.outliers <- tune.svm(quality~., data = train.outliers, gamma = 2^(-1:1),cost = 2^(2:4))
+obj.outliers <- tune.svm(quality~., data = train.outliers, gamma = 2^(-1:1),
+  cost = 2^(2:4))
 summary(obj.outliers)
 p.tune.svm.outliers <- (plot(obj.outliers))
 ```
@@ -835,7 +610,7 @@ paste('Random Forest Mean Accuracy: ', mean.acc.rf, '%', sep = '')
 ```
 
 ```
-## [1] "Random Forest Mean Accuracy: 62.13%"
+## [1] "Random Forest Mean Accuracy: 62.12%"
 ```
 
 ```r
@@ -859,7 +634,7 @@ paste('Random Forest Mean Accuracy: ', mean.acc.rf.out, '%', sep = '')
 ```
 
 ```
-## [1] "Random Forest Mean Accuracy: 62.38%"
+## [1] "Random Forest Mean Accuracy: 62.37%"
 ```
 
 ```r
@@ -905,13 +680,13 @@ Accuracy Mean (%)</td></tr>
 <tbody>
 <tr>
 <td style='text-align: left;'>RAW Data</td>
-<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>62.13</td>
+<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>62.12</td>
 <td style='padding-left: 1em; padding-right: 1em; text-align: center;'>59.34</td>
 <td style='padding-left: 1em; padding-right: 1em; text-align: center;'>52.19</td>
 </tr>
 <tr>
 <td style='border-bottom: 2px solid grey; text-align: left;'>Outliers Data</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>62.38</td>
+<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>62.37</td>
 <td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>58.02</td>
 <td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>50.81</td>
 </tr>
@@ -938,7 +713,8 @@ plot(wdf.pca, type = "l")
 abline(h=0.55, v=8, col="blue")
 
 # PCA components plots
-g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
+g <- autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', 
+  loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
 ggsave(file = 'pictures/pca_outliers.png', g)
 ```
 
@@ -1020,7 +796,7 @@ Accuracy Mean (%)</td></tr>
 <tbody>
 <tr>
 <td style='border-bottom: 2px solid grey; text-align: left;'>Outliers Data</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>66.45</td>
+<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>66.51</td>
 </tr>
 </tbody>
 </table>
@@ -1036,7 +812,8 @@ We could increase the accuracy in more than 4% with Random Forest and PCA.
 # PCA
 wdf.pca <- prcomp(wdf.outliers[,1:11], center = TRUE, scale. = TRUE)
 # PCA components plots
-autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
+autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue', 
+  loadings.label = TRUE, loadings.label.size = 5, alpha = 0.3, main = 'PCA')
 ```
 
 ![PCA components](pictures/pca_outliers.png)
@@ -1048,17 +825,19 @@ THe PCA component plot is a very ilustrative way to see the correlation between 
 ## Plot Two
 
 ```r
-good.wine <- median(subset(wdf.outliers, quality > 6)$alcohol)
-normal.wine <- median(subset(wdf.outliers, quality == 6)$alcohol)
-bad.wine <- median(subset(wdf.outliers, quality < 6)$alcohol)
+good.wine <- median(subset(wdf.outliers, as.numeric(quality) > 6)$alcohol)
+normal.wine <- median(subset(wdf.outliers, as.numeric(quality) == 6)$alcohol)
+bad.wine <- median(subset(wdf.outliers, as.numeric(quality) < 6)$alcohol)
 
 ggplot(data = wdf.outliers, aes(x = quality, y = alcohol)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
   ggtitle('quality X alcohol') +
   geom_hline(yintercept = good.wine, color = 'blue') +
   geom_hline(yintercept = normal.wine, color = 'orange') +
-    geom_hline(yintercept = bad.wine, color = 'red')
+  geom_hline(yintercept = bad.wine, color = 'red')
 ```
+
+![plot of chunk Plot Two](figure/Plot Two-1.png)
 
 ### Description Two
 
@@ -1068,39 +847,12 @@ In this Graphic we can see that the Very Good wines (quality = 9) have a very lo
 
 ## Plot Three
 
-```r
-wdf.outliers$quality <- as.numeric(wdf.outliers$quality)
-
-p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
-
-p2 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
-
-
-p3 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
-
-p4 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity, colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
-
-grid.arrange(p1, p2, p3, p4, ncol = 2, 
-  top = textGrob("Outliers Dataset",gp=gpar(fontsize=15,font=3)))
-```
 
 ![Multivariate scatter plot](pictures/2_multivariate_outliers.png)
 
 ### Description Three
 
-In this Multivariate Scatter plot it is easy to note that the even the correlation is positive, negative or zero, the Good Wines have  clear tendency in each case. For Positive and Negative correlation plots, the Good wines are above the Linear Regression Line and For Zero COrrelation plots they are in left, which means low Density and low Chlorides.
+In this Multivariate Scatter plot it is easy to note that even the correlation is positive, negative or zero, the Good Wines have clear tendency in each case. For Positive and Negative correlation plots, the Good wines are above the Linear Regression Line and For Zero Correlation plots they are in left, which means low Density and low Chlorides.
 
 ------
 

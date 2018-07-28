@@ -7,71 +7,13 @@ editor_options:
 ---
 TITLE by Rodrigo P Maruyama
 ========================================================
-# Table of contents
-
-1. Initial Setup
-  + Working Directory 
-  + Package Installation
-  + Libraries
-  
-2. Introduction
-  
-3. Data Structure:
-  + Size
-  + Summary
-
-4. Univariate Plots Section
-  + Bar plot for each variable
-  + Outliers
-  + Replot - Bar plot for each variable 
-  + Density plot for each variable
-  + Quality.2 feature creation
-  + Univariate analysis
-
-5. Bivariate Plots Section
-  + ggpairs plot
-  + corrplot
-  + Positive, Negative and Zero Correlation Table
-  + Bivariate Boxplots
-  + Bivariate Scatter plots with linear regression
-  + Bivariate analysis
-
-6. Multivariate Plots Section
-  + Highest Correlated features plots
-  + Multivariate analysis
-
-
-7. Machine Learning
-  + Random Forest model
-  + Tuning SVM parameters
-  + SVM
-  + Rpart
-  + Pricipal component analysis - PCA
-  + Load new Dataset
-  + Random Forest
-  + Tuning SVM parameters
-  + SVM
-  + Rpart
-  + Accuracy Average
-
-8. Final Plots and Summary
-  + Plot One
-  + Plot two
-  + Plot Three
-
-9. Reflection
-
-10. Resources
 
 # Initial Setup
-
-## Working directory
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, 'set wd'}
 setwd("D://Documents/ead/Udacity/dsNanodegree/dataAnalysisR/project/")
 ```
 
-## Package Instalation
 
 ```{r echo = FALSE, eval = FALSE, warning = FALSE, 'install packages'}
 install.packages("markdown", dependencies = TRUE)
@@ -92,7 +34,7 @@ install.packages('ROCR', dependencies = TRUE)
 
 ## Libraries 
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, 'lilbrary'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, 'lilbrary'}
 library(ROCR)
 library(ggfortify)
 library(ggplot2)
@@ -113,13 +55,6 @@ library(markdown)
 library(htmlTable)
 ```
 
-## Loading Dataset
-
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'load dataset'}
-# Load the Data
-wdf <- read.csv('data/wineQualityWhites.csv')
-wdf$X <- NULL
-```
 
 # Introduction
 
@@ -132,6 +67,15 @@ Article link: [here](https://www.semanticscholar.org/paper/Modeling-wine-prefere
 
 # The Dataset Structure
 
+## Loading Dataset
+
+```{r echo = TRUE, eval = TRUE, warning = FALSE, 'load dataset'}
+# Load the Data
+wdf <- read.csv('data/wineQualityWhites.csv')
+wdf$X <- NULL
+```
+
+
 ## Dataset size
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'dataset size'}
@@ -141,7 +85,7 @@ dim(wdf)
 
 ## Summary of the Dataset:
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'summary dataset'}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, 'summary dataset'}
 swdf <- summary(wdf)
 swdf <- t.data.frame(swdf)
 write.csv(swdf, file = 'data/summary.csv')
@@ -163,11 +107,18 @@ write.csv(swdf, file = 'data/summary.csv')
 | alcohol              | [% vol.]                     | 8.00 | 9.50    | 10.40  | 10.51  | 11.40   | 14.20  |
 | quality              |                              | 3.00 | 5.00    | 6.00   | 5.88   | 6.00    | 9.00   |
 
+## Type of Feature
+
+```{r echo = TRUE, eval = TRUE, warning = FALSE, 'dataset size'}
+str(wdf)
+```
+
+
 # Univariate Plots Section
 
 ## Histogram for each feature
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, histogram}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, histogram}
 
 p1 <- ggplot(aes(x=fixed.acidity), data = wdf) +
   geom_bar(fill='#99CCFF')
@@ -202,12 +153,28 @@ ggsave(file = 'pictures/1_univariate.png', u1)
 
 ![Histogram](pictures/1_univariate.png)
 
-Histogram for all features in the dataset. We can observe that most of the
-graphic have a normal distribution with a tendency for a positive skeew. The next section we will remove the outliers based on our observation on the plots below and re-plot the Histograms again.
+We can start our observation over the dataset with a histogram for each feature. Looking this graphic we can see that almost all features have a normal distribution and a few of then a right skewed distribution. There some outliers
+ that we will discuss and treat then in the next section.
 
 ## Removing Outliers
 
-```{r echo = TRUE, eval = TRUE, warning = FALSE, 'remove outliers'}
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE, 'outliers_Q3_Q1'}
+
+
+for (f in names(wdf)) {
+  q1 <- quantile(wdf[, f], 0.25)
+  q3 <- quantile(wdf[, f], 0.75)
+  step <- 1.5*(q3 - q1)
+  #print(q1)
+  #print(q3)
+  #print(step)
+  print(dim(subset(wdf, (f <= (q1 - step)) | (f >= (q3 + step)))))
+}
+
+```
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE, 'remove outliers'}
 
 wdf.outliers <- data.frame(wdf)
 
@@ -229,7 +196,8 @@ wdf.outliers <- subset(wdf.outliers, wdf.outliers$density < 1.005)
 
 ![Histogram without outliers](pictures/1_univariate_outliers.png)
 
-Histograms re-ploted without outliers.
+Histograms re-ploted without outliers and we can observe a better visualization 
+in the plots.
 
 ## Density plot for each feature with stat lines
 
@@ -261,13 +229,14 @@ ggsave(file = 'pictures/density_univariate_outliers.png', do.call(grid.arrange, 
 
 ```
 
-Density plots for each feature with stats lines
-
 ![univariate density plots without outliers](pictures/density_univariate_outliers.png)
 
-In this plot and from the histograms above we can see the mean, median, 1st quantile and 3rd quantile over each density distribution and a very normal distribution for all features except for residual.sugar that have a very slightly positve skeew.
+With this plot I wanted to see how the Mean and the Median are positioned over the distribution and If Median are following the Mean in the positive (right) skewed distribution. As we can see we can confirm this statement for all features except for the "quality".
 
 ## Quality.2 feature creation
+
+For a easy understanding about the Wines quality we created a new feature based 
+on the quality as you can check in the table below.
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, quality.2}
 
@@ -284,6 +253,8 @@ wdf.outliers$quality.2 <- as.factor(wdf.outliers$quality.2)
 table(wdf.outliers$quality.2)
 wdf.outliers$quality.2 <- NULL
 ```
+
+And the result, including the number of removed outliers for each classification is in the table below.
 
 | Quality.2 | raw  dataset | outliers removed dataset | removed |
 |-----------|--------------|--------------------------|---------|
@@ -306,6 +277,9 @@ pie(rating, labels = lable, main = 'Wine quality Pie chart distribution',
 ```
 
 ![Pie chart](pictures/pie_outlier.png)
+
+In this chart we have a simple but effective visualization about the quality 
+distribution fir each classification.
 
 ## Univariate Analysis
 
@@ -361,10 +335,12 @@ ggpairs(wdf.outliers, title = 'GGPAIRS') +
 
 ![Ggpairs](pictures/ggpairs_plot_outliers.png)
 
+With Ggpairs we can have a overview about the correlation for all dataset with
+scatter plot, density and correlation number.
+
 ## CORRPLOT
 
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, corrplot}
-
 cor.wdf.outliers <- cor(wdf.outliers)
 corrplot.mixed(cor.wdf.outliers, tl.pos = 'lt', mar=c(2,0,2,0), title = 'CORRPLOT graphic') 
 ```
@@ -399,7 +375,7 @@ properties.
 
 ## Bivariate Boxplots
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'bivariate boxplots'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'bivariate boxplots'}
 # Removing outliers for density and residual.sugar for better visualization
 
 # Positive correlation plots
@@ -463,10 +439,12 @@ ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
 
 ![Bivariate Boxplots](pictures/3_boxplot_bivariate_outliers.png)
 
+We can notice that we have much more outliers for the features with zero correlation
+than the positive and negative ones.
 
 ## Bivariate Scatter plots with linear regression line
 
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'bivariate scatter plots'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'bivariate scatter plots'}
 # Removing outliers for better visualization
 
 # Solution for Warning message: "Continuous x aesthetic -- did you forget aes(group=...)? "
@@ -535,8 +513,6 @@ ggsave(file = 'pictures/3_scatterplot_bivariate_outliers.png', grid3)
 
 ![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate_outliers.png)
 
-
-
 ## Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
@@ -586,36 +562,32 @@ total.sulfur.dioxide x free.sulfur.dioxide beacuse one is part of the others.
 # Multivariate plots with Linear Regression
 
 p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar, 
-  colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X residual.sugar X quality')
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 p2 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol, 
-  colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X alcohol X quality')
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
+
 
 p3 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides, 
-  colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('sulphates X chlorides X quality')
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 p4 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity, 
-  colour = quality)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method='lm',formula=y~x) +
-  scale_colour_gradientn(colours=rainbow(10)) +
-  ggtitle('density X volatile.acidity X quality')
-
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 grid_multivariate <- grid.arrange(p1, p2, p3, p4, ncol = 2, 
-  top = textGrob("Multivariate Plots",gp=gpar(fontsize=15,font=3)))
+  top = textGrob("Outliers Dataset",gp=gpar(fontsize=15,font=3)))
 
 ggsave(file = 'pictures/2_multivariate_outliers.png', grid_multivariate)
 
@@ -956,18 +928,18 @@ autoplot(wdf.pca, loadings = TRUE, loadings.colour = 'blue',
 THe PCA component plot is a very ilustrative way to see the correlation between the features. As we expected quality is very negative correlated with residual.sugar as pH and Acidty as well.
 
 ## Plot Two
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'Plot Two'}
+```{r echo = TRUE, eval = TRUE, warning = FALSE, 'Plot Two'}
 
-good.wine <- median(subset(wdf.outliers, quality > 6)$alcohol)
-normal.wine <- median(subset(wdf.outliers, quality == 6)$alcohol)
-bad.wine <- median(subset(wdf.outliers, quality < 6)$alcohol)
+good.wine <- median(subset(wdf.outliers, as.numeric(quality) > 6)$alcohol)
+normal.wine <- median(subset(wdf.outliers, as.numeric(quality) == 6)$alcohol)
+bad.wine <- median(subset(wdf.outliers, as.numeric(quality) < 6)$alcohol)
 
 ggplot(data = wdf.outliers, aes(x = quality, y = alcohol)) +
   geom_boxplot(aes(group = cut_width(quality, 1)), fill = '#99CCFF') +
   ggtitle('quality X alcohol') +
   geom_hline(yintercept = good.wine, color = 'blue') +
   geom_hline(yintercept = normal.wine, color = 'orange') +
-    geom_hline(yintercept = bad.wine, color = 'red')
+  geom_hline(yintercept = bad.wine, color = 'red')
 ```
 
 ### Description Two
@@ -977,34 +949,34 @@ In this Graphic we can see that the Very Good wines (quality = 9) have a very lo
 
 
 ## Plot Three
-```{r echo = TRUE, eval = FALSE, warning = FALSE, 'Plot Three'}
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'Plot Three'}
 
-wdf.outliers$quality <- as.numeric(wdf.outliers$quality)
+#wdf.outliers$quality <- as.numeric(wdf.outliers$quality)
 
 p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar, 
-    colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 p2 <- ggplot(data = wdf.outliers, aes(x = density, y = alcohol, 
-    colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 
 p3 <- ggplot(data = wdf.outliers, aes(y = sulphates, x = chlorides, 
-    colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 p4 <- ggplot(data = wdf.outliers, aes(x = density, y = volatile.acidity, 
-    colour = quality)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method='lm',formula=y~x) +
-    scale_colour_gradientn(colours=rainbow(10))
+    color = factor(quality))) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_smooth(method = "lm", se = FALSE, size = 1) +
+    scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 grid.arrange(p1, p2, p3, p4, ncol = 2, 
   top = textGrob("Outliers Dataset",gp=gpar(fontsize=15,font=3)))
@@ -1015,7 +987,7 @@ grid.arrange(p1, p2, p3, p4, ncol = 2,
 
 ### Description Three
 
-In this Multivariate Scatter plot it is easy to note that the even the correlation is positive, negative or zero, the Good Wines have  clear tendency in each case. For Positive and Negative correlation plots, the Good wines are above the Linear Regression Line and For Zero COrrelation plots they are in left, which means low Density and low Chlorides.
+In this Multivariate Scatter plot it is easy to note that even the correlation is positive, negative or zero, the Good Wines have clear tendency in each case. For Positive and Negative correlation plots, the Good wines are above the Linear Regression Line and For Zero Correlation plots they are in left, which means low Density and low Chlorides.
 
 ------
 
