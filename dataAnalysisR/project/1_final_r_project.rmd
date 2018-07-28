@@ -72,7 +72,7 @@ Article link: [here](https://www.semanticscholar.org/paper/Modeling-wine-prefere
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'load dataset'}
 # Load the Data
 wdf <- read.csv('data/wineQualityWhites.csv')
-wdf$X <- NULL
+#wdf$X <- NULL
 ```
 
 
@@ -145,7 +145,8 @@ p11 <- ggplot(aes(x=alcohol), data = wdf) +
 p12 <- ggplot(aes(x=quality), data = wdf) +
   geom_bar(fill='#99CCFF')
 
-u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
+u1 <- grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4, 
+  top = textGrob("Histograms for all features",gp=gpar(fontsize=15,font=3)))
 
 ggsave(file = 'pictures/1_univariate.png', u1)
 
@@ -158,46 +159,28 @@ We can start our observation over the dataset with a histogram for each feature.
 
 ## Removing Outliers
 
+```{r echo = FALSE, eval = TRUE, warning = FALSE, 'outliers IQR'}
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, 'outliers_Q3_Q1'}
-
-
-for (f in names(wdf)) {
-  q1 <- quantile(wdf[, f], 0.25)
-  q3 <- quantile(wdf[, f], 0.75)
+# Find the outliers based in the 1.5*IQR value
+outliers <- data.frame()
+   for (f in names(wdf[2, -12])) {
+  q1 <- as.numeric(quantile(wdf[, f], 0.25))
+  q3 <- as.numeric(quantile(wdf[, f], 0.75))
   step <- 1.5*(q3 - q1)
-  #print(q1)
-  #print(q3)
-  #print(step)
-  print(dim(subset(wdf, (f <= (q1 - step)) | (f >= (q3 + step)))))
-}
+  outliers <- rbind(outliers, 
+    subset(wdf, (wdf[, f] <= (q1 - step)) | (wdf[, f] >= (q3 + step))))
+   }
 
+# Just getting the outliers in more than one feature
+outliers <- outliers[duplicated(outliers), ]
+dim(outliers)
+
+# Removing the outliers from the dataset
+wdf.outliers <- anti_join(wdf, outliers)
+wdf.outliers$X <- NULL
+dim(wdf.outliers)
 ```
 
-```{r echo = FALSE, eval = TRUE, warning = FALSE, 'remove outliers'}
-
-wdf.outliers <- data.frame(wdf)
-
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$fixed.acidity < 11)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$volatile.acidity < 0.75)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$citric.acid < 1)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$residual.sugar < 30)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$chlorides < 0.10)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$free.sulfur.dioxide < 125)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$total.sulfur.dioxide < 350)
-wdf.outliers <- subset(wdf.outliers, wdf.outliers$density < 1.005)
-
-# 139 removed
-
-```
-
-
-## Histogram without outliers
-
-![Histogram without outliers](pictures/1_univariate_outliers.png)
-
-Histograms re-ploted without outliers and we can observe a better visualization 
-in the plots.
 
 ## Density plot for each feature with stat lines
 
@@ -258,16 +241,16 @@ And the result, including the number of removed outliers for each classification
 
 | Quality.2 | raw  dataset | outliers removed dataset | removed |
 |-----------|--------------|--------------------------|---------|
-| bad       |     1640     |           1565           |   75    |
-| normal    |     2198     |           2139           |   59    |
-| good      |     1060     |           1055           |    5    |
+| bad       |     1640     |           1197           |   443   |
+| normal    |     2198     |           1860           |   338   |
+| good      |     1060     |           941            |   119   |
 
 
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, 'pie chart'}
 
 # Pie plot creation with percent legend
 
-rating = as.numeric(c(1565, 2139, 1055))
+rating = as.numeric(c(1197, 1860, 941))
 percent <- round(100*rating/sum(rating), 1)
 colors = c("red", "orange", "blue")
 lable <- c('Bad', 'Normal', 'Good')
@@ -329,8 +312,7 @@ No. I didn't change the original data.
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, ggpairs}
 
 ggpairs(wdf.outliers, title = 'GGPAIRS') + 
-  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(),         
-  axis.line=element_blank(), axis.text=element_blank())
+  theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank(),       axis.line=element_blank(), axis.text=element_blank())
 ```
 
 ![Ggpairs](pictures/ggpairs_plot_outliers.png)
@@ -354,24 +336,24 @@ properties.
 
 ## Positive, Negative and Zero Correlation Table
 
-|    | Positive correlation                       | correlation | correlation outliers |
-|----|--------------------------------------------|-------------|----------------------|
-| 1  | density x residual.sugar                   | 0.84        | 0.84                 |
-| 2  | total.sulfur.dioxide x free.sulfur.dioxide | 0.62        | 0.61                 |
-| 3  | density x total.sulfur.dioxide             | 0.53        | 0.55                 |
-| 4  | quality x alcohol                          | 0.44        | 0.44                 |
+|    | Positive correlation                       | correlation |
+|----|--------------------------------------------|-------------|
+| 1  | density x residual.sugar                   |    0.85     |
+| 2  | total.sulfur.dioxide x free.sulfur.dioxide |    0.62     |
+| 3  | density x total.sulfur.dioxide             |    0.56     |
+| 4  | quality x alcohol                          |    0.42     |
 
-|    | Negative correlation                       | correlation | correlation outliers  |
-|----|--------------------------------------------|-------------|-----------------------|
-| 1  | density x alcohol                          | -0.78       | -0.81                 |
-| 2  | total.sulfur.dioxide x alcohol             | -0.45       | -0.46                 |
-| 3  | alcohol x residual.sugar                   | -0.45       | -0.48                 |
+|    | Negative correlation                       | correlation |
+|----|--------------------------------------------|-------------|
+| 1  | density x alcohol                          |   -0.82     |
+| 2  | total.sulfur.dioxide x alcohol             |   -0.56     |
+| 3  | alcohol x residual.sugar                   |   -0.48     |
 
-|    | Zero correlation                           | correlation | correlation outliers  |
-|----|--------------------------------------------|-------------|-----------------------|
-| 1  | quality x citric.acid                      | ~ 0         | ~ 0                   |
-| 2  | sulphates x chlorides                      | ~ 0         |  0.06                 |
-| 3  | density x volatily.acidity                 | ~ 0         | -0.03                 |
+|    | Zero correlation                           | correlation |
+|----|--------------------------------------------|-------------|
+| 1  | quality x citric.acid                      |    0.02     |
+| 2  | sulphates x chlorides                      |    0.07     |
+| 3  | density x volatily.acidity                 |    0.02     |
 
 ## Bivariate Boxplots
 
@@ -542,12 +524,12 @@ No.
 
 ### What was the strongest relationship you found?
 
-|    | Positive correlation                       | correlation | correlation outliers |
-|----|--------------------------------------------|-------------|----------------------|
-| 1  | density x residual.sugar                   | 0.84        | 0.84                 |
-| 2  | total.sulfur.dioxide x free.sulfur.dioxide | 0.62        | 0.61                 |
-| 3  | density x total.sulfur.dioxide             | 0.53        | 0.55                 |
-| 4  | quality x alcohol                          | 0.44        | 0.44                 |
+|    | Positive correlation                       | correlation |
+|----|--------------------------------------------|-------------|
+| 1  | density x residual.sugar                   |    0.85     |
+| 2  | total.sulfur.dioxide x free.sulfur.dioxide |    0.62     |
+| 3  | density x total.sulfur.dioxide             |    0.56     |
+| 4  | quality x alcohol                          |    0.42     |
 
 In this table we can see the correlation using a raw dataset and the dataset
 without oultliers we can't see difference between them. We can disconsidering
@@ -1013,6 +995,7 @@ Concatenate Strings: https://stat.ethz.ch/R-manual/R-devel/library/base/html/pas
 Format function: https://www.rdocumentation.org/packages/base/versions/3.5.1/topics/format <br>
 htmlTable: https://cran.r-project.org/web/packages/htmlTable/vignettes/tables.html <br>
 ROCR: https://cran.r-project.org/web/packages/ROCR/ROCR.pdf <br>
+anti_join: https://stackoverflow.com/questions/38085288/how-to-subtract-one-dataframe-from-another
 
 ## Style and Markdown tools and cheatsheet
 
