@@ -920,11 +920,12 @@ THe PCA component plot is a very ilustrative way to see the correlation between 
 
 ## Plot Two
 ```{r echo = FALSE, eval = FALSE, warning = FALSE, 'Plot Two'}
-
+wdf.outliers$quality <- as.factor(wdf.outliers$quality)
 ggplot(data = wdf.outliers, aes(x = quality, y = alcohol)) +
   geom_jitter( alpha = .3)  +
   geom_boxplot(alpha = .5,color = 'blue') +
   ggtitle('quality X alcohol') +
+  labs(y =  "alcohol [% vol.]") +
   stat_summary(fun.y = "mean", 
                geom = "point", 
                color = "red", 
@@ -947,12 +948,14 @@ In this Graphic we can see that the Very Good wines (quality = 9) have a very lo
 
 p1 <- ggplot(data = wdf.outliers, aes(x = density, y = residual.sugar, 
     color = factor(quality))) +
+    labs(x = 'density [g/cm^3]', y = 'residual.sugar [g/dm^3]') +
     geom_point(alpha = 0.3, size = 1) +
     geom_smooth(method = "lm", se = FALSE, size = 1) +
     scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
 
 p2 <- ggplot(data = wdf.outliers, aes(x = fixed.acidity, y = alcohol, 
     color = factor(quality))) +
+    labs(x = 'fixed.acidity [g(tartaric acid)/dm^3]',y = 'alcohol [% vol.]') + 
     geom_point(alpha = 0.3, size = 1) +
     geom_smooth(method = "lm", se = FALSE, size = 1) +
     scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
@@ -960,6 +963,7 @@ p2 <- ggplot(data = wdf.outliers, aes(x = fixed.acidity, y = alcohol,
 
 p3 <- ggplot(data = wdf.outliers, aes(x = pH, y = alcohol, 
     color = factor(quality))) +
+    labs(x = 'pH', y = 'alcohol [% vol.]') +
     geom_point(alpha = 0.3, size = 1) +
     geom_smooth(method = "lm", se = FALSE, size = 1) +
     scale_color_brewer(type='seq', guide=guide_legend(title='Quality'))
