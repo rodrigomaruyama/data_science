@@ -429,12 +429,38 @@ ggsave(file = 'pictures/3_boxplot_bivariate_outliers.png', grid3)
 
 ![Bivariate Boxplots](pictures/1_boxplot_bivariate_outliers.png)
 
+We can observe a very clear tendency for good wines to have a different behavior 
+from the others.For example, in the 3rd plot (quality x alcohol) the good wines
+have a level of alcohol around 12 % volume, what means around 1% higher than the 
+others as you can see below:
+
+```{r echo = FALSE, eval = FALSE, warning = FALSE, 'mean alcohol calc'}
+
+mean.good <- format(mean(subset(wdf.outliers, 
+  as.numeric(wdf.outliers$quality) > 6)$alcohol),digits = 4)
+mean.normal <- format(mean(subset(wdf.outliers, 
+  as.numeric(wdf.outliers$quality) == 6)$alcohol),digits = 4)
+mean.bad <- format(mean(subset(wdf.outliers, 
+  as.numeric(wdf.outliers$quality) < 6)$alcohol),digits = 4)
+
+```
+
+```{r echo = TRUE, eval = TRUE, warning = FALSE, 'mean alcohol'}
+paste('good:', mean.good, 
+  '% / normal:', mean.normal, 
+  '% / bad:', mean.bad, '%', 
+  sep = ' ')
+```
+
 ![Bivariate Boxplots](pictures/2_boxplot_bivariate_outliers.png)
+
+We can verify in the 1st plot that higher levels of density means low level of
+alcohol what it is expected once water is denser than alcohol.
 
 ![Bivariate Boxplots](pictures/3_boxplot_bivariate_outliers.png)
 
-We can notice that we have much more outliers for the features with zero correlation
-than the positive and negative ones.
+We can notice that we have much more outliers and a flat behavior for the 
+features with zero correlation than the positive and negative ones.
 
 ## Bivariate Scatter plots with linear regression line
 
@@ -503,9 +529,19 @@ ggsave(file = 'pictures/3_scatterplot_bivariate_outliers.png', grid3)
 
 ![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate_outliers.png)
 
+It is very clear to notice with the linear regression lines the positive correlation
+beteween those features once the x variable increase as the y variable increase too.
+
 ![Negative Correlation Bivariate Scatterplot](pictures/2_scatterplot_bivariate_outliers.png)
 
+Similar to the positive correlation, here it is clear again the negative
+correlation looking  for the linear regression lines.
+
 ![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate_outliers.png)
+
+In this graphic it is interesting the 2nd plot where we have a very clear cluster 
+on the left side and some points spread out on the right side. This can be a 
+motivation to look into those ones carefully.
 
 ## Bivariate Analysis
 
@@ -521,7 +557,7 @@ of wines have a concentration in the midle for both features but fot total.sulfu
 
 - Strong Negative correlation
 
-In the density_X_alcohol plot we can see the expected behaivour once the alcohol
+In the density_X_alcohol plot we can see the expected behavior once the alcohol
 density is lower than the water density.
 For both second and third plots they have a negative tendency nad for alcohol_X_residual.sugar they are a concentration of wines with lower residual.sugar quantities.
 

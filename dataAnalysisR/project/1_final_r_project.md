@@ -286,12 +286,34 @@ properties.
 
 ![Bivariate Boxplots](pictures/1_boxplot_bivariate_outliers.png)
 
+We can observe a very clear tendency for good wines to have a different behavior 
+from the others.For example, in the 3rd plot (quality x alcohol) the good wines
+have a level of alcohol around 12 % volume, what means around 1% higher than the 
+others as you can see below:
+
+
+
+
+```r
+paste('good:', mean.good, 
+  '% / normal:', mean.normal, 
+  '% / bad:', mean.bad, '%', 
+  sep = ' ')
+```
+
+```
+## [1] "good: 12.62 % / normal: 11.51 % / bad: 10.48 %"
+```
+
 ![Bivariate Boxplots](pictures/2_boxplot_bivariate_outliers.png)
+
+We can verify in the 1st plot that higher levels of density means low level of
+alcohol what it is expected once water is denser than alcohol.
 
 ![Bivariate Boxplots](pictures/3_boxplot_bivariate_outliers.png)
 
-We can notice that we have much more outliers for the features with zero correlation
-than the positive and negative ones.
+We can notice that we have much more outliers and a flat behavior for the 
+features with zero correlation than the positive and negative ones.
 
 ## Bivariate Scatter plots with linear regression line
 
@@ -299,9 +321,19 @@ than the positive and negative ones.
 
 ![Positive COrrelation Bivariate Scatterplot](pictures/1_scatterplot_bivariate_outliers.png)
 
+It is very clear to notice with the linear regression lines the positive correlation
+beteween those features once the x variable increase as the y variable increase too.
+
 ![Negative Correlation Bivariate Scatterplot](pictures/2_scatterplot_bivariate_outliers.png)
 
+Similar to the positive correlation, here it is clear again the negative
+correlation looking  for the linear regression lines.
+
 ![Zero Correlation Bivariate Scatterplot](pictures/3_scatterplot_bivariate_outliers.png)
+
+In this graphic it is interesting the 2nd plot where we have a very clear cluster 
+on the left side and some points spread out on the right side. This can be a 
+motivation to look into those ones carefully.
 
 ## Bivariate Analysis
 
@@ -317,7 +349,7 @@ of wines have a concentration in the midle for both features but fot total.sulfu
 
 - Strong Negative correlation
 
-In the density_X_alcohol plot we can see the expected behaivour once the alcohol
+In the density_X_alcohol plot we can see the expected behavior once the alcohol
 density is lower than the water density.
 For both second and third plots they have a negative tendency nad for alcohol_X_residual.sugar they are a concentration of wines with lower residual.sugar quantities.
 
@@ -522,32 +554,9 @@ htmlTable(acc.matrix,
           caption="Accuracy Mean (%)")
 ```
 
-<table class='gmisc_table' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
-<thead>
-<tr><td colspan='4' style='text-align: left;'>
-Accuracy Mean (%)</td></tr>
-<tr>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey;'> </th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Random Forest</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>SVM</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Rpart</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style='text-align: left;'>RAW Data</td>
-<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>62.2</td>
-<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>59.68</td>
-<td style='padding-left: 1em; padding-right: 1em; text-align: center;'>52.19</td>
-</tr>
-<tr>
-<td style='border-bottom: 2px solid grey; text-align: left;'>Outliers Data</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>63.22</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>58.71</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>52.43</td>
-</tr>
-</tbody>
-</table>
+```
+## Error in htmlTable(acc.matrix, css.cell = ("padding-left: 1em; padding-right: 1em;"), : object 'acc.matrix' not found
+```
 
 
 ## Pricipal component analysis - PCA
@@ -637,7 +646,7 @@ Accuracy Mean (%)</td></tr>
 <tbody>
 <tr>
 <td style='border-bottom: 2px solid grey; text-align: left;'>Outliers Data</td>
-<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>69.1</td>
+<td style='padding-left: 1em; padding-right: 1em; border-bottom: 2px solid grey; text-align: center;'>69.11</td>
 </tr>
 </tbody>
 </table>
