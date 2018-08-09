@@ -11,7 +11,7 @@ TITLE by Rodrigo P Maruyama
 # ROCR
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, 'set wd'}
-setwd("D://Documents/ead/Udacity/dsNanodegree/dataAnalysisR/project/")
+setwd("D://Documents/ead/Udacity/dsNanodegree/data_scientist/dataAnalysisR/project/")
 ```
 
 ## Packages
@@ -26,13 +26,15 @@ install.packages('ROCR', dependencies = TRUE)
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'lilbrary'}
 library(ROCR)
 library(randomForest)
+library(dplyr)
+
 ```
 
 ## Loading Dataset
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE, 'load dataset'}
 # Load the Data
-wdf <- read.csv('data/wineQualityWhites.csv')
+wdf <- read.csv('/media/maru/Documents/ead/Udacity/dsNanodegree/data_scientist/dataAnalysisR/project/data/wineQualityWhites.csv')
 ```
 
 
@@ -42,13 +44,13 @@ wdf <- read.csv('data/wineQualityWhites.csv')
 
 # Find the outliers based in the 1.5*IQR value
 outliers <- data.frame()
-   for (f in names(wdf[2, -12])) {
+for (f in names(wdf[2, -12])) {
   q1 <- as.numeric(quantile(wdf[, f], 0.25))
   q3 <- as.numeric(quantile(wdf[, f], 0.75))
   step <- 1.5*(q3 - q1)
   outliers <- rbind(outliers, 
     subset(wdf, (wdf[, f] <= (q1 - step)) | (wdf[, f] >= (q3 + step))))
-   }
+}
 
 # Just getting the outliers in more than one feature
 outliers <- outliers[duplicated(outliers), ]
@@ -98,8 +100,11 @@ while (a < s) {
       print(paste('FALSE', a, rf.pred[a], test.outliers$quality[a], sep = '--'))
     }
 }
-
+# 
 pred <- prediction(rf.pred, test.outliers$quality)
+#
+pred <- prediction(rf.pred.prob[,3], bin.pred)
+
 perf <- performance(pred,"tpr","fpr")
 plot(perf)
 
