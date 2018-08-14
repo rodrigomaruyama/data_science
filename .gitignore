@@ -1,24 +1,9 @@
-###
-
-data_scientist/big_data/
-data_scientist/articles/
-data_scientist/dataAnalysisR/data
-data_scientist/dataAnalysisR/project/data
-data_scientist/dataAnalysisR/project/review
-data_scientist/dataAnalysisR/project/articles
 
 ###
-fdsc1/projeto_final/data
-fdsc1/projeto_final/review
+data_scientist/
 
+###
+fdsc1/
 
 ###
 fdsc2/
-nyc_subway_project/data/
-nyc_subway_project/FDSC_entregue/
-nyc_subway_project/.ipynb_checkpoints/
-data_scientist/screenshots/
-.RData
-.Rhistory
-fdsc1/projeto_final/.ipynb_checkpoints/
-fdsc1/projeto_final/__pycache__/
